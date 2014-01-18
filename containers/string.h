@@ -21,7 +21,7 @@ namespace alib
       public:
         string_literal();
         string_literal(const char*);
-        string_literal(const char*, size_t allocated_length);
+        //string_literal(const char*, size_t allocated_length);
         string_literal(initializer_list<string_literal> list);
 
         string_literal(string_literal&&);
@@ -47,6 +47,8 @@ namespace alib
     {
     public:
       string(string_literal value = "");
+      //char* conversion constructor... nice to have
+      string(const char* value);
 
       string(const string& rhs) = default;
       string& operator=(const string& rhs) = default;

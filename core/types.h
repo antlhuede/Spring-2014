@@ -1,6 +1,8 @@
 #pragma once
 
 //basic type definitions
+typedef unsigned char uchar;
+
 typedef signed __int8 int8;
 typedef signed __int16 int16;
 typedef signed __int32 int32;
@@ -29,7 +31,10 @@ inline object_id get_id(tag t) { return object_id(t & 0x00000000FFFFFFFF); }
 
 //forward declarations
 namespace alib { 
-  namespace containers { class string; } 
+  namespace containers { 
+    class string;
+    template <class T> class vector;
+  } 
   namespace core { 
     namespace hash_functions { class FNV; }
   }
@@ -40,6 +45,7 @@ typedef alib::core::hash_functions::FNV hash_function;
 
 //container definitions
 typedef alib::containers::string string;
+template <class T> using vector = alib::containers::vector<T>;
 
 #include <memory>
 template <class T> using shared_ptr = std::shared_ptr<T>;

@@ -42,11 +42,11 @@ string_literal::string_literal(const char* str)
 {
   construct(str, m_strlen);
 }
-string_literal::string_literal(const char* str, size_t allocated_length)
-  : m_strlen(std::strlen(str))
-{
-  construct(str, allocated_length);
-}
+//string_literal::string_literal(const char* str, size_t allocated_length)
+//  : m_strlen(std::strlen(str))
+//{
+//  construct(str, allocated_length);
+//}
 void string_literal::construct(const char* str, size_t allocated_length)
 {
   assert(str != nullptr);
@@ -107,6 +107,11 @@ string_literal& string::access_registry(string_hash hash) {
 
 string::string(string_literal value)
   : m_hash(hash_function::generate_hash(value.get())) 
+{
+  register_string(value, m_hash);
+}
+string::string(const char* value)
+  : m_hash(hash_function::generate_hash(value))
 {
   register_string(value, m_hash);
 }

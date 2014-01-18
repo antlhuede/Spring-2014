@@ -5,13 +5,17 @@
 #include "containers/vector.h"
 #include <utility>
 #include <cstdio>
-void print_string(const string& str)
+
+template <typename T> void print(const T&);
+template <> void print(const string& str)
 {
   printf("%s : hash(%u) length(%u)\n", str.c_str(), str.hash(), str.length());
 }
-string return_string()
+template <typename T> void print(const vector<T>& vec)
 {
-  return string("rvalue string");
+  printf("vector - size(%u) capacity(%u)\n", vec.size(), vec.capacity());
+  for (size_t i = 0; i < vec.size(); ++i)
+    print(vec[i]);
 }
 void test_string()
 {
@@ -24,23 +28,25 @@ void test_string()
 
   string normalstring("normal string");
 
-  string move_construct_nonconst(normalstring);
+  string moveable_string("movable string");
+  string move_construct_nonconst = std::move(moveable_string);
+  print(move_construct_nonconst);
 
   string subscript_nonconst("normal string to be subscripted");
   const string subscript_const("const string to be subscripted");
 
-  print_string(default_construct);
-  print_string(charptr_construct);
-  print_string(copy_construct);
+  print(default_construct);
+  print(charptr_construct);
+  print(copy_construct);
 
-  print_string(conststring);
-  print_string(move_construct_const);
+  print(conststring);
+  print(move_construct_const);
 
-  print_string(normalstring);
-  print_string(move_construct_nonconst);
+  print(normalstring);
+  print(move_construct_nonconst);
 
-  print_string(subscript_nonconst);
-  print_string(subscript_const);
+  print(subscript_nonconst);
+  print(subscript_const);
 
   //test subscripts
   auto test_subscript = [](string subscript) {
@@ -62,10 +68,101 @@ void test_string()
   test_assignment(charptr_construct, subscript_const);
 
   string init_list({ "hello", " world", " test" });
-  print_string(init_list);
+  print(init_list);
+}
+
+void test_vector()
+{
+  vector<string> default_constructor;
+  vector<string> size_constructor(20);
+  vector<string> list_constructor({ string("hello"), string(" world"), string(" second "), string("test") });
+
+  print(default_constructor);
+  print(size_constructor);
+  print(list_constructor);
+
+
+  string pushback_str("this string is being pushed back");
+  vector<string> pushback_normal;
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+  pushback_normal.push_back(pushback_str);
+
+  print(pushback_normal);
+
+  vector<string> pushback_rvalue;
+  pushback_rvalue.push_back("0");
+  pushback_rvalue.push_back("1");
+  pushback_rvalue.push_back("2");
+  pushback_rvalue.push_back("3");
+  pushback_rvalue.push_back("4");
+  pushback_rvalue.push_back("5");
+  pushback_rvalue.push_back("6");
+  pushback_rvalue.push_back("7");
+  pushback_rvalue.push_back("8");
+  pushback_rvalue.push_back("9");
+  pushback_rvalue.push_back("10");
+  pushback_rvalue.push_back("11");
+  pushback_rvalue.push_back("12");
+  pushback_rvalue.push_back("13");
+  pushback_rvalue.push_back("14");
+  pushback_rvalue.push_back("15");
+  pushback_rvalue.push_back("16");
+  pushback_rvalue.push_back("17");
+  pushback_rvalue.push_back("18");
+  pushback_rvalue.push_back("19");
+  pushback_rvalue.push_back("20");
+  pushback_rvalue.push_back("21");
+  pushback_rvalue.push_back("22");
+  pushback_rvalue.push_back("23");
+  pushback_rvalue.push_back("24");
+  pushback_rvalue.push_back("25");
+  pushback_rvalue.push_back("26");
+  pushback_rvalue.push_back("27");
+  pushback_rvalue.push_back("28");
+  pushback_rvalue.push_back("29");
+  pushback_rvalue.push_back("30");
+  pushback_rvalue.push_back("31");
+  pushback_rvalue.push_back("32");
+  pushback_rvalue.push_back("33");
+  pushback_rvalue.push_back("34");
+
+  print(pushback_rvalue);
+
+  auto check_operators = [](const vector<string>& vec) {
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
+      if (i != atoi(vec[i].c_str()))
+        printf("Error in pushback or subscript operators, value: %u\n", i);
+    }
+  };
+  
+  check_operators(pushback_rvalue);
 }
 int main(void)
 {
   test_string();
+  test_vector();
   return 0;
 }
