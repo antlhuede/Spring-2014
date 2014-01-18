@@ -9,7 +9,6 @@ namespace alib
 {
   namespace containers
   {
-    typedef hash_map<string_hash, char*> string_pool;
 
     //template <typename
     //template <typename... Args>
@@ -17,37 +16,59 @@ namespace alib
     //{
     //  
     //}
+    class string_literal
+    {
+      public:
+        string_literal();
+        string_literal(const char*);
+        string_literal(const char*, size_t allocated_length);
+        string_literal(initializer_list<string_literal> list);
+
+        string_literal(string_literal&&);
+        string_literal(const string_literal&) = default;
+
+        string_literal& operator=(const string_literal&) = default;
+
+        inline char* get() { return m_data.get(); }
+        inline size_t length() const { return m_strlen; }
+        inline size_t allocated() const { return m_allocated; }
+      private:
+        void construct(const char*, size_t allocated_length);
+        shared_ptr<char> m_data;
+        size_t m_strlen;
+        size_t m_allocated;
+        friend void strcat(string_literal*, string_literal);
+    };
+
+    void strcat(string_literal* dest, string_literal append);
+    typedef hash_map<string_hash, string_literal> string_pool;
 
     class string
     {
     public:
-      string();
-      string(const char* value);
-      string(const string& rhs);
-      string(string&& rhs);
+      string(string_literal value = "");
 
-      string& operator=(const string& rhs);
+      string(const string& rhs) = default;
+      string& operator=(const string& rhs) = default;
+
+      string(string&& rhs);
       string& operator=(string&& rhs);
 
       bool operator==(const string& rhs) const;
 
-      char& operator[](size index);
-      const char& operator[](size index) const;
+      char& operator[](size_t index);
+      const char& operator[](size_t index) const;
   
       string_hash hash() const;
-      size length() const;
+      size_t length() const;
       const char* c_str() const;
+
     private:
-      inline string& copy_string(const string& rhs)
-      {
-        m_length = rhs.m_length;
-        m_hash = rhs.m_hash;
-        return *this;
-      }
       static string_pool registry;
-      static void register_string(const char* value, size length, string_hash hash);
+      static void register_string(string_literal value, string_hash hash);
+      static string_literal& access_registry(string_hash hash);
+
       string_hash m_hash;
-      size m_length;
     };
   }
 }

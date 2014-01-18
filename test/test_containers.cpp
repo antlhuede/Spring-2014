@@ -46,7 +46,7 @@ void test_string()
   auto test_subscript = [](string subscript) {
     printf("\ntesting subscript...\n");
     printf("%s\n", subscript.c_str());
-    for (size i = 0; i < subscript.length(); ++i)
+    for (size_t i = 0; i < subscript.length(); ++i)
       printf("%c", subscript[i]);
     printf("\n");
   };
@@ -60,6 +60,9 @@ void test_string()
     printf("left: %s \tright: %s\n", left.c_str(), right.c_str());
   };
   test_assignment(charptr_construct, subscript_const);
+
+  string init_list({ "hello", " world", " test" });
+  print_string(init_list);
 }
 int main(void)
 {

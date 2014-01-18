@@ -11,8 +11,6 @@ typedef unsigned __int16 uint16;
 typedef unsigned __int32 uint32;
 typedef unsigned __int64 uint64;
 
-typedef size_t size;
-
 typedef float f32;
 typedef double f64;
 
@@ -53,5 +51,5 @@ template <class T> using object_ref = weak_ptr<T>;
 #include <unordered_map>
 template <class Key, class Value> using hash_map = std::unordered_map<Key, Value>;
 
-#include <vector>
-template <class T> using vector = std::vector<T>;
+#include <initializer_list>
+template <class T> using initializer_list = std::initializer_list<T>;
