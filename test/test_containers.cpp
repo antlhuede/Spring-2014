@@ -5,6 +5,7 @@
 #include "containers/vector.h"
 #include <utility>
 #include <cstdio>
+#include <cassert>
 
 template <typename T> void print(const T&);
 template <> void print(const string& str)
@@ -123,54 +124,69 @@ void test_vector()
 
   print(pushback_normal);
 
-  vector<string> pushback_rvalue;
-  pushback_rvalue.push_back("0");
-  pushback_rvalue.push_back("1");
-  pushback_rvalue.push_back("2");
-  pushback_rvalue.push_back("3");
-  pushback_rvalue.push_back("4");
-  pushback_rvalue.push_back("5");
-  pushback_rvalue.push_back("6");
-  pushback_rvalue.push_back("7");
-  pushback_rvalue.push_back("8");
-  pushback_rvalue.push_back("9");
-  pushback_rvalue.push_back("10");
-  pushback_rvalue.push_back("11");
-  pushback_rvalue.push_back("12");
-  pushback_rvalue.push_back("13");
-  pushback_rvalue.push_back("14");
-  pushback_rvalue.push_back("15");
-  pushback_rvalue.push_back("16");
-  pushback_rvalue.push_back("17");
-  pushback_rvalue.push_back("18");
-  pushback_rvalue.push_back("19");
-  pushback_rvalue.push_back("20");
-  pushback_rvalue.push_back("21");
-  pushback_rvalue.push_back("22");
-  pushback_rvalue.push_back("23");
-  pushback_rvalue.push_back("24");
-  pushback_rvalue.push_back("25");
-  pushback_rvalue.push_back("26");
-  pushback_rvalue.push_back("27");
-  pushback_rvalue.push_back("28");
-  pushback_rvalue.push_back("29");
-  pushback_rvalue.push_back("30");
-  pushback_rvalue.push_back("31");
-  pushback_rvalue.push_back("32");
-  pushback_rvalue.push_back("33");
-  pushback_rvalue.push_back("34");
-
-  print(pushback_rvalue);
-
-  auto check_operators = [](const vector<string>& vec) {
+  auto check_operators = [](const vector<string>& vec, int32 start, size_t length) {
+    assert(vec.size() == length);
+    bool error_found = false;
     for (size_t i = 0; i < vec.size(); ++i)
     {
-      if (i != atoi(vec[i].c_str()))
+      if (atoi(vec[i].c_str()) != start + i)
+      {
+        error_found = true;
         printf("Error in pushback or subscript operators, value: %u\n", i);
+      }
     }
+    if (error_found == false) printf("subscript and pushback operators successful\n");
   };
+  auto itostr = [&check_operators](vector<string>& vec, int32 start, int32 length){
+    char buffer[256];
+    for (int32 i = start; i < start + length; ++i)
+    {
+      vec.push_back(_itoa(i, buffer, 10));
+    }
+
+    check_operators(vec, start, length);
+  };
+
+  int32 start = -10;
+  int32 length = 45;
+  vector<string> pushback_rvalue;
+  itostr(pushback_rvalue, start, length);
+  print(pushback_rvalue);
+
+  //test copy construct
+
+  vector<string> copy_normal(pushback_normal);
+  vector<string> assign_normal;
+  assign_normal = pushback_normal;
+  printf("\ntest copy normal:\n");
+  print(copy_normal);
+
+  printf("\ntest assign normal:\n");
+  print(assign_normal);
+
+  auto run_test = [](vector<string>& vec, string test_name, void(*callback)(vector<string>&)) {
+    printf("\ntest %s:\n", test_name.c_str());
+    printf("before:\n");
+    print(vec);
+    callback(vec);
+    printf("after:\n");
+    print(vec);
+  };
+
+  auto clear = [](vector<string>& vec) { vec.clear(); };
+  auto emplace_back = [](vector<string>& vec) { vec.emplace_back("emp1", "emp2", "emp3"); };
+  auto reset = [](vector<string>& vec) { vec.reset(); };
+
+  run_test(pushback_normal, "emplace back", emplace_back);
+  run_test(pushback_rvalue, "emplace back", emplace_back);
+  run_test(pushback_normal, "clear", clear);
+  run_test(pushback_rvalue, "clear", clear);
+  run_test(pushback_normal, "emplace back", emplace_back);
+  run_test(pushback_rvalue, "emplace back", emplace_back);
+  run_test(pushback_normal, "reset", reset);
+  run_test(pushback_rvalue, "reset", reset);
+
   
-  check_operators(pushback_rvalue);
 }
 int main(void)
 {

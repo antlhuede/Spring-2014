@@ -252,15 +252,26 @@ public:
   vector(vector&&);
   vector& operator=(vector&&);
 
-  //iterators
-  iterator begin();
-  const_iterator begin() const;
-  iterator end();
-  const_iterator end() const;
+  iterator begin()
+  {
+    return iterator(m_data.get());
+  }
+  iterator end()
+  {
+    return iterator(m_data.get() + m_size);
+  }
+  const_iterator begin() const
+  {
+    return const_iterator(m_data.get());
+  }
+  const_iterator end() const
+  {
+    return const_iterator(m_data.get() + m_size);
+  }
 
   iterator rbegin();
-  const_iterator rbegin() const;
   iterator rend();
+  const_iterator rbegin() const;
   const_iterator rend() const;
 
   const_iterator cbegin() const;
@@ -319,12 +330,15 @@ public:
   template <class... Args>
   iterator emplace(const_iterator position, Args&&... args);
   template <class... Args>
-  void emplace_back(Args&&... args);
+  void emplace_back(Args&&... args)
+  {
+    initializer_list<T> list = { args... };
+    for (auto it : list)
+      push_back(it);
+  }
+  void reset();
 private:
   void grow();
-
-  template <typename R>
-  void do_push_back(R value);
 
   shared_ptr<value_type> m_data;
   size_t m_size;
@@ -349,39 +363,18 @@ inline size_t get_next_power_of_two(size_t value)
 template <typename T>
 shared_ptr<T> allocate_memory(size_t num_elements)
 {
-  size_t size = sizeof(T)* num_elements;
+  size_t size = sizeof(T) * num_elements;
   shared_ptr<T> ret((T*)(new char[size]));
   std::memset(ret.get(), 0, size);
   return ret;
-}
-
-template <class T>
-auto vector<T>::begin() -> iterator
-{
-  return iterator(m_data.get());
-}
-template <class T>
-auto vector<T>::begin() const -> const_iterator
-{
-  return const_iterator(m_data.get());
-}
-template <class T>
-auto vector<T>::end() ->  iterator
-{
-  return iterator(m_data.get() + m_size);
-}
-template <class T>
-auto vector<T>::end() const -> const_iterator
-{
-  return const_iterator(m_data.get() + m_size);
 }
 
 //insertion
 template <class T>
 void vector<T>::grow()
 {
-  assert(m_size == m_capacity);
   m_capacity = get_next_power_of_two(m_capacity);
+  assert(m_capacity <= max_elements);
   shared_ptr<T> new_data(allocate_memory<T>(m_capacity));
   T* new_mem = new_data.get();
   T* old_mem = m_data.get();
@@ -414,6 +407,14 @@ vector<T>::vector(initializer_list<T> list)
   T* v = m_data.get();
   for (auto it = list.begin(); it != list.end(); ++it)
     new (v++) T(*it);
+}
+template <class T>
+void vector<T>::reset()
+{
+  clear();
+  m_data.reset();
+  m_capacity = default_size;
+  m_data = allocate_memory<T>(m_capacity);
 }
 
 
@@ -492,28 +493,52 @@ void vector<T>::pop_back()
 {
   assert(m_size);
   //explicitly call destructor
-  (*this)[--m_size]->~T();
+  (*this)[--m_size].~T();
+}
+template <class T>
+void vector<T>::clear() noexcept
+{
+  while (m_size) pop_back();
 }
 
 template <class T>
-vector<T>::vector(const vector&)
-{ assert(false); }
+vector<T>::vector(const vector<T>& rhs)
+  : m_size(rhs.m_size)
+  , m_capacity(rhs.m_capacity)
+  , m_data(allocate_memory<T>(rhs.m_capacity))
+{ 
+  for (size_t i = 0; i < m_size; ++i)
+    new (&(*this)[i]) value_type(rhs[i]);
+}
 template <class T>
-vector<T>& vector<T>::operator=(const vector<T>&)
+vector<T>& vector<T>::operator=(const vector<T>& rhs)
 {
-  assert(false);
+  if (m_data.get() == rhs.m_data.get())
+    return *this;
+
+  clear();
+  while (m_capacity <= rhs.m_capacity)
+    grow();
+
+  m_size = rhs.m_size;
+  for (size_t i = 0; i < m_size; ++i)
+    new (&(*this)[i]) value_type(rhs[i]);
   return *this;
 }
 
 template <class T>
-vector<T>::vector(vector&&)
+vector<T>::vector(vector&& rval)
 {
-  assert(false);
+  m_data = rval.m_data;
+  m_capacity = rval.m_capacity;
+  m_size = rval.m_size;
 }
 template <class T>
-vector<T>& vector<T>::operator=(vector&&)
+vector<T>& vector<T>::operator=(vector&& rval)
 {
-  assert(false);
+  m_data = rval.m_data;
+  m_capacity = rval.m_capacity;
+  m_size = rval.m_size;
   return *this;
 }
 
