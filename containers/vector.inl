@@ -10,7 +10,7 @@ inline size_t get_next_power_of_two(size_t value)
 }
 
 template <typename T>
-shared_ptr<T> allocate_memory(size_t num_elements)
+shared_ptr<T> allocate_array(size_t num_elements)
 {
   size_t size = sizeof(T)* num_elements;
   shared_ptr<T> ret((T*)(new char[size]));
@@ -24,7 +24,7 @@ void vector<T>::reserve(size_t n)
   if (m_capacity < n)
   {
     m_capacity = n;
-    shared_ptr<T> temp = allocate_memory<T>(m_capacity);
+    shared_ptr<T> temp = allocate_array<T>(m_capacity);
     for (size_t i = 0; i < m_size; ++i)
       temp.get()[i] = std::move((*this)[i]);
     m_data = temp;
@@ -52,7 +52,7 @@ void vector<T>::grow()
 {
   m_capacity = get_next_power_of_two(m_capacity);
   assert(m_capacity <= max_elements);
-  shared_ptr<T> new_data(allocate_memory<T>(m_capacity));
+  shared_ptr<T> new_data(allocate_array<T>(m_capacity));
   T* new_mem = new_data.get();
   T* old_mem = m_data.get();
 
@@ -65,14 +65,14 @@ template <class T>
 vector<T>::vector()
   : m_size(0)
   , m_capacity(default_size)
-  , m_data(allocate_memory<T>(default_size)) {}
+  , m_data(allocate_array<T>(default_size)) {}
 
 template <class T>
 vector<T>::vector(size_t num_elems)
   : m_size(0)
   , m_capacity(get_next_power_of_two(num_elems))
 {
-  m_data = allocate_memory<T>(m_capacity);
+  m_data = allocate_array<T>(m_capacity);
 }
 
 template <class T>
@@ -80,7 +80,7 @@ vector<T>::vector(initializer_list<T> list)
   : m_size(list.size())
 {
   m_capacity = m_size > default_size ? get_next_power_of_two(m_size) : default_size;
-  m_data = allocate_memory<T>(m_capacity);
+  m_data = allocate_array<T>(m_capacity);
   T* v = m_data.get();
   for (auto it = list.begin(); it != list.end(); ++it)
     new (v++) T(*it);
@@ -91,7 +91,7 @@ void vector<T>::reset()
   clear();
   m_data.reset();
   m_capacity = default_size;
-  m_data = allocate_memory<T>(m_capacity);
+  m_data = allocate_array<T>(m_capacity);
 }
 
 
@@ -192,7 +192,7 @@ template <class T>
 vector<T>::vector(const vector<T>& rhs)
   : m_size(rhs.m_size)
   , m_capacity(rhs.m_capacity)
-  , m_data(allocate_memory<T>(rhs.m_capacity))
+  , m_data(allocate_array<T>(rhs.m_capacity))
 {
   for (size_t i = 0; i < m_size; ++i)
     new (&(*this)[i]) value_type(rhs[i]);
