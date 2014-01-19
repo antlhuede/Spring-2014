@@ -10,7 +10,44 @@ class vector
 public:
   typedef T value_type;
 
-  class iterator {};
+  class iterator
+  {
+  private:
+    iterator(T* value);
+  public:
+    iterator();
+    iterator(const iterator& rhs) = default;
+    iterator& operator=(const iterator& rhs) = default;
+    ~iterator() = default;
+
+    T& operator*();
+    const T& operator*() const;
+
+    T& operator->();
+    const T& operator->() const;
+
+    iterator& operator++();
+    iterator& operator++(int);
+
+    T& operator[](int32 index);
+    const T& operator[](int32 index) const;
+  private:
+    T* m_position;
+    
+    friend bool operator==(const iterator& left, const iterator& right);
+    friend bool operator!=(const iterator& left, const iterator& right);
+
+    friend iterator operator+(const iterator& it, int32 diff);
+    friend iterator operator-(const iterator& it, int32 diff);
+    friend iterator operator-(const iterator& lhs, const iterator& rhs);
+
+    friend iterator operator+=(iterator& lhs, int32 n);
+    friend iterator operator-=(iterator& lhs, int32 n);
+    friend iterator operator<(const iterator& lhs, const iterator& rhs);
+    friend iterator operator>(const iterator& lhs, const iterator& rhs);
+    friend iterator operator<=(const iterator& lhs, const iterator& rhs);
+    friend iterator operator>=(const iterator& lhs, const iterator& rhs);
+  };
   class const_iterator {};
 
   vector();
@@ -94,6 +131,9 @@ public:
 private:
   void grow();
 
+  template <typename R>
+  void do_push_back(R value);
+
   shared_ptr<value_type> m_data;
   size_t m_size;
   size_t m_capacity;
@@ -103,7 +143,122 @@ private:
   static const size_t default_size = 16; //arbitrary, set higher/lower if necessary
 };
 
+//iterator comparison funcs
+template <class T>
+T& vector<T>::iterator::operator[](int32 offset)
+{
+  return *(left + offset);
+}
+template <class T>
+const T& vector<T>::iterator::operator[](int32 offset) const
+{
+  return const_cast<iterator&>(*this)[offset];
+}
+
+template <class vector_iterator>
+bool operator==(const vector_iterator& left, const vector_iterator& right)
+{
+  if (left.m_position == right.m_position)
+    return true;
+  return false;
+}
+template <class vector_iterator>
+bool operator!=(const vector_iterator& left, const vector_iterator& right)
+{
+  return !(left == right);
+}
+template <class vector_iterator>
+vector_iterator operator+(const vector_iterator& it, int32 diff)
+{
+  return typename vector<T>::iterator(it.m_position + diff);
+}
+template <class vector_iterator>
+vector_iterator operator-(const vector_iterator& it, int32 diff)
+{
+  return it + (-diff);
+}
+template <class vector_iterator>
+int32 operator-(const vector_iterator& lhs, const vector_iterator& rhs)
+{
+  return lhs.m_position - rhs.m_position;
+}
+template <class vector_iterator>
+vector_iterator& operator+=(vector_iterator& lhs, int32 n)
+{
+  lhs.m_position += n;
+  return *this;
+}
+template <class vector_iterator>
+vector_iterator& operator-=(vector_iterator& lhs, int32 n)
+{
+  lhs.m_position -= n;
+  return *this;
+}
+template <class vector_iterator>
+bool operator<(const vector_iterator& lhs, const vector_iterator& rhs)
+{
+  return (lhs.m_position - rhs.m_position) < 0;
+}
+template <class vector_iterator>
+bool operator>(const vector_iterator& lhs, const vector_iterator& rhs)
+{
+  return (lhs.m_position - rhs.m_position) > 0;
+}
+template <class vector_iterator>
+bool operator<=(const vector_iterator& lhs, const vector_iterator& rhs)
+{
+  return (lhs.m_position - rhs.m_position) <= 0;
+}
+template <class vector_iterator>
+bool operator>=(const vector_iterator& lhs, const vector_iterator& rhs)
+{
+  return (lhs.m_position - rhs.m_position) >= 0;
+}
+
+
 #include <cassert>
+
+//iterators
+template <class T>
+vector<T>::iterator::iterator() : m_position(nullptr) {}
+template <class T>
+vector<T>::iterator::iterator(T* value) : m_position(value) {}
+
+template <class T>
+T& vector<T>::iterator::operator*()
+{
+  return *m_position;
+}
+template <class T>
+const T& vector<T>::iterator::operator*() const
+{
+  return *const_cast<iterator*>(this);
+}
+
+template <class T>
+T& vector<T>::iterator::operator->()
+{
+  return *m_position;
+}
+template <class T>
+const T& vector<T>::iterator::operator->() const
+{
+  return *const_cast<iterator*>(this);
+}
+
+template <class T>
+auto vector<T>::iterator::operator++() -> iterator&
+{
+  ++m_position;
+  return *this;
+}
+template <class T>
+auto vector<T>::iterator::operator++(int) -> iterator&
+{
+  iterator temp(m_position);
+  ++m_position;
+  return temp;
+}
 
 inline size_t get_next_power_of_two(size_t value)
 {
@@ -120,6 +275,12 @@ shared_ptr<T> allocate_memory(size_t num_elements)
   std::memset(ret.get(), 0, size);
   return ret;
 }
+//insertion
+template <class T, class R> void place_memory(void* memory, R value)
+{
+  new (memory) T(value);
+}
+
 
 template <class T>
 void vector<T>::grow()
@@ -219,24 +380,17 @@ const T& vector<T>::back() const
   return const_cast<vector<T>*>(this)->back();
 }
 
-//insertion
 template <class T>
-void vector<T>::push_back(const value_type& val)
+void vector<T>::push_back(const value_type& value)
 {
-  if (m_size == m_capacity)
-    grow();
-
-    //placement construct
-  new (&(*this)[m_size++]) value_type(val);
+  if (m_size == m_capacity) grow();
+  new (m_data.get() + m_size++) value_type(value);
 }
 template <class T>
-void vector<T>::push_back(value_type&& val)
+void vector<T>::push_back(value_type&& value)
 {
-  if (m_size == m_capacity)
-    grow();
-
-    //move construct - not sure if correct?
-  (*this)[m_size++] = std::move(val);
+  if (m_size == m_capacity) grow();
+  (*this)[m_size++] = std::move(value);
 }
 template <class T>
 void vector<T>::pop_back()

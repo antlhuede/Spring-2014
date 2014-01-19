@@ -1,5 +1,5 @@
 #include "core\types.h"
-#include "containers\string.h"
+#include "containers\vector.h"
 
 
 namespace alib

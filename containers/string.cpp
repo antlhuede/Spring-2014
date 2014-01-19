@@ -31,22 +31,11 @@ void strcat(string_literal* dest, string_literal append)
   dest->m_strlen = new_length;
 }
 
-
-string_literal::string_literal()
-  : m_strlen(0)
-{
-  construct("", m_strlen);
-}
 string_literal::string_literal(const char* str)
   : m_strlen(std::strlen(str))
 {
   construct(str, m_strlen);
 }
-//string_literal::string_literal(const char* str, size_t allocated_length)
-//  : m_strlen(std::strlen(str))
-//{
-//  construct(str, allocated_length);
-//}
 void string_literal::construct(const char* str, size_t allocated_length)
 {
   assert(str != nullptr);
@@ -79,7 +68,6 @@ string_literal::string_literal(initializer_list<string_literal> list)
   while (it != list.end()) { strcat(this, *it); ++it; }
 }
 
-//template <class T> void assign_to_registry(string_pool& registry, T )
 void string::register_string(string_literal value, string_hash hash)
 {
   auto current_value = registry.find(hash);

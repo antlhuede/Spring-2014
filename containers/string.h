@@ -9,18 +9,11 @@ namespace alib
 {
   namespace containers
   {
-
-    //template <typename
-    //template <typename... Args>
-    //string strcat(Args... args)
-    //{
-    //  
-    //}
     class string_literal
     {
-      public:
-        string_literal();
-        string_literal(const char*);
+    public:
+        string_literal(const char* = "");
+        ~string_literal() = default;
         //string_literal(const char*, size_t allocated_length);
         string_literal(initializer_list<string_literal> list);
 
@@ -47,6 +40,7 @@ namespace alib
     {
     public:
       string(string_literal value = "");
+      ~string() = default;
       //char* conversion constructor... nice to have
       string(const char* value);
 
