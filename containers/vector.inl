@@ -318,17 +318,17 @@ auto vector<T>::iterator::operator[](int32 offset) -> value_type&
 }
 
 template <class T>
-auto vector<T>::iterator::operator*() const -> const value_type&
+auto vector<T>::const_iterator::operator*() const -> const value_type&
 {
   return *m_position;
 }
 template <class T>
-auto vector<T>::iterator::operator->() const -> const value_type*
+auto vector<T>::const_iterator::operator->() const -> const value_type*
 {
   return m_position;
 }
 template <class T>
-auto vector<T>::iterator::operator[](int32 offset) const -> const value_type&
+auto vector<T>::const_iterator::operator[](int32 offset) const -> const value_type&
 {
   return m_position[offset];
 }
