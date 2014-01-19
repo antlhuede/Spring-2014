@@ -176,9 +176,13 @@ void test_vector()
   auto clear = [](vector<string>& vec) { vec.clear(); };
   auto emplace_back = [](vector<string>& vec) { vec.emplace_back("emp1", "emp2", "emp3"); };
   auto reset = [](vector<string>& vec) { vec.reset(); };
+  auto reserve200 = [](vector<string>& vec) { vec.reserve(200); };
+  auto reserve500 = [](vector<string>& vec) { vec.reserve(500); };
 
   run_test(pushback_normal, "emplace back", emplace_back);
   run_test(pushback_rvalue, "emplace back", emplace_back);
+  run_test(pushback_normal, "reserve200", reserve200);
+  run_test(pushback_rvalue, "reserve500", reserve500);
   run_test(pushback_normal, "clear", clear);
   run_test(pushback_rvalue, "clear", clear);
   run_test(pushback_normal, "emplace back", emplace_back);
@@ -186,7 +190,8 @@ void test_vector()
   run_test(pushback_normal, "reset", reset);
   run_test(pushback_rvalue, "reset", reset);
 
-  
+  run_test(pushback_normal, "reserve200", reserve200);
+  run_test(pushback_rvalue, "reserve500", reserve500);
 }
 int main(void)
 {

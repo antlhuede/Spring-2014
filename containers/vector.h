@@ -286,6 +286,18 @@ shared_ptr<T> allocate_memory(size_t num_elements)
   return ret;
 }
 
+template <typename T>
+void vector<T>::reserve(size_t n)
+{
+  if (m_capacity < n)
+  {
+    m_capacity = n;
+    shared_ptr<T> temp = allocate_memory<T>(m_capacity);
+    for (size_t i = 0; i < m_size; ++i)
+      temp.get()[i] = std::move((*this)[i]);
+    m_data = temp;
+  }
+}
 //insertion
 template <class T>
 void vector<T>::grow()
