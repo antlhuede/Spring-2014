@@ -22,8 +22,8 @@ template <template <class> class container, class T> void print(container<T>& ve
   //test const version
   printf("test const version\n");
   const container<T>& const_vec = vec;
-  for (auto it = const_vec.begin(); it != const_vec.end(); ++it)
-    print(*it);
+  for (auto it : vec)
+    print(it);
 }
 void test_string()
 {
