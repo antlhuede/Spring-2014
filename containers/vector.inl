@@ -174,6 +174,21 @@ void vector<T>::pop_back()
 }
 
 template <class T>
+void vector<T>::clear() noexcept
+{
+  while (m_size) pop_back();
+}
+
+template <class T>
+template <class... Args>
+void vector<T>::emplace_back(Args&&... args)
+{
+  initializer_list<T> list = { args... };
+  for (auto it : list)
+    push_back(it);
+}
+
+template <class T>
 vector<T>::vector(const vector<T>& rhs)
   : m_size(rhs.m_size)
   , m_capacity(rhs.m_capacity)
@@ -213,6 +228,29 @@ vector<T>& vector<T>::operator=(vector&& rval)
   m_size = rval.m_size;
   return *this;
 }
+
+
+template <class T>
+auto vector<T>::begin() -> iterator
+{
+  return iterator(m_data.get());
+}
+template <class T>
+auto vector<T>::end() -> iterator
+{
+  return iterator(m_data.get() + m_size);
+}
+template <class T>
+auto vector<T>::begin() const -> const_iterator
+{
+  return const_iterator(m_data.get());
+}
+template <class T>
+auto vector<T>::end() const -> const_iterator
+{
+  return const_iterator(m_data.get() + m_size);
+}
+
 
 template <class T>
 auto vector<T>::base_iterator::operator++() -> base_iterator&

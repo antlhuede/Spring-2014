@@ -87,22 +87,10 @@ public:
   vector(vector&&);
   vector& operator=(vector&&);
 
-  iterator begin()
-  {
-    return iterator(m_data.get());
-  }
-  iterator end()
-  {
-    return iterator(m_data.get() + m_size);
-  }
-  const_iterator begin() const
-  {
-    return const_iterator(m_data.get());
-  }
-  const_iterator end() const
-  {
-    return const_iterator(m_data.get() + m_size);
-  }
+  iterator begin();
+  iterator end();
+  const_iterator begin() const;
+  const_iterator end() const;
 
   iterator rbegin();
   iterator rend();
@@ -161,20 +149,13 @@ public:
 
   void swap(vector& x);
 
-  void clear() noexcept
-  {
-    while (m_size) pop_back();
-  }
-  
+  void clear() noexcept;
+
   template <class... Args>
   iterator emplace(const_iterator position, Args&&... args);
+
   template <class... Args>
-  void emplace_back(Args&&... args)
-  {
-    initializer_list<T> list = { args... };
-    for (auto it : list)
-      push_back(it);
-  }
+  void emplace_back(Args&&... args);
   void reset();
 private:
   void grow();
