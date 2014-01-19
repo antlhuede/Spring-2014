@@ -233,11 +233,17 @@ public:
 
   void swap(vector& x)
   {
-    vector temp(*this);
+    shared_ptr<T> temp_data(m_data);
+    size_t temp_size = m_size;
+    size_t temp_capacity = m_capacity;
+
     m_data = x.m_data;
     m_size = x.m_size;
     m_capacity = x.m_capacity;
-    x = temp;
+
+    x.m_data = temp_data;
+    x.m_size = temp_size;
+    x.m_capacity = temp_capacity;
   }
   void clear() noexcept
   {
@@ -268,7 +274,6 @@ private:
 
 
 #include <cassert>
-
 
 inline size_t get_next_power_of_two(size_t value)
 {
