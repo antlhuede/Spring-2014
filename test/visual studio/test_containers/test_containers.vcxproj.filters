@@ -27,7 +27,7 @@
     <ClCompile Include="..\..\..\core\hashing\hash_functions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\containers\vector.cpp">
+    <ClCompile Include="..\..\..\containers\vector.inl">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
