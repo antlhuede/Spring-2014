@@ -11,11 +11,18 @@ template <> void print(const string& str)
 {
   printf("%s : hash(%u) length(%u)\n", str.c_str(), str.hash(), str.length());
 }
-template <typename T> void print(const vector<T>& vec)
+template <template <class> class container, class T> void print(container<T>& vec)
 {
   printf("vector - size(%u) capacity(%u)\n", vec.size(), vec.capacity());
-  for (size_t i = 0; i < vec.size(); ++i)
-    print(vec[i]);
+
+  for (auto it = vec.begin(); it != vec.end(); ++it)
+    print(*it);
+  
+  //test const version
+  printf("test const version\n");
+  const container<T>& const_vec = vec;
+  for (auto it = const_vec.begin(); it != const_vec.end(); ++it)
+    print(*it);
 }
 void test_string()
 {
@@ -56,8 +63,13 @@ void test_string()
       printf("%c", subscript[i]);
     printf("\n");
   };
-  test_subscript(subscript_const);
-  test_subscript(subscript_nonconst);
+
+  auto test_all_subscript = [&test_subscript](initializer_list<string> list) {
+    for (string s : list)
+      test_subscript(s);
+  };
+
+  test_all_subscript({subscript_const, subscript_const});
 
   auto test_assignment = [](string left, string right) {
     printf("\ntesting assignment...\n");

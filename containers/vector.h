@@ -13,46 +13,238 @@ public:
   class iterator
   {
   private:
-    iterator(T* value);
+    iterator(value_type* value) : m_position(value) {}
   public:
-    iterator();
-    iterator(const iterator& rhs) = default;
-    iterator& operator=(const iterator& rhs) = default;
+    iterator() : m_position(nullptr) {}
     ~iterator() = default;
 
-    T& operator*();
-    const T& operator*() const;
+    iterator(const iterator& rhs) = default;
+    iterator& operator=(const iterator& rhs) = default;
 
-    T& operator->();
-    const T& operator->() const;
+    value_type& operator*()
+    {
+      return *m_position;
+    }
+    const value_type& operator*() const
+    {
+      return *const_cast<iterator*>(this);
+    }
 
-    iterator& operator++();
-    iterator& operator++(int);
+    value_type* operator->()
+    {
+      return m_position;
+    }
+    const value_type* operator->() const
+    {
+      return m_position;
+    }
 
-    T& operator[](int32 index);
-    const T& operator[](int32 index) const;
+    iterator& operator++()
+    {
+      ++m_position;
+      return *this;
+    }
+    iterator operator++(int)
+    {
+      iterator temp(*this);
+      ++m_position;
+      return temp;
+    }
+
+    iterator& operator--() 
+    {
+      --m_position;
+      return *this;
+    }
+    iterator operator--(int) 
+    {
+      iterator temp(*this);
+      --m_position;
+      return temp;
+    }
+
+
+    //iterator comparison funcs
+    value_type& operator[](int32 offset)
+    {
+      return *(m_position + offset);
+    }
+    const value_type& operator[](int32 offset) const
+    {
+      return const_cast<iterator&>(*this)[offset];
+    }
+
+    bool operator==(const iterator& rhs)
+    {
+      return (m_position == rhs.m_position);
+    }
+    bool operator!=(const iterator& rhs)
+    {
+      return (m_position != rhs.m_position);
+    }
+    iterator operator+(int32 diff)
+    {
+      return iterator(m_position + diff);
+    }
+    iterator operator-(int32 diff)
+    {
+      return iterator(m_position - diff);
+    }
+    int32 operator-(const iterator& rhs)
+    {
+      return m_position - rhs.m_position;
+    }
+    iterator& operator+=(int32 n)
+    {
+      m_position += n;
+      return *this;
+    }
+    iterator& operator-=(int32 n)
+    {
+      m_position -= n;
+      return *this;
+    }
+    bool operator<(const iterator& rhs)
+    {
+      return (m_position - rhs.m_position) < 0;
+    }
+    bool operator>(const iterator& rhs)
+    {
+      return (m_position - rhs.m_position) > 0;
+    }
+    bool operator<=(const iterator& rhs)
+    {
+      return (m_position - rhs.m_position) <= 0;
+    }
+    bool operator>=(const iterator& rhs)
+    {
+      return (m_position - rhs.m_position) >= 0;
+    }
+
   private:
-    T* m_position;
+    value_type* m_position;
     
-    friend bool operator==(const iterator& left, const iterator& right);
-    friend bool operator!=(const iterator& left, const iterator& right);
+    friend class vector<value_type>;
+    //friend bool operator==(const iterator& left, const iterator& right);
+    //friend bool operator!=(const iterator& left, const iterator& right);
 
-    friend iterator operator+(const iterator& it, int32 diff);
-    friend iterator operator-(const iterator& it, int32 diff);
-    friend iterator operator-(const iterator& lhs, const iterator& rhs);
+    //friend iterator operator+(const iterator& it, int32 diff);
+    //friend iterator operator-(const iterator& it, int32 diff);
+    //friend iterator operator-(const iterator& lhs, const iterator& rhs);
 
-    friend iterator operator+=(iterator& lhs, int32 n);
-    friend iterator operator-=(iterator& lhs, int32 n);
-    friend iterator operator<(const iterator& lhs, const iterator& rhs);
-    friend iterator operator>(const iterator& lhs, const iterator& rhs);
-    friend iterator operator<=(const iterator& lhs, const iterator& rhs);
-    friend iterator operator>=(const iterator& lhs, const iterator& rhs);
+    //friend iterator operator+=(iterator& lhs, int32 n);
+    //friend iterator operator-=(iterator& lhs, int32 n);
+    //friend iterator operator<(const iterator& lhs, const iterator& rhs);
+    //friend iterator operator>(const iterator& lhs, const iterator& rhs);
+    //friend iterator operator<=(const iterator& lhs, const iterator& rhs);
+    //friend iterator operator>=(const iterator& lhs, const iterator& rhs);
   };
-  class const_iterator {};
+  class const_iterator 
+  {
+  private:
+    const_iterator(value_type* value) : m_position(value) {}
+  public:
+    const_iterator() : m_position(nullptr) {}
+    ~const_iterator() = default;
+
+    const_iterator(const const_iterator& rhs) = default;
+    const_iterator& operator=(const const_iterator& rhs) = default;
+
+    const value_type& operator*() const
+    {
+      return *m_position;
+    }
+
+    const value_type* operator->() const
+    {
+      return m_position;
+    }
+
+    const_iterator& operator++() //pre
+    {
+      ++m_position;
+      return *this;
+    }
+    const_iterator operator++(int) //post
+    {
+      const_iterator temp(*this);
+      ++m_position;
+      return temp;
+    }
+
+    const_iterator& operator--() 
+    {
+      --m_position;
+      return *this;
+    }
+    const_iterator operator--(int) 
+    {
+      const_iterator temp(*this);
+      --m_position;
+      return temp;
+    }
+
+    const value_type& operator[](int32 offset) const
+    {
+      return m_position[offset];
+    }
+
+    bool operator==(const const_iterator& rhs)
+    {
+      return (m_position == rhs.m_position);
+    }
+    bool operator!=(const const_iterator& rhs)
+    {
+      return (m_position != rhs.m_position);
+    }
+    const_iterator operator+(int32 diff)
+    {
+      return const_iterator(m_position + diff);
+    }
+    const_iterator operator-(int32 diff)
+    {
+      return const_iterator(m_position - diff);
+    }
+    int32 operator-(const const_iterator& rhs)
+    {
+      return m_position - rhs.m_position;
+    }
+    const_iterator& operator+=(int32 n)
+    {
+      m_position += n;
+      return *this;
+    }
+    const_iterator& operator-=(int32 n)
+    {
+      m_position -= n;
+      return *this;
+    }
+    bool operator<(const const_iterator& rhs)
+    {
+      return (m_position - rhs.m_position) < 0;
+    }
+    bool operator>(const const_iterator& rhs)
+    {
+      return (m_position - rhs.m_position) > 0;
+    }
+    bool operator<=(const const_iterator& rhs)
+    {
+      return (m_position - rhs.m_position) <= 0;
+    }
+    bool operator>=(const const_iterator& rhs)
+    {
+      return (m_position - rhs.m_position) >= 0;
+    }
+
+  private:
+    value_type* m_position;
+
+    friend class vector<value_type>;
+  };
 
   vector();
   vector(size_t num_elems);
-  vector(initializer_list<T>);
+  vector(initializer_list<value_type>);
 
   vector(const vector&);
   vector& operator=(const vector&);
@@ -143,122 +335,9 @@ private:
   static const size_t default_size = 16; //arbitrary, set higher/lower if necessary
 };
 
-//iterator comparison funcs
-template <class T>
-T& vector<T>::iterator::operator[](int32 offset)
-{
-  return *(left + offset);
-}
-template <class T>
-const T& vector<T>::iterator::operator[](int32 offset) const
-{
-  return const_cast<iterator&>(*this)[offset];
-}
-
-template <class vector_iterator>
-bool operator==(const vector_iterator& left, const vector_iterator& right)
-{
-  if (left.m_position == right.m_position)
-    return true;
-  return false;
-}
-template <class vector_iterator>
-bool operator!=(const vector_iterator& left, const vector_iterator& right)
-{
-  return !(left == right);
-}
-template <class vector_iterator>
-vector_iterator operator+(const vector_iterator& it, int32 diff)
-{
-  return typename vector<T>::iterator(it.m_position + diff);
-}
-template <class vector_iterator>
-vector_iterator operator-(const vector_iterator& it, int32 diff)
-{
-  return it + (-diff);
-}
-template <class vector_iterator>
-int32 operator-(const vector_iterator& lhs, const vector_iterator& rhs)
-{
-  return lhs.m_position - rhs.m_position;
-}
-template <class vector_iterator>
-vector_iterator& operator+=(vector_iterator& lhs, int32 n)
-{
-  lhs.m_position += n;
-  return *this;
-}
-template <class vector_iterator>
-vector_iterator& operator-=(vector_iterator& lhs, int32 n)
-{
-  lhs.m_position -= n;
-  return *this;
-}
-template <class vector_iterator>
-bool operator<(const vector_iterator& lhs, const vector_iterator& rhs)
-{
-  return (lhs.m_position - rhs.m_position) < 0;
-}
-template <class vector_iterator>
-bool operator>(const vector_iterator& lhs, const vector_iterator& rhs)
-{
-  return (lhs.m_position - rhs.m_position) > 0;
-}
-template <class vector_iterator>
-bool operator<=(const vector_iterator& lhs, const vector_iterator& rhs)
-{
-  return (lhs.m_position - rhs.m_position) <= 0;
-}
-template <class vector_iterator>
-bool operator>=(const vector_iterator& lhs, const vector_iterator& rhs)
-{
-  return (lhs.m_position - rhs.m_position) >= 0;
-}
-
 
 #include <cassert>
 
-//iterators
-template <class T>
-vector<T>::iterator::iterator() : m_position(nullptr) {}
-template <class T>
-vector<T>::iterator::iterator(T* value) : m_position(value) {}
-
-template <class T>
-T& vector<T>::iterator::operator*()
-{
-  return *m_position;
-}
-template <class T>
-const T& vector<T>::iterator::operator*() const
-{
-  return *const_cast<iterator*>(this);
-}
-
-template <class T>
-T& vector<T>::iterator::operator->()
-{
-  return *m_position;
-}
-template <class T>
-const T& vector<T>::iterator::operator->() const
-{
-  return *const_cast<iterator*>(this);
-}
-
-template <class T>
-auto vector<T>::iterator::operator++() -> iterator&
-{
-  ++m_position;
-  return *this;
-}
-template <class T>
-auto vector<T>::iterator::operator++(int) -> iterator&
-{
-  iterator temp(m_position);
-  ++m_position;
-  return temp;
-}
 
 inline size_t get_next_power_of_two(size_t value)
 {
@@ -275,13 +354,29 @@ shared_ptr<T> allocate_memory(size_t num_elements)
   std::memset(ret.get(), 0, size);
   return ret;
 }
-//insertion
-template <class T, class R> void place_memory(void* memory, R value)
+
+template <class T>
+auto vector<T>::begin() -> iterator
 {
-  new (memory) T(value);
+  return iterator(m_data.get());
+}
+template <class T>
+auto vector<T>::begin() const -> const_iterator
+{
+  return const_iterator(m_data.get());
+}
+template <class T>
+auto vector<T>::end() ->  iterator
+{
+  return iterator(m_data.get() + m_size);
+}
+template <class T>
+auto vector<T>::end() const -> const_iterator
+{
+  return const_iterator(m_data.get() + m_size);
 }
 
-
+//insertion
 template <class T>
 void vector<T>::grow()
 {
