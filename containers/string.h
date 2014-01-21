@@ -40,9 +40,8 @@ namespace alib
     {
     public:
       string(string_literal value = "");
+      string(const char* value); //char* conversion constructor... nice to have
       ~string() = default;
-      //char* conversion constructor... nice to have
-      string(const char* value);
 
       string(const string& rhs) = default;
       string& operator=(const string& rhs) = default;
