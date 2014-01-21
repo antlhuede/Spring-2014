@@ -2,6 +2,7 @@
 * http://isthe.com/chongo/src/fnv/hash_32a.c
 * I have changed things to suite my needs, however all props go to them.
 */
+#include "core\types.h"
 #include "fnv.h"
 
 static const Fnv32_t FNV_32_PRIME = (Fnv32_t)0x01000193;

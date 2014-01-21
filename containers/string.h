@@ -14,7 +14,6 @@ namespace alib
     public:
         string_literal(const char* = "");
         ~string_literal() = default;
-        //string_literal(const char*, size_t allocated_length);
         string_literal(initializer_list<string_literal> list);
 
         string_literal(string_literal&&);

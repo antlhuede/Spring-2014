@@ -30,6 +30,9 @@
     <ClCompile Include="..\..\..\containers\vector.inl">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\core\hashing\hash_64a.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\containers\hash_map.h">

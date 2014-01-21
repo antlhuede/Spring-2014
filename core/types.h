@@ -21,6 +21,10 @@ typedef uint32 slot_index;
 typedef uint32 object_id;
 typedef uint32 string_hash;
 
+//fnv hash types
+typedef uint32 Fnv32_t;
+typedef uint64 Fnv64_t;
+
 //constexpr functions to get the index or id from a tag, and to build a tag from index/id
 //make slot 64bit by or'ing it with a zero uint64, then shift left 32bits, then ensure bottom bits are cancelled out and preserve top bits before oring with the id ensuring negated top bits
 inline tag make_tag(slot_index slot, object_id object) { return ((uint64(slot) << 32) & 0xFFFFFFFF00000000) | object; }

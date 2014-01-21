@@ -4,10 +4,6 @@
  */
 
 #pragma once
-#include "core\types.h"
-
-typedef uint32 Fnv32_t;
-typedef uint64 Fnv64_t;
 
 static const Fnv32_t FNV0_32_INIT = (Fnv32_t)0;
 static const Fnv32_t FNV1_32_INIT = (Fnv32_t)0x811c9dc5;
@@ -70,3 +66,7 @@ struct fnv1a_64_test_vector {
 /* hash_32a.c */
 extern Fnv32_t fnv_32a_buf(void *buf, size_t len, Fnv32_t hashval = FNV1_32A_INIT);
 extern Fnv32_t fnv_32a_str(const char *buf, Fnv32_t hashval = FNV1_32A_INIT);
+
+/* hash_64a.c */
+extern Fnv32_t fnv_64a_buf(void *buf, size_t len, Fnv64_t hashval = FNV1_64A_INIT);
+extern Fnv32_t fnv_64a_str(const char *buf, Fnv64_t hashval = FNV1_64A_INIT);

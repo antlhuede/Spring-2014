@@ -85,6 +85,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\core\hashing\hash_32a.cpp" />
+    <ClCompile Include="..\..\..\core\hashing\hash_64a.cpp" />
     <ClCompile Include="..\..\..\core\hashing\hash_functions.cpp" />
     <ClCompile Include="..\..\test_containers.cpp" />
   </ItemGroup>
