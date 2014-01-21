@@ -24,8 +24,7 @@ namespace alib
 
         inline char* get() { return m_data.get(); }
         inline size_t length() const { return m_strlen; }
-        inline size_t allocated() const { return m_allocated; }
-      private:
+    private:
         void construct(const char*, size_t allocated_length);
         shared_ptr<char> m_data;
         size_t m_strlen;
