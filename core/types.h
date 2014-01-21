@@ -19,7 +19,6 @@ typedef double f64;
 typedef uint64 tag;
 typedef uint32 slot_index;
 typedef uint32 object_id;
-typedef uint32 string_hash;
 
 //fnv hash types
 typedef uint32 Fnv32_t;
@@ -32,6 +31,9 @@ inline slot_index get_index(tag t) { return slot_index((t >> 32) & 0x00000000FFF
 inline object_id get_id(tag t) { return object_id(t & 0x00000000FFFFFFFF); }
 
 //hash function definition
+#include "core\hashing\hash_functions.h"
+typedef alib::core::hash_functions::FNV64 hash_function;
+typedef hash_function::hash_type string_hash;
 
 //forward declarations
 namespace alib { 
@@ -39,14 +41,7 @@ namespace alib {
     class string;
     template <class T> class vector;
   } 
-  namespace core { 
-    namespace hash_functions { class FNV; }
-  }
 }
-
-//hash function definition
-typedef alib::core::hash_functions::FNV hash_function;
-
 //container definitions
 typedef alib::containers::string string;
 template <class T> using vector = alib::containers::vector<T>;

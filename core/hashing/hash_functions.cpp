@@ -9,22 +9,24 @@ namespace core
 {
 namespace hash_functions
 {
-  auto x65599::generate_hash(const char* str)-> string_hash
+  auto x65599::generate_hash(const char* str)-> hash_type
   {
-    string_hash hash = do_hash(str, 0);
+    hash_type hash = do_hash(str, 0);
     return hash ^ (hash >> 16);
   }
-  auto x65599::do_hash(const char* str, string_hash hash)-> string_hash
+  auto x65599::do_hash(const char* str, uint32 hash)-> hash_type
   {
     return (*str == 0) ? hash : do_hash(str + 1, *str + hash * 65599);
   }
-
-  auto FNV::generate_hash(const char* str)-> string_hash
+  auto FNV32::generate_hash(const char* str)-> hash_type
   {
     return fnv_32a_str(str);
   }
-
-  auto sum::generate_hash(const char* str)-> string_hash
+  auto FNV64::generate_hash(const char* str)-> uint64
+  {
+    return fnv_64a_str(str);
+  }
+  auto sum::generate_hash(const char* str)-> hash_type
   {
     return (*str == 0) ? 0 : (*str + generate_hash(str + 1));
   }

@@ -110,8 +110,7 @@ fnv_64a_buf(void *buf, size_t len, Fnv64_t hval)
  * NOTE: To use the recommended 64 bit FNV-1a hash, use FNV1A_64_INIT as the
  * 	 hval arg on the first call to either fnv_64a_buf() or fnv_64a_str().
  */
-Fnv64_t
-fnv_64a_str(char *str, Fnv64_t hval)
+Fnv64_t fnv_64a_str(const char *str, Fnv64_t hval)
 {
     unsigned char *s = (unsigned char *)str;	/* unsigned string */
 

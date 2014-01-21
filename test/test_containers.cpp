@@ -10,7 +10,7 @@
 template <typename T> void print(const T&);
 template <> void print(const string& str)
 {
-  printf("%s : hash(%u) length(%u)\n", str.c_str(), str.hash(), str.length());
+  printf("%s : hash(%llu) length(%u)\n", str.c_str(), str.hash(), str.length());
 }
 template <template <class> class container, class T> void print(container<T>& vec)
 {

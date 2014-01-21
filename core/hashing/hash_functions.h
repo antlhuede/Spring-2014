@@ -9,22 +9,32 @@ namespace alib
       class x65599
       {
       public:
-        static string_hash generate_hash(const char* str);
+        typedef uint32 hash_type;
+        static hash_type generate_hash(const char* str);
 
       private:
-        static string_hash do_hash(const char* str, string_hash hash);
+        static hash_type do_hash(const char* str, hash_type hash);
       };
 
-      class FNV
+      class FNV32
       {
       public:
-        static string_hash generate_hash(const char* str);
+        typedef uint32 hash_type;
+        static hash_type generate_hash(const char* str);
+      };
+
+      class FNV64
+      {
+      public:
+        typedef uint64 hash_type;
+        static hash_type generate_hash(const char* str);
       };
 
       class sum
       {
       public:
-        static string_hash generate_hash(const char* str);
+        typedef uint32 hash_type;
+        static hash_type generate_hash(const char* str);
       };
     }
   }
