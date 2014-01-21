@@ -35,6 +35,9 @@ inline object_id get_id(tag t) { return object_id(t & 0x00000000FFFFFFFF); }
 typedef alib::core::hash_functions::FNV64 hash_function;
 typedef hash_function::hash_type string_hash;
 
+template <class T>
+struct array_deleter { void operator()(void* p) { delete [] reinterpret_cast<T*>(p); } };
+
 //forward declarations
 namespace alib { 
   namespace containers { 

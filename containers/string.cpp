@@ -14,9 +14,9 @@ string_pool string::registry;
 //helper funcs
 shared_ptr<char> allocate_string(size_t length)
 {
-  return shared_ptr<char>(new char[length + 1]);
+  return shared_ptr<char>(new char[length + 1], array_deleter<char>());
 }
-void strcat(string_literal* dest, string_literal append)
+void strcat(string_literal* dest, const string_literal& append)
 {
   size_t new_length = dest->m_strlen + append.m_strlen;
   if (dest->m_allocated < new_length)
@@ -31,11 +31,6 @@ void strcat(string_literal* dest, string_literal append)
   dest->m_strlen = new_length;
 }
 
-string_literal::string_literal(const char* str)
-  : m_strlen(std::strlen(str))
-{
-  construct(str, m_strlen);
-}
 void string_literal::construct(const char* str, size_t allocated_length)
 {
   assert(str != nullptr);
@@ -47,9 +42,17 @@ void string_literal::construct(const char* str, size_t allocated_length)
   m_data = shared_ptr<char>(allocate_string(allocated_length));
   std::strcpy(m_data.get(), str);
 }
-
+string_literal::string_literal(const char* str)
+  : m_strlen(std::strlen(str))
+{
+  construct(str, m_strlen);
+}
+string_literal::string_literal(string_literal&& rhs)
+  : m_data(rhs.m_data)
+  , m_strlen(rhs.m_strlen)
+  , m_allocated(rhs.m_allocated) {}
 string_literal::string_literal(initializer_list<string_literal> list)
-  : m_strlen(0)
+: m_strlen(0)
 {
   if (list.size() == 0)
   {
@@ -66,6 +69,14 @@ string_literal::string_literal(initializer_list<string_literal> list)
   construct("", get_length());
   auto it = list.begin();
   while (it != list.end()) { strcat(this, *it); ++it; }
+}
+
+string_literal& string_literal::operator=(string_literal&& rhs)
+{
+  m_data = rhs.m_data;
+  m_strlen = rhs.m_strlen;
+  m_allocated = rhs.m_allocated;
+  return *this;
 }
 
 void string::register_string(string_literal value, string_hash hash)
@@ -93,7 +104,7 @@ string_literal& string::access_registry(string_hash hash) {
   return value->second;
 }
 
-string::string(string_literal value)
+string::string(const string_literal& value)
   : m_hash(hash_function::generate_hash(value.get())) 
 {
   register_string(value, m_hash);
