@@ -27,9 +27,9 @@ namespace alib
         inline size_t length() const { return m_strlen; }
     private:
         void construct(const char*, size_t allocated_length);
-        shared_ptr<char> m_data;
-        size_t m_strlen;
-        size_t m_allocated;
+        shared_ptr<char> m_data = nullptr;
+        size_t m_strlen = 0;
+        size_t m_allocated = 0;
         friend void strcat(string_literal* dest, const string_literal& append);
     };
 
@@ -63,7 +63,7 @@ namespace alib
       static void register_string(string_literal value, string_hash hash);
       static string_literal& access_registry(string_hash hash);
 
-      string_hash m_hash;
+      string_hash m_hash = 0;
     };
   }
 }

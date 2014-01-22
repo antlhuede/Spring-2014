@@ -38,7 +38,7 @@ namespace alib
         bool operator<=(const base_iterator& rhs) const;
         bool operator>=(const base_iterator& rhs) const;
       protected:
-        value_type* m_position;
+        value_type* m_position = nullptr;
       private:
         friend class vector<value_type>;
       };
@@ -160,9 +160,9 @@ namespace alib
     private:
       void grow();
 
-      shared_ptr<value_type> m_data;
-      size_t m_size;
-      size_t m_capacity;
+      shared_ptr<value_type> m_data = nullptr;
+      size_t m_size = 0;
+      size_t m_capacity = 0;
 
       //these are powers of two because my growth strategy is in powers of two
       static const size_t max_elements = 1024; //arbitrary, set higher if necessary

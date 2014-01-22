@@ -80,23 +80,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\containers\string.cpp" />
-    <ClCompile Include="..\..\..\containers\vector.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\..\core\hashing\hash_32a.cpp" />
-    <ClCompile Include="..\..\..\core\hashing\hash_64a.cpp" />
-    <ClCompile Include="..\..\..\core\hashing\hash_functions.cpp" />
     <ClCompile Include="..\..\test_containers.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\containers\hash_map.h" />
-    <ClInclude Include="..\..\..\containers\slot_map.h" />
-    <ClInclude Include="..\..\..\containers\string.h" />
-    <ClInclude Include="..\..\..\containers\vector.h" />
-    <ClInclude Include="..\..\..\core\hashing\fnv.h" />
-    <ClInclude Include="..\..\..\core\hashing\hash_functions.h" />
-    <ClInclude Include="..\..\..\core\types.h" />
+    <ProjectReference Include="..\containers\containers.vcxproj">
+      <Project>{dc558e7b-1a4a-4508-916a-237a2114affe}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
