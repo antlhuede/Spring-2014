@@ -138,7 +138,7 @@ void test_vector()
     if (error_found == false) printf("subscript and pushback operators successful\n");
   };
   auto itostr = [&check_operators](vector<string>& vec, int32 start, int32 length){
-    char buffer[256];
+    char_t buffer[256];
     for (int32 i = start; i < start + length; ++i)
     {
       vec.push_back(_itoa(i, buffer, 10));

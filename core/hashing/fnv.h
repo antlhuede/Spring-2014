@@ -65,8 +65,8 @@ struct fnv1a_64_test_vector {
  */
 /* hash_32a.c */
 extern Fnv32_t fnv_32a_buf(void *buf, size_t len, Fnv32_t hashval = FNV1_32A_INIT);
-extern Fnv32_t fnv_32a_str(const char *buf, Fnv32_t hashval = FNV1_32A_INIT);
+extern Fnv32_t fnv_32a_str(const char_t *buf, Fnv32_t hashval = FNV1_32A_INIT);
 
 /* hash_64a.c */
 extern Fnv64_t fnv_64a_buf(void *buf, size_t len, Fnv64_t hashval = FNV1_64A_INIT);
-extern Fnv64_t fnv_64a_str(const char *buf, Fnv64_t hashval = FNV1_64A_INIT);
+extern Fnv64_t fnv_64a_str(const char_t *buf, Fnv64_t hashval = FNV1_64A_INIT);

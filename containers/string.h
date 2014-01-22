@@ -12,7 +12,7 @@ namespace alib
     class string_literal
     {
     public:
-        string_literal(const char* = "");
+        string_literal(const char_t* = "");
         ~string_literal() = default;
         string_literal(initializer_list<string_literal> list);
 
@@ -22,12 +22,12 @@ namespace alib
         string_literal(string_literal&&);
         string_literal& operator=(string_literal&&);
 
-        inline char* get() { return m_data.get(); }
-        inline const char* get() const { return m_data.get(); }
+        inline char_t* get() { return m_data.get(); }
+        inline const char_t* get() const { return m_data.get(); }
         inline size_t length() const { return m_strlen; }
     private:
-        void construct(const char*, size_t allocated_length);
-        shared_ptr<char> m_data = nullptr;
+        void construct(const char_t*, size_t allocated_length);
+        shared_ptr<char_t> m_data = nullptr;
         size_t m_strlen = 0;
         size_t m_allocated = 0;
         friend void strcat(string_literal* dest, const string_literal& append);
@@ -40,7 +40,7 @@ namespace alib
     {
     public:
       string(const string_literal& value = "");
-      string(const char* value); //char* conversion constructor... nice to have
+      string(const char_t* value); //char_t* conversion constructor... nice to have
       ~string() = default;
 
       string(const string& rhs) = default;
@@ -51,12 +51,12 @@ namespace alib
 
       bool operator==(const string& rhs) const;
 
-      char& operator[](size_t index);
-      const char& operator[](size_t index) const;
+      char_t& operator[](size_t index);
+      const char_t& operator[](size_t index) const;
   
       string_hash hash() const;
       size_t length() const;
-      const char* c_str() const;
+      const char_t* c_str() const;
 
     private:
       static string_pool registry;

@@ -9,8 +9,8 @@ static const Fnv32_t FNV_32_PRIME = (Fnv32_t)0x01000193;
 
 Fnv32_t fnv_32a_buf(void *buf, size_t len, Fnv32_t hval)
 {
-  unsigned char *bp = (unsigned char *)buf;	/* start of buffer */
-  unsigned char *be = bp + len;		/* beyond end of buffer */
+  uchar_t *bp = (uchar_t *)buf;	/* start of buffer */
+  uchar_t *be = bp + len;		/* beyond end of buffer */
 
   /*
   * FNV-1a hash each octet in the buffer
@@ -32,9 +32,9 @@ Fnv32_t fnv_32a_buf(void *buf, size_t len, Fnv32_t hval)
 }
 
 
-Fnv32_t fnv_32a_str(const char *str, Fnv32_t hval)
+Fnv32_t fnv_32a_str(const char_t *str, Fnv32_t hval)
 {
-  const unsigned char *s = (const unsigned char *)str;	/* unsigned string */
+  const uchar_t *s = (const uchar_t *)str;	/* unsigned string */
 
   /*
   * FNV-1a hash each octet in the buffer

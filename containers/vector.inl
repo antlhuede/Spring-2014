@@ -13,7 +13,7 @@ template <typename T>
 shared_ptr<T> allocate_array(size_t num_elements)
 {
   size_t size = sizeof(T)* num_elements;
-  shared_ptr<T> ret((T*)(new char[size]), array_deleter<char>());
+  shared_ptr<T> ret((T*)(new uchar_t[size]), array_deleter<uchar_t>());
   std::memset(ret.get(), 0, size);
   return ret;
 }

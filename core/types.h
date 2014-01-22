@@ -1,7 +1,8 @@
 #pragma once
 
 //basic type definitions
-typedef unsigned char uchar;
+typedef char char_t;
+typedef unsigned char uchar_t;
 
 typedef signed __int8 int8;
 typedef signed __int16 int16;

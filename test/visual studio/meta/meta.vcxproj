@@ -16,7 +16,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -75,6 +75,11 @@
     <ClInclude Include="..\..\..\meta\_type.h" />
     <ClInclude Include="..\..\..\meta\_type_info.h" />
     <ClInclude Include="..\..\..\meta\_variant.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\containers\containers.vcxproj">
+      <Project>{dc558e7b-1a4a-4508-916a-237a2114affe}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

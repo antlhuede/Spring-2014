@@ -4,6 +4,7 @@ namespace alib
 {
   namespace meta
   {
+    
     class type
     {
     public:

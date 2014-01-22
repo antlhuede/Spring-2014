@@ -82,8 +82,8 @@
 Fnv64_t
 fnv_64a_buf(void *buf, size_t len, Fnv64_t hval)
 {
-    unsigned char *bp = (unsigned char *)buf;	/* start of buffer */
-    unsigned char *be = bp + len;		/* beyond end of buffer */
+    uchar_t *bp = (uchar_t *)buf;	/* start of buffer */
+    uchar_t *be = bp + len;		/* beyond end of buffer */
     /*
      * FNV-1a hash each octet of the buffer
      */
@@ -110,9 +110,9 @@ fnv_64a_buf(void *buf, size_t len, Fnv64_t hval)
  * NOTE: To use the recommended 64 bit FNV-1a hash, use FNV1A_64_INIT as the
  * 	 hval arg on the first call to either fnv_64a_buf() or fnv_64a_str().
  */
-Fnv64_t fnv_64a_str(const char *str, Fnv64_t hval)
+Fnv64_t fnv_64a_str(const char_t *str, Fnv64_t hval)
 {
-    unsigned char *s = (unsigned char *)str;	/* unsigned string */
+    uchar_t *s = (uchar_t *)str;	/* unsigned string */
 
     /*
      * FNV-1a hash each octet of the string
