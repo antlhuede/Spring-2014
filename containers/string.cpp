@@ -22,12 +22,12 @@ void strcat(string_literal* dest, const string_literal& append)
   if (dest->m_allocated < new_length)
   {
     shared_ptr<char_t> new_string = allocate_string(new_length);
-    std::strcpy(new_string.get(), dest->get());
+    std::strcpy(new_string.get(), dest->data());
     dest->m_data.swap(new_string);
     dest->m_allocated = new_length;
   }
 
-  std::strcat(dest->get(), append.get());
+  std::strcat(dest->data(), append.data());
   dest->m_strlen = new_length;
 }
 
@@ -93,7 +93,7 @@ void string::register_string(string_literal value, string_hash hash)
     assert(current_value->second.length() == value.length());
 
     //compare strings, error if different (2 strings hash to same value)
-    assert(std::strcmp(current_value->second.get(), value.get()) == 0);
+    assert(std::strcmp(current_value->second.data(), value.data()) == 0);
   }
 #endif
 }
@@ -105,7 +105,7 @@ string_literal& string::access_registry(string_hash hash) {
 }
 
 string::string(const string_literal& value)
-  : m_hash(hash_function::generate_hash(value.get())) 
+  : m_hash(hash_function::generate_hash(value.data())) 
 {
   register_string(value, m_hash);
 }
@@ -129,11 +129,11 @@ bool string::operator==(const string& rhs) const
   return m_hash == rhs.m_hash;
 }
 
-char_t& string::operator[](size_t index) { return access_registry(m_hash).get()[index]; }
+char_t& string::operator[](size_t index) { return access_registry(m_hash).data()[index]; }
 const char_t& string::operator[](size_t index) const { return const_cast<string&>(*this)[index]; }
 
 string_hash string::hash() const { return m_hash; }
 size_t string::length() const { return access_registry(m_hash).length(); }
-const char_t* string::c_str() const { return access_registry(m_hash).get(); }
+const char_t* string::c_str() const { return access_registry(m_hash).data(); }
 }
 }

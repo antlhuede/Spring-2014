@@ -22,8 +22,8 @@ namespace alib
         string_literal(string_literal&&);
         string_literal& operator=(string_literal&&);
 
-        inline char_t* get() { return m_data.get(); }
-        inline const char_t* get() const { return m_data.get(); }
+        inline char_t* data() { return m_data.get(); }
+        inline const char_t* data() const { return m_data.get(); }
         inline size_t length() const { return m_strlen; }
     private:
         void construct(const char_t*, size_t allocated_length);
