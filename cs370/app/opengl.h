@@ -31,9 +31,20 @@ namespace dit
       color_t(T r_, T g_, T b_, T a_) : r(r_), g(g_), b(b_), a(a_) {}
       color_t(std::initializer_list<T> values)
       {
-        assert(values.size() == 4);
+        copy_list(values);
+      }
+      color_t& operator=(std::initializer_list<T> values)
+      {
+        copy_list(values);
+        return *this;
+      }
+
+    private:
+      void copy_list(std::initializer_list<T> list)
+      {
+        assert(list.size() == 4);
         T* walk = const_cast<T*>(v);
-        for (auto it = values.begin(); it != values.end(); ++it, ++walk)
+        for (auto it = list.begin(); it != list.end(); ++it, ++walk)
           *walk = *it;
       }
     };
