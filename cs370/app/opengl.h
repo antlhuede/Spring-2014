@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <type_traits>
 #include <cassert>
+#include <string>
 
 #define USE_FONTS 0
 #define STRICT_OPENGL_4_0 1
@@ -120,5 +121,8 @@ namespace dit
     void EndScene(device* pDevice);
 
     void OrthoLens(GLsizei width, GLsizei height);
+
+    bool CompileShader(const std::string& source_file, GLuint* shader_id);
+    bool CreateProgram(GLuint vertex_shader, GLuint fragment_shader, GLuint* program_id);
   }
 }

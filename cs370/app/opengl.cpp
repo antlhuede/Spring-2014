@@ -1,5 +1,7 @@
 #include "opengl.h"
 #include <cassert>
+#include <cstdio>
+#include <vector>
 
 namespace dit
 {
@@ -49,7 +51,107 @@ namespace dit
     const coloruc palette::sepia(94, 38, 18, 255);
     const coloruc palette::salmon(250, 128, 114, 255);
 
-    device::device(HWND hWnd_)
+    bool CompileShader(const std::string& source_file, GLuint* shader_id)
+    {
+      FILE* pFile = fopen(source_file.c_str(), "rt");
+      char line_buffer[256] = {0};
+      std::string source;
+      while (std::fgets(line_buffer, 256, pFile))
+      {
+        source += line_buffer;
+      }
+      fclose(pFile);
+      
+      GLenum shaderType = GL_FRAGMENT_SHADER;
+      if (source_file.find(".v") != std::string::npos)
+        shaderType = GL_VERTEX_SHADER;
+      GLuint& id = *shader_id;
+      id = glCreateShader(shaderType);
+      const GLchar* source_array[] = { source.c_str() };
+      GLsizei array_len = sizeof(source_array) / sizeof(GLchar*);
+      glShaderSource(id, array_len, source_array, nullptr);
+      glCompileShader(id);
+
+      //source retrieved from http://www.opengl.org/wiki/Shader_Compilation
+      GLint isCompiled = 0;
+      glGetShaderiv(id, GL_COMPILE_STATUS, &isCompiled);
+      if (isCompiled == GL_FALSE)
+      {
+        GLint maxLength = 0;
+        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+
+        //The maxLength includes the NULL character
+        std::vector<GLchar> infoLog(maxLength);
+        glGetShaderInfoLog(id, maxLength, &maxLength, &infoLog[0]);
+
+        //Use the infoLog as you see fit.
+        
+        FILE* pErr = fopen("shader.log", "wt");
+        assert(pErr);
+
+        fprintf(pErr, "%s", &infoLog[0]);
+        fclose(pErr);
+        pErr = nullptr;
+
+        //Exit with failure.
+        glDeleteShader(id); //Don't leak the shader.
+        id = 0;
+
+        return false;
+      }
+
+      return true;
+    }
+    bool CreateProgram(GLuint vertex_shader, GLuint fragment_shader, GLuint* program_id)
+    {
+      //source retrieved from http://www.opengl.org/wiki/Shader_Compilation
+      //Vertex and fragment shaders are successfully compiled.
+      //Now time to link them together into a program.
+      //Get a program object.
+      GLuint id = glCreateProgram();
+
+      //Attach our shaders to our program
+      glAttachShader(id, vertex_shader);
+      glAttachShader(id, fragment_shader);
+
+      //Link our program
+      glLinkProgram(id);
+
+      //Note the different functions here: glGetProgram* instead of glGetShader*.
+      GLint isLinked = 0;
+      glGetProgramiv(id, GL_LINK_STATUS, &isLinked);
+      if (isLinked == GL_FALSE)
+      {
+        GLint maxLength = 0;
+        glGetProgramiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+
+        //The maxLength includes the NULL character
+        std::vector<GLchar> infoLog(maxLength);
+        glGetProgramInfoLog(id, maxLength, &maxLength, &infoLog[0]);
+
+        //Always detach shaders after a successful link.
+        glDetachShader(id, vertex_shader);
+        glDetachShader(id, fragment_shader);
+
+        //We don't need the program anymore.
+        glDeleteProgram(id);
+        //Don't leak shaders either.
+        glDeleteShader(vertex_shader);
+        glDeleteShader(fragment_shader);
+
+        //Use the infoLog as you see fit.
+        assert(false);
+        //In this simple program, we'll just leave
+        return false;
+      }
+
+      //Always detach shaders after a successful link.
+      glDetachShader(id, vertex_shader);
+      glDetachShader(id, fragment_shader);
+
+      return true;
+    }
+    device::device(HWND hWnd_) : hWnd(nullptr), hdc(nullptr), glrc(nullptr)
     {
       assert(create(hWnd_));
     }
