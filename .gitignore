@@ -149,3 +149,8 @@ $RECYCLE.BIN/
 
 # Mac crap
 .DS_Store
+
+
+#unity
+GAM400/project/Library/
+GAM400/project/Temp/
