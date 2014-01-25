@@ -42,7 +42,7 @@
             <property name="id">wxID_ANY</property>
             <property name="maximum_size"></property>
             <property name="minimum_size"></property>
-            <property name="name">project1</property>
+            <property name="name">project1_wxui</property>
             <property name="pos"></property>
             <property name="size">557,447</property>
             <property name="style">wxDEFAULT_FRAME_STYLE</property>

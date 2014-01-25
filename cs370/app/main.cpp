@@ -1,9 +1,7 @@
-#include "wx/wx.h"
-#include "project1/form.h"
 #include "bind_projects.h"
-#include "opengl.h"
 
-class app : public wxApp
+template <class Project>
+class App : public wxApp
 {
 public:
   virtual bool OnInit()
@@ -13,16 +11,9 @@ public:
 
     wxInitAllImageHandlers();
 
-    dit::cs370::projects* projects = new dit::cs370::projects(nullptr);
+    Project* projects = new Project(nullptr);
     projects->Show();
     
-    if (dit::opengl::CompileShader(std::string("shaders/test.frag"), &frag) == false)
-      return false;
-    if (dit::opengl::CompileShader(std::string("shaders/test.vert"), &vert) == false)
-      return false;
-    if (dit::opengl::CreateProgram(vert, frag, &program) == false)
-      return false;
-
     return true;
   }
 
@@ -32,4 +23,4 @@ public:
 private:
 };
 
-IMPLEMENT_APP(app)
+IMPLEMENT_APP(App<dit::cs370::project1>)

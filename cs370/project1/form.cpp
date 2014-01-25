@@ -10,7 +10,7 @@
 ///////////////////////////////////////////////////////////////////////////
 using namespace dit::cs370;
 
-project1::project1( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+project1_wxui::project1_wxui( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
@@ -64,24 +64,24 @@ project1::project1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	this->Centre( wxBOTH );
 	
 	// Connect Events
-	m_image->Connect( wxEVT_PAINT, wxPaintEventHandler( project1::OnDrawImage ), NULL, this );
-	m_image->Connect( wxEVT_SIZE, wxSizeEventHandler( project1::OnResizeImage ), NULL, this );
-	m_command->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( project1::OnCommandEnter ), NULL, this );
-	this->Connect( m_loadImage->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( project1::OnLoadImage ) );
-	this->Connect( m_saveImage->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( project1::OnSaveImage ) );
-	this->Connect( m_nearestNeighbor->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( project1::OnEnableNearestNeighbor ) );
-	this->Connect( m_bilinear->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( project1::OnEnableBilinear ) );
+	m_image->Connect( wxEVT_PAINT, wxPaintEventHandler( project1_wxui::OnDrawImage ), NULL, this );
+	m_image->Connect( wxEVT_SIZE, wxSizeEventHandler( project1_wxui::OnResizeImage ), NULL, this );
+	m_command->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( project1_wxui::OnCommandEnter ), NULL, this );
+	this->Connect( m_loadImage->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( project1_wxui::OnLoadImage ) );
+	this->Connect( m_saveImage->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( project1_wxui::OnSaveImage ) );
+	this->Connect( m_nearestNeighbor->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( project1_wxui::OnEnableNearestNeighbor ) );
+	this->Connect( m_bilinear->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( project1_wxui::OnEnableBilinear ) );
 }
 
-project1::~project1()
+project1_wxui::~project1_wxui()
 {
 	// Disconnect Events
-	m_image->Disconnect( wxEVT_PAINT, wxPaintEventHandler( project1::OnDrawImage ), NULL, this );
-	m_image->Disconnect( wxEVT_SIZE, wxSizeEventHandler( project1::OnResizeImage ), NULL, this );
-	m_command->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( project1::OnCommandEnter ), NULL, this );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( project1::OnLoadImage ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( project1::OnSaveImage ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( project1::OnEnableNearestNeighbor ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( project1::OnEnableBilinear ) );
+	m_image->Disconnect( wxEVT_PAINT, wxPaintEventHandler( project1_wxui::OnDrawImage ), NULL, this );
+	m_image->Disconnect( wxEVT_SIZE, wxSizeEventHandler( project1_wxui::OnResizeImage ), NULL, this );
+	m_command->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( project1_wxui::OnCommandEnter ), NULL, this );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( project1_wxui::OnLoadImage ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( project1_wxui::OnSaveImage ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( project1_wxui::OnEnableNearestNeighbor ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( project1_wxui::OnEnableBilinear ) );
 	
 }

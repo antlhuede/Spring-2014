@@ -95,7 +95,9 @@ project "Project1"
 
   targetdir("bin/projects/")
 
-  includedirs{"project1/", "extern/wxWidgets-3.0.0/include/", "extern/wxWidgets-3.0.0/include/msvc/"}
+  includedirs{"app", "project1/",
+              "extern/glew-1.10.0/include/",  
+              "extern/wxWidgets-3.0.0/include/", "extern/wxWidgets-3.0.0/include/msvc/"}
 
   configuration "Release"
     targetname( "project1_r" )

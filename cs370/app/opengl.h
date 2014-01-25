@@ -5,6 +5,7 @@
 #include <type_traits>
 #include <cassert>
 #include <string>
+#include <memory>
 
 #define USE_FONTS 0
 #define STRICT_OPENGL_4_0 1
@@ -124,5 +125,16 @@ namespace dit
 
     bool CompileShader(const std::string& source_file, GLuint* shader_id);
     bool CreateProgram(GLuint vertex_shader, GLuint fragment_shader, GLuint* program_id);
+
+    struct shader_cache
+    {
+      GLuint id;
+      GLenum binary_format;
+      unsigned char* buffer;
+      GLsizei buffer_length;
+    };
+    bool CreateShaderCache(GLuint shader, GLsizei source_length = 0, shader_cache* cache = nullptr);
+    void DestroyShader(GLuint shader);
+    void DestroyProgram(GLuint program);
   }
 }

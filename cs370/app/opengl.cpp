@@ -65,11 +65,13 @@ namespace dit
       GLenum shaderType = GL_FRAGMENT_SHADER;
       if (source_file.find(".v") != std::string::npos)
         shaderType = GL_VERTEX_SHADER;
+      
       GLuint& id = *shader_id;
       id = glCreateShader(shaderType);
+
       const GLchar* source_array[] = { source.c_str() };
-      GLsizei array_len = sizeof(source_array) / sizeof(GLchar*);
-      glShaderSource(id, array_len, source_array, nullptr);
+      GLsizei num_source_files = sizeof(source_array) / sizeof(GLchar*);
+      glShaderSource(id, num_source_files, source_array, nullptr);
       glCompileShader(id);
 
       //source retrieved from http://www.opengl.org/wiki/Shader_Compilation
@@ -100,15 +102,23 @@ namespace dit
         return false;
       }
 
+      //successful compilation, create shader cache
+
       return true;
     }
     bool CreateProgram(GLuint vertex_shader, GLuint fragment_shader, GLuint* program_id)
     {
+      assert(program_id);
+
       //source retrieved from http://www.opengl.org/wiki/Shader_Compilation
       //Vertex and fragment shaders are successfully compiled.
       //Now time to link them together into a program.
       //Get a program object.
-      GLuint id = glCreateProgram();
+      GLuint& id = *program_id;
+      id = glCreateProgram();
+
+      //ensure that the program id was generated correctly
+      assert(id != 0);
 
       //Attach our shaders to our program
       glAttachShader(id, vertex_shader);
@@ -150,6 +160,12 @@ namespace dit
       glDetachShader(id, fragment_shader);
 
       return true;
+    }
+    bool CreateShaderCache(GLuint shader, GLsizei source_length, shader_cache* cache)
+    {
+      assert(cache);
+
+      return false;
     }
     device::device(HWND hWnd_) : hWnd(nullptr), hdc(nullptr), glrc(nullptr)
     {

@@ -33,9 +33,9 @@ namespace dit
 	{
 		
 		///////////////////////////////////////////////////////////////////////////////
-		/// Class project1
+		/// Class project1_wxui
 		///////////////////////////////////////////////////////////////////////////////
-		class project1 : public wxFrame 
+		class project1_wxui : public wxFrame 
 		{
 			private:
 			
@@ -59,9 +59,9 @@ namespace dit
 			public:
 				wxPanel* m_image;
 				
-				project1( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("CS370 Project 1 - Image Interpolation"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 557,447 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+				project1_wxui( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("CS370 Project 1 - Image Interpolation"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 557,447 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 				
-				~project1();
+				~project1_wxui();
 			
 		};
 		
