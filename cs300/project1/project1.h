@@ -1,7 +1,7 @@
 #pragma once
 #include "form.h"
 
-namespace dit { namespace cs370 {
+namespace dit { namespace cs300 {
 
 class project1_wxui;
 

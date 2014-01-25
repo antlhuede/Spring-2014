@@ -16,11 +16,6 @@ public:
     
     return true;
   }
-
-  GLuint frag = 0;
-  GLuint vert = 0;
-  GLuint program = 0;
-private:
 };
 
-IMPLEMENT_APP(App<dit::cs370::project1>)
+IMPLEMENT_APP(App<dit::cs300::project1>)

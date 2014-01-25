@@ -8,7 +8,7 @@
 #include "form.h"
 
 ///////////////////////////////////////////////////////////////////////////
-using namespace dit::cs370;
+using namespace dit::cs300;
 
 project1_wxui::project1_wxui( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {

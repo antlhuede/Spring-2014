@@ -29,7 +29,7 @@
 
 namespace dit
 {
-	namespace cs370
+	namespace cs300
 	{
 		
 		///////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ namespace dit
 			
 		};
 		
-	} // namespace cs370
+	} // namespace cs300
 } // namespace dit
 
 #endif //__FORM_H__

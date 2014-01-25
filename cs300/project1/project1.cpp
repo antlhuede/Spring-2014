@@ -2,7 +2,7 @@
 #include "opengl.h"
 #include "project1.h"
 
-namespace dit { namespace cs370 {
+namespace dit { namespace cs300 {
 
 project1::project1(wxWindow* parent)
   : project1_wxui(parent)
