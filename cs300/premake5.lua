@@ -1,4 +1,4 @@
-solution "CS370"
+solution "CS300"
   language "C++"
   location ("build/")
  
