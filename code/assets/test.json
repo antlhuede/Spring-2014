@@ -1,0 +1,31 @@
+
+[
+	
+	{
+		"test_class" : 
+		{
+			"test_int" : 
+			{
+				"int" : 5
+			},
+			"test_string" : 
+			{
+				"string" : "test123"
+			}
+		}
+	},
+	
+	{
+		"test_class" : 
+		{
+			"test_int" : 
+			{
+				"int" : 5
+			},
+			"test_string" : 
+			{
+				"string" : "test123"
+			}
+		}
+	}
+]
