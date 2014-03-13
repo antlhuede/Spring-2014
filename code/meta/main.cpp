@@ -30,6 +30,7 @@ class serializer
 {
 public:
   virtual ~serializer() = 0 {};
+  
   virtual void add(const meta::type& t, void* obj) = 0;
   virtual void write(std::ostream& stream) = 0;
   virtual bool read(std::istream& stream) = 0;
