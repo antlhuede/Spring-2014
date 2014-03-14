@@ -1,6 +1,6 @@
 
-[
-	
+{
+	"test_class1" : 
 	{
 		"test_class" : 
 		{
@@ -14,7 +14,7 @@
 			}
 		}
 	},
-	
+	"test_class2" : 
 	{
 		"test_class" : 
 		{
@@ -28,4 +28,4 @@
 			}
 		}
 	}
-]
+}
