@@ -39,7 +39,7 @@ namespace meta
     , construct(std::has_default_constructor<T>::value ? &PlacementNew<std::conditional<std::has_default_constructor<T>::value, T, decl<T>>::type> : nullptr)
     , copy(std::has_copy_constructor<T>::value ? &CreateCopy<std::conditional<std::has_copy_constructor<T>::value, T, decl<T>>::type> : nullptr)
     , move(std::has_move_constructor<T>::value ? &MoveObject<std::conditional<std::has_move_constructor<T>::value, T, decl<T>>::type> : nullptr)
-    , destruct(std::has_trivial_destructor<T>::value ? &CallDestructor<std::conditional<std::has_trivial_destructor<T>::value, T, decl<T>>::type> : nullptr) {}
+    , destruct(&CallDestructor<T>) {}
 
   type& type::operator=(const type& rhs)
   {
@@ -58,8 +58,19 @@ namespace meta
   template <typename T, typename U>
   type& type::Field(const string& name, T U::*var)
   {
-    m_fields.push_back(new field(name, meta_holder<T>::t, ((size_t)&(((U*)0)->*var))));
+    assert(m_fieldmap.find(name) == m_fieldmap.end());
+    m_fieldmap[name] = m_fields.size();
+    m_fields.push_back(new ::meta::field(name, meta_holder<T>::t, ((size_t)&(((U*)0)->*var))));
     return *this;
+  }
+
+  const field type::field(const string& name, bool assert_on_failure) const
+  {
+    auto index = m_fieldmap.find(name);
+    if (index == m_fieldmap.end() && (assert_on_failure ? assert(false), false : true))
+      return ::meta::field("empty_field", typeof<nulltype>(), 0);
+    
+    return *m_fields[index->second];
   }
 
   field::field(const string& name, const ::meta::type& type, size_t offset)

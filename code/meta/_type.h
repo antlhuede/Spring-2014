@@ -12,8 +12,8 @@ namespace meta
   typedef void(*ReadFunc)(istream&, void*);
   typedef void(*WriteFunc)(ostream&, void*);
   typedef void(*PlacementNewFunc)(void*);
-  typedef void(*CopyFunc)(void*, void*);
-  typedef void(*MoveFunc)(void*, void*);
+  typedef void(*CopyFunc)(void* dest, void* source);
+  typedef void(*MoveFunc)(void* dest, void* source);
   typedef void(*DestructFunc)(void*);
   typedef const string(*StringizeFunc)(void*);
 
@@ -40,7 +40,9 @@ namespace meta
     template <typename T, typename U >
     type& Field(const string& name, T U::*var);
 
-    const vector<const field*>& fields() const { return m_fields; }
+    const field field(const string& name, bool assert_on_failure = false) const;
+
+    const vector<const ::meta::field*>& fields() const { return m_fields; }
     size_t size() const { return m_size; }
     const string& name() const { return m_name; }
     unsigned id() const { return m_id; }
@@ -50,7 +52,8 @@ namespace meta
     unsigned m_id = 0;
     size_t m_size = 0;
     string m_name = "uninitialized_type";
-    vector<const field*> m_fields;
+    vector<const ::meta::field*> m_fields;
+    hash_map<string, size_t> m_fieldmap;
   };
 
   class field

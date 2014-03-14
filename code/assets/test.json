@@ -2,30 +2,20 @@
 {
 	"test_class1" : 
 	{
-		"test_class" : 
+		"fields" : 
 		{
-			"test_int" : 
-			{
-				"int" : 5
-			},
-			"test_string" : 
-			{
-				"string" : "test123"
-			}
-		}
+			"test_int" : 5,
+			"test_string" : "test123"
+		},
+		"type" : "test_class"
 	},
 	"test_class2" : 
 	{
-		"test_class" : 
+		"fields" : 
 		{
-			"test_int" : 
-			{
-				"int" : 5
-			},
-			"test_string" : 
-			{
-				"string" : "test123"
-			}
-		}
+			"test_int" : 5,
+			"test_string" : "test123"
+		},
+		"type" : "test_class"
 	}
 }

@@ -30,7 +30,7 @@ DECLARE_META_TYPE(float);
 DECLARE_META_TYPE(double);
 DECLARE_META_TYPE(string);
 
-class test_class { public: test_class(int ti, string ts) : test_int(ti), test_string(ts) {} int test_int; string test_string; };
+class test_class { public: test_class() = default; test_class(int ti, string ts) : test_int(ti), test_string(ts) {} ~test_class() = default; int test_int; string test_string; };
 
 DECLARE_META_OBJECT(meta::nulltype);
 DECLARE_META_OBJECT(test_class);
@@ -43,7 +43,7 @@ public:
   virtual void add(const string& name, const meta::type& t, void* obj) = 0;
   virtual void write(ostream& stream) = 0;
   virtual bool read(istream& stream) = 0;
-  virtual shared_ptr<void> get(const string& var, const meta::type& t) = 0;
+  virtual bool get(const string& var, const meta::type& t, void* obj) = 0;
 };
 
 class JSonSerializer : public serializer
@@ -56,6 +56,11 @@ public:
   void add(const string& name, const T& obj)
   {
     add(name, meta::typeof(obj), const_cast<T*>(&obj));
+  }
+  template <class T>
+  bool get(const string& name, T& obj)
+  {
+    return get(name, meta::typeof(obj), &obj);
   }
   virtual void add(const string& name, const meta::type& t, void* obj)
   {
@@ -80,40 +85,64 @@ public:
     return true;
   }
 
-  virtual shared_ptr<void> get(const string& var, const meta::type& t)
+  virtual bool get(const string& var, const meta::type& t, void* obj)
   {
     auto it = m_loadedVariables.find(var);
     if (it == m_loadedVariables.end())
-      return shared_ptr<void>(nullptr);
-
-    Json::Value& value = it->second;
-    //value.
-
-    return false;
+      return false;
+    
+    recursive_read(it->second, t, obj);
+    return true;
   }
 
 private:
-  void recursive_read(const Json::Value& node)
+  void recursive_read(const Json::Value& node, const meta::type& type, void* obj)
   {
-    //Json::Value::Members members = node.getMemberNames();
     if (node.isObject())
     {
-      
+      Json::Value fields = node["fields"];
+      for (auto it = fields.begin(); it != fields.end(); ++it)
+      {
+        const meta::field& field = type.field(it.memberName(), true);
+        recursive_read(*it, field.type(), field.member_ptr(obj));
+      }
     }
     else
     {
-      //m_loadedVariables[]
-      assert(false);
+#define ASSERT_CORRECT_TYPE(TYPE) (assert(type.id() == meta::typeof<TYPE>().id()), true)
+
+      if (node.isInt() && ASSERT_CORRECT_TYPE(int))
+      {
+        int result = node.asInt();
+        type.copy(obj, &result);
+      }
+      else if (node.isBool() && ASSERT_CORRECT_TYPE(bool))
+      {
+        bool result = node.asBool();
+        type.copy(obj, &result);
+      }
+      else if (node.isDouble() && type == meta::typeof<double>()) //let it fall back to converting to real otherwise
+      {
+        double result = node.asDouble();
+        type.copy(obj, &result);
+      }
+      else if (node.isConvertibleTo(Json::ValueType::realValue) && ASSERT_CORRECT_TYPE(float))
+      {
+        float result = static_cast<float>(node.asDouble());
+        type.copy(obj, &result);
+      }
+      else if (node.isString() && ASSERT_CORRECT_TYPE(string))
+      {
+        string result = node.asString();
+        type.copy(obj, &result);
+      }
+      else
+      {
+        assert(false);
+      }
     }
-    //else if (node.isArray())
-    //{
-    //  for (size_t i = 0; i < node.size(); ++i)
-    //  {
-    //    //m_loadedVariables[members[i]] = node[i];
-    //    recursive_read(node[i]);
-    //  }
-    //}
   }
+
   Json::Value recursive_add(const meta::type& t, void* obj)
   {
     const vector<const meta::field*>& fields = t.fields();
@@ -121,23 +150,24 @@ private:
     
     if (fields.size())
     {
+      value["type"] = t.name();
       for (size_t i = 0; i < fields.size(); ++i)
-        value[t.name()][fields[i]->name()] = recursive_add(fields[i]->type(), fields[i]->member_ptr(obj));
+        value["fields"][fields[i]->name()] = recursive_add(fields[i]->type(), fields[i]->member_ptr(obj));
     }
     else
     {
       if (t.id() == meta::typeof<int>().id())
-        value[t.name()] = meta::converter::toInt(t, obj);
+        value = meta::converter::toInt(t, obj);
       else if (t.id() == meta::typeof<bool>().id())
-        value[t.name()] = meta::converter::toBool(t, obj);
+        value = meta::converter::toBool(t, obj);
       else if (t.id() == meta::typeof<float>().id())
-        value[t.name()] = meta::converter::toFloat(t, obj);
+        value = meta::converter::toFloat(t, obj);
       else if (t.id() == meta::typeof<double>().id())
-        value[t.name()] = meta::converter::toDouble(t, obj);
+        value = meta::converter::toDouble(t, obj);
       else if (t.id() == meta::typeof<string>().id())
-        value[t.name()] = meta::converter::toString(t, obj);
+        value = meta::converter::toString(t, obj);
       else
-        value[t.name()] = t.to_string(obj);
+        value = t.to_string(obj);
     }
 
     return value;
@@ -162,6 +192,7 @@ int main(void)
   test_class tc(5, "test123");
   std::cout << t.to_string(&tc);
   
+
   std::ofstream writefile;
   writefile.open("test.json");
   JSonSerializer serializer;
@@ -174,6 +205,8 @@ int main(void)
   readfile.open("test.json");
   serializer.read(readfile);
   readfile.close();
+  test_class read_test;
+  serializer.get("test_class1", read_test);
 
   Json::Value root;
   
