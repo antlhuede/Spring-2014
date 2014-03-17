@@ -4,6 +4,9 @@
 	{
 		"fields" : 
 		{
+			"test_bool" : true,
+			"test_double" : 0.09279999999999999,
+			"test_float" : 13.250,
 			"test_int" : 5,
 			"test_string" : "test123"
 		},
@@ -13,8 +16,11 @@
 	{
 		"fields" : 
 		{
-			"test_int" : 5,
-			"test_string" : "test123"
+			"test_bool" : false,
+			"test_double" : 10293.92820,
+			"test_float" : 103.4840011596680,
+			"test_int" : 12,
+			"test_string" : "123 boogaloo"
 		},
 		"type" : "test_class"
 	}

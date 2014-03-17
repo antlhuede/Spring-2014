@@ -50,11 +50,11 @@ project "Meta"
   kind("ConsoleApp")
   files { "meta/**.*" }
 
-  includedirs { "./", "meta/", "json/" }
+  includedirs { "./", "gmock/", "gtest/", "meta/", "json/" }
   libdirs { "bin/" }
   --linkoptions{"/ENTRY:WinMainCRTStartup"}
 
-  links { "JSON" }
+  links { "JSON", "GMOCK" }
   links { "gdi32", "opengl32" }
   links { "winmm", "comctl32", "rpcrt4" }
 
@@ -69,8 +69,8 @@ project "Meta"
 
 project "JSON"
   kind("StaticLib")
-  files { "json/**.*" }
-  includedirs { "json/" }
+  files { "json/*" }
+  includedirs { "./", "json/" }
 
   vpaths({ ["source"] = {"**.cpp", "**.c", "**.h"} })
 
@@ -79,3 +79,17 @@ project "JSON"
     
   configuration "Debug"
     targetname( "json_d" )
+
+
+project "GMOCK"
+  kind("StaticLib")
+  files { "gmock/*", "gtest/*" }
+  includedirs { "./", "gmock/", "gtest/" }
+
+  vpaths({ ["source"] = {"**.cpp", "**.c", "**.h"} })
+
+  configuration "Release"
+    targetname( "gmock_r" )
+
+  configuration "Debug"
+    targetname( "gmock_d" )
