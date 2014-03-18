@@ -2,9 +2,9 @@
 
 namespace meta
 {
-template <class T> const type& typeof(const T& var) { return meta_holder<std::remove_cv<T>::type>::t; }
-template <class T> const type& typeof() { return meta_holder<std::remove_cv<T>::type>::t; }
-inline const type& typeof(const char_t* name) { return meta_registry::find(name); }
+template <class T> const type& typeof(const T& var) { return *internal::meta_holder<std::remove_cv<T>::type>::s_pType; }
+template <class T> const type& typeof() { return *internal::meta_holder<std::remove_cv<T>::type>::s_pType; }
+inline const type& typeof(const char_t* name) { return internal::meta_registry::find(name); }
 
 template <class T>
 void PlacementNew(void* memory)

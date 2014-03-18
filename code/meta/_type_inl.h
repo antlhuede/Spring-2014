@@ -13,7 +13,7 @@ type::type(decl<T>, const string name, ReadFunc r, WriteFunc w, StringizeFunc st
   , to_string(str)
   , construct(std::has_default_constructor<T>::value ? &PlacementNew<std::conditional<std::has_default_constructor<T>::value, T, decl<T>>::type> : nullptr)
   , copy(std::has_copy_constructor<T>::value ? &CopyMemory<std::conditional<std::has_copy_constructor<T>::value, T, decl<T>>::type> : nullptr)
-  , destruct(&CallDestructor<T>) { assert(meta_registry::register_type(this) == true); }
+  , destruct(&CallDestructor<T>) { assert(internal::meta_registry::register_type(this) == true); }
 
 inline type& type::operator=(const type& rhs)
 {
@@ -43,7 +43,7 @@ type& type::Field(const string& name, T U::*var)
 {
   assert(m_fieldmap.find(name) == m_fieldmap.end());
   m_fieldmap[name] = m_fields.size();
-  m_fields.push_back(new ::meta::field(name, meta_holder<T>::t, ((size_t)&(((U*)0)->*var))));
+  m_fields.push_back(new ::meta::field(name, typeof<T>(), ((size_t)&(((U*)0)->*var))));
   return *this;
 }
 

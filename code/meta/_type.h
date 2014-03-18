@@ -1,13 +1,13 @@
 #pragma once
 
-namespace meta
-{
+namespace meta {
 
-class type
+class type : public list<type>
 {
 public:
   template <class T>
   type(decl<T>, const string name, ReadFunc r, WriteFunc w, StringizeFunc str);
+  type(const type& rhs) = default;
 
   type& operator=(const type& rhs);
 

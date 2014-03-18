@@ -32,3 +32,5 @@ namespace meta
   typedef void(*DestructFunc)(void*);
   typedef const string(*StringizeFunc)(void*);
 }
+
+typedef hash_map<string, const meta::type*> type_map;
