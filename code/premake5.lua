@@ -2,7 +2,7 @@ solution "Programming"
   language "C++"
   location ("build/")
  
-  defines { "_CRT_SECURE_NO_WARNINGS", "_WINDOWS", "WIN32", "GLEW_STATIC" }
+  defines { "_CRT_SECURE_NO_WARNINGS", "_WINDOWS", "WIN32" }
 
   configurations
   { 
@@ -54,7 +54,7 @@ project "Meta"
   libdirs { "bin/" }
   --linkoptions{"/ENTRY:WinMainCRTStartup"}
 
-  links { "JSON", "GMOCK" }
+  links { "Serializers", "Test" }
   links { "gdi32", "opengl32" }
   links { "winmm", "comctl32", "rpcrt4" }
 
@@ -67,21 +67,22 @@ project "Meta"
     targetname( "meta_d" )
 
 
-project "JSON"
+project "Serializers"
   kind("StaticLib")
-  files { "json/*" }
-  includedirs { "./", "json/" }
+  files { "json/*", "xml/*" }
+  includedirs { "./", "json/", "xml/" }
 
-  vpaths({ ["source"] = {"**.cpp", "**.c", "**.h"} })
+  vpaths({ ["json"] = {"json/**.cpp", "json/**.c", "json/**.h"} })
+  vpaths({ ["xml"] = {"xml/**.cpp", "xml/**.c", "xml/**.h"} })
 
   configuration "Release"
-    targetname( "json_r" )
+    targetname( "serialize_r" )
     
   configuration "Debug"
-    targetname( "json_d" )
+    targetname( "serialize_d" )
 
 
-project "GMOCK"
+project "Test"
   kind("StaticLib")
   files { "gmock/*", "gtest/*" }
   includedirs { "./", "gmock/", "gtest/" }
@@ -89,7 +90,7 @@ project "GMOCK"
   vpaths({ ["source"] = {"**.cpp", "**.c", "**.h"} })
 
   configuration "Release"
-    targetname( "gmock_r" )
+    targetname( "test_r" )
 
   configuration "Debug"
-    targetname( "gmock_d" )
+    targetname( "test_d" )

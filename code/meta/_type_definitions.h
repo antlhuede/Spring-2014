@@ -28,9 +28,11 @@ namespace meta
   typedef void(*ReadFunc)(istream&, void*);
   typedef void(*WriteFunc)(ostream&, void*);
   typedef void(*PlacementNewFunc)(void*);
-  typedef void(*CopyFunc)(void* dest, void* source);
+  typedef void(*CopyFunc)(void* dest, const void* source);
   typedef void(*DestructFunc)(void*);
-  typedef const string(*StringizeFunc)(void*);
+  typedef const string(*StringizeFunc)(const void*);
+  typedef void*(*CloneFunc)(const void*);
+  typedef void*(*AllocFunc)();
 }
 
 typedef hash_map<string, const meta::type*> type_map;

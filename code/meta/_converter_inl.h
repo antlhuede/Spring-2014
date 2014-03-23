@@ -3,7 +3,7 @@
 namespace meta {
 
 template <typename T>
-static T converter::convert(const type& t, void* obj)
+static T converter::convert(const type& t, const void* obj)
 {
   if (t == typeof<T>())
     return *((T*)obj);
@@ -12,7 +12,7 @@ static T converter::convert(const type& t, void* obj)
 }
 
 template <typename T>
-static bool converter::safe_convert(const type& t, void* obj, T* result)
+static bool converter::safe_convert(const type& t, const void* obj, T* result)
 {
   if (t != typeof<T>())
     return false;
@@ -22,7 +22,7 @@ static bool converter::safe_convert(const type& t, void* obj, T* result)
 }
 
 template <class T>
-const string to_string_basic_types(void* var)
+const string to_string_basic_types(const void* var)
 {
   ostringstream buff;
   buff << *((T*)var);
@@ -41,7 +41,7 @@ void write_basic_types(ostream& stream, void* memory)
 }
 
 template <class T>
-const string to_string_objects(void* memory)
+const string to_string_objects(const void* memory)
 {
   return typeof<T>().name();
   /*const type& obj_type = typeof<T>();
@@ -82,23 +82,23 @@ void write_objects(ostream& stream, void* memory)
 }
 #undef ITERATE_OBJECTS
 
-inline int converter::toInt(const type& t, void* obj)
+inline int converter::toInt(const type& t, const void* obj)
 {
   return convert<int>(t, obj);
 }
-inline bool converter::toBool(const type& t, void* obj)
+inline bool converter::toBool(const type& t, const void* obj)
 {
   return convert<bool>(t, obj);
 }
-inline float converter::toFloat(const type& t, void* obj)
+inline float converter::toFloat(const type& t, const void* obj)
 {
   return convert<float>(t, obj);
 }
-inline double converter::toDouble(const type& t, void* obj)
+inline double converter::toDouble(const type& t, const void* obj)
 {
   return convert<double>(t, obj);
 }
-inline string converter::toString(const type& t, void* obj)
+inline string converter::toString(const type& t, const void* obj)
 {
   return convert<string>(t, obj);
 }

@@ -20,17 +20,18 @@ public:
   const PlacementNewFunc construct;
   const CopyFunc copy;
   const DestructFunc destruct;
+  const AllocFunc make_new;
+  const CloneFunc clone;
 
   template <typename T, typename U >
   type& Field(const string& name, T U::*var);
 
-  const field field(const string& name, bool assert_on_failure = false) const;
-
-  const vector<const ::meta::field*>& fields() const { return m_fields; }
+  const vector<const field*>& fields() const { return m_fields; }
   size_t size() const { return m_size; }
   const string& name() const { return m_name; }
   unsigned id() const { return m_id; }
 
+  const field field(const string& name, bool assert_on_failure = false) const;
 private:
   static unsigned S_ID_COUNTER;
   unsigned m_id = 0;

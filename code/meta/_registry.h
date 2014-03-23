@@ -10,7 +10,7 @@ struct meta_holder { static const type* s_pType; };
 struct meta_registry
 {
 public:
-  static const type& find(const string& key);
+  static const type* find(const string& key);
 
   static bool register_type(const type* pType);
 private:

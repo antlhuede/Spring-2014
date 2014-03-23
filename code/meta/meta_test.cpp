@@ -110,10 +110,10 @@ hash_map<string, Json::Value> BuildVariableMap()
   json_test_class##SUFFIX["type"] = "test_class";
 
   BUILD_TEST_CLASS_AS_JSON_VALUE(1)
-    BUILD_TEST_CLASS_AS_JSON_VALUE(2)
+  BUILD_TEST_CLASS_AS_JSON_VALUE(2)
 #undef BUILD_TEST_CLASS_AS_JSON_VALUE
 
-    variables["test_class1"] = json_test_class1;
+  variables["test_class1"] = json_test_class1;
   variables["test_class2"] = json_test_class2;
 
   return variables;
@@ -275,14 +275,44 @@ TEST(Meta_JsonSerializer, get)
 
 void run_basic_test_code()
 {
+  meta::variant variant;
+  variant = 5;
+  assert(variant.is_type<int>());
+  std::cout << "variant is int:" << variant.get_as<int>() << "\n";
+  variant = 15.32413;
+  assert(variant.is_type<double>());
+  std::cout << "variant is double:" << variant.get_as<double>() << "\n";
+
+  variant = 2.32f;
+  assert(variant.is_type<float>());
+  std::cout << "variant is float:" << variant.get_as<float>() << "\n";
+
+  variant = false;
+  assert(variant.is_type<bool>());
+  std::cout << "variant is bool:" << variant.get_as<bool>() << "\n";
+
+  variant = "hello world";
+  assert(variant.is_type<string>());
+  std::cout << "variant is string:" << variant.get_as<string>() << "\n";
+
+
   meta::type type = meta::typeof<test_class>();
 
   std::ofstream writefile;
   std::ifstream readfile;
+
+  meta::XmlSerializer xmlserializer;
   meta::JSonSerializer serializer;
 
   test_class tc(test_int1, test_string1, test_float1, test_double1, test_bool1);
   test_class tc2(test_int2, test_string2, test_float2, test_double2, test_bool2);
+
+  xmlserializer.add("test_class1", tc);
+  xmlserializer.add("test_class2", tc2);
+
+  writefile.open("test.xml");
+  xmlserializer.write(writefile);
+  writefile.close();
 
   serializer.add("test_class1", tc);
   serializer.add("test_class2", tc2);
@@ -290,6 +320,8 @@ void run_basic_test_code()
   writefile.open("test.json");
   serializer.write(writefile);
   writefile.close();
+
+  serializer.clear();
 
   readfile.open("test.json");
   serializer.read(readfile);

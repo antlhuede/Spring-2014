@@ -11,7 +11,6 @@
 #include "meta\meta.h"
 #include "gmock\gmock.h"
 
-class test_class;
 void run_basic_test_code();
 
 int main(int argc, char** argv)

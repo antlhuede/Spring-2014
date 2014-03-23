@@ -16,6 +16,10 @@ public:
   {
     return ((char*)object_ptr) + m_offset;
   }
+  const void* field::member_ptr(const void* object_ptr) const
+  {
+    return member_ptr(const_cast<void*>(object_ptr));
+  }
   const string field::to_string(void* var) const
   {
     return m_type.to_string(member_ptr(var));

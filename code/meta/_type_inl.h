@@ -13,7 +13,9 @@ type::type(decl<T>, const string name, ReadFunc r, WriteFunc w, StringizeFunc st
   , to_string(str)
   , construct(std::has_default_constructor<T>::value ? &PlacementNew<std::conditional<std::has_default_constructor<T>::value, T, decl<T>>::type> : nullptr)
   , copy(std::has_copy_constructor<T>::value ? &CopyMemory<std::conditional<std::has_copy_constructor<T>::value, T, decl<T>>::type> : nullptr)
-  , destruct(&CallDestructor<T>) { assert(internal::meta_registry::register_type(this) == true); }
+  , destruct(&CallDestructor<T>)
+  , clone(&CloneObject<T>)
+  , make_new(&AllocMemory<T>) { assert(internal::meta_registry::register_type(this) == true); }
 
 inline type& type::operator=(const type& rhs)
 {
@@ -26,6 +28,8 @@ inline type& type::operator=(const type& rhs)
   const_cast<PlacementNewFunc&>(construct) = rhs.construct;
   const_cast<CopyFunc&>(copy) = rhs.copy;
   const_cast<DestructFunc&>(destruct) = rhs.destruct;
+  const_cast<CloneFunc&>(clone) = rhs.clone;
+  const_cast<AllocFunc&>(make_new) = rhs.make_new;
 
   m_fields = rhs.m_fields;
   m_fieldmap = rhs.m_fieldmap;

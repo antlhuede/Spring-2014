@@ -8,9 +8,9 @@ void JSonSerializer::set(const hash_map<string, Json::Value>& variables)
 {
   m_loadedVariables = variables;
 }
-bool JSonSerializer::add(const string& name, const meta::type& t, void* obj)
+bool JSonSerializer::add(const string& name, const meta::type& t, const void* obj)
 {
-  if(m_loadedVariables.find(name) != m_loadedVariables.end())
+  if (has(name) == true)
     return false;
 
   Json::Value value = recursive_add(t, obj);
@@ -105,7 +105,7 @@ void JSonSerializer::recursive_read(const Json::Value& node, const meta::type& t
   }
 }
 
-Json::Value JSonSerializer::recursive_add(const meta::type& t, void* obj)
+Json::Value JSonSerializer::recursive_add(const meta::type& t, const void* obj)
 {
   const vector<const meta::field*>& fields = t.fields();
   Json::Value value;
