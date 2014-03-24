@@ -14,6 +14,14 @@ inline variant::variant(const variant& obj)
   m_type = obj.m_type;
   copy_memory(*m_type, obj.m_data);
 }
+inline variant::variant(const meta::type& type, const void* obj, bool take_ownership)
+{
+  m_type = &type;
+  if (take_ownership)
+    this->take_ownership(type, const_cast<void*>(obj));
+  else
+    copy_memory(type, obj);
+}
 inline variant::variant(const variant_ref& obj)
 {
   assert(false);
@@ -86,7 +94,11 @@ inline const string variant::to_string() const
 template <class T>
 void variant::take_ownership(T* pData)
 {
-  m_type = &typeof<T>();
+  take_ownership(typeof<T>(), pData);
+}
+inline void variant::take_ownership(const meta::type& type, void* pData)
+{
+  m_type = &type;
   m_data = pData;
 }
 inline void variant::take_ownership(variant_ref& data)

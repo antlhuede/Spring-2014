@@ -12,6 +12,8 @@ public:
   variant(const variant& rhs);
   variant(const variant_ref& rhs);
   variant(const char_t* str);
+  variant(const type& type, const void* source, bool take_ownership = false);
+
   ~variant();
 
   variant& operator=(const variant& rhs);
@@ -24,6 +26,7 @@ public:
 
   template <class T>
   void take_ownership(T* pData);
+  void take_ownership(const type& type, void* pData);
   void take_ownership(variant_ref& data);
 
   const string to_string() const;
@@ -39,6 +42,7 @@ private:
 public:
   const type& type() const { return *m_type; }
   const void* data() const { return m_data; }
+  void* data() { return m_data; }
 
   friend class variant_ref;
 };

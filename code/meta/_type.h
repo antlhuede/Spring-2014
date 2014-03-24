@@ -12,6 +12,7 @@ public:
   type& operator=(const type& rhs);
 
   bool operator==(const type& rhs) const;
+  bool operator!=(const type& rhs) const;
 
   const ReadFunc read;
   const WriteFunc write;

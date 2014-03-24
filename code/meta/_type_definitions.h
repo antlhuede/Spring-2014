@@ -17,7 +17,9 @@ typedef std::istream istream;
 typedef std::ostream ostream;
 typedef std::ostringstream ostringstream;
 typedef std::istringstream istringstream;
+
 class nulltype {};
+class void_ {};
 
 namespace meta
 {

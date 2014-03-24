@@ -41,6 +41,10 @@ inline bool type::operator==(const type& rhs) const
 {
   return m_id == rhs.m_id;
 }
+inline bool type::operator!=(const type& rhs) const
+{
+  return !(*this == rhs);
+}
 
 template <typename T, typename U>
 type& type::Field(const string& name, T U::*var)
