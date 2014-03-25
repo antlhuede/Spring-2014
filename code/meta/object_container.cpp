@@ -1,6 +1,10 @@
 #include "meta\meta.h"
 
 namespace meta {
+object_container::~object_container()
+{
+  clear();
+}
 bool object_container::add(const string& name, const variant& obj)
 {
   return add(name, obj.type(), obj.data());
@@ -18,6 +22,10 @@ bool object_container::add(const string& name, const type& type, const void* obj
 bool object_container::get(const string& name, variant& obj) const
 {
   return get(name, obj.type(), obj.data());
+}
+const variant& object_container::get(const string& name) const
+{
+  return m_objects[m_lexicon.find(name)->second];
 }
 bool object_container::get(const string& name, const type& type, void* obj) const
 {

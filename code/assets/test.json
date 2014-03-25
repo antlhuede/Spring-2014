@@ -11,17 +11,5 @@
 			"test_string" : "test123"
 		},
 		"type" : "test_class"
-	},
-	"test_class2" : 
-	{
-		"fields" : 
-		{
-			"test_bool" : false,
-			"test_double" : 10293.93820,
-			"test_float" : 332.50,
-			"test_int" : 12,
-			"test_string" : "123 boogaloo"
-		},
-		"type" : "test_class"
 	}
 }

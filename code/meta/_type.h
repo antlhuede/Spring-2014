@@ -22,12 +22,13 @@ public:
   const CopyFunc copy;
   const DestructFunc destruct;
   const AllocFunc make_new;
+  const DeleteFunc delete_ptr;
   const CloneFunc clone;
 
   template <typename T, typename U >
   type& Field(const string& name, T U::*var);
 
-  const vector<const field*>& fields() const { return m_fields; }
+  const vector<shared_ptr<const field>>& fields() const { return m_fields; }
   size_t size() const { return m_size; }
   const string& name() const { return m_name; }
   unsigned id() const { return m_id; }
@@ -38,7 +39,7 @@ private:
   unsigned m_id = 0;
   size_t m_size = 0;
   string m_name = "nulltype";
-  vector<const ::meta::field*> m_fields;
+  vector<shared_ptr<const ::meta::field>> m_fields;
   hash_map<string, size_t> m_fieldmap;
 };
 

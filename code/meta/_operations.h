@@ -9,10 +9,9 @@ const type& typeof(const char_t* name);
 template <class T> void PlacementNew(void* memory);
 template <class T> void CopyMemory(void* dest, const void* source);
 template <class T> void CallDestructor(void* object);
-template <class T> shared_ptr<void> CloneObject(const void* object);
-template <class T> shared_ptr<void> AllocMemory();
+template <class T> void DeletePointer(void* object);
+template <class T> void* CloneObject(const void* object);
+template <class T> void* AllocMemory();
 
-void no_deleter(void*);
-template <class T> void class_deleter(T*);
 
 }

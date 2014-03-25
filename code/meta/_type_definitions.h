@@ -32,6 +32,7 @@ namespace meta
   typedef void(*PlacementNewFunc)(void*);
   typedef void(*CopyFunc)(void* dest, const void* source);
   typedef void(*DestructFunc)(void*);
+  typedef void(*DeleteFunc)(void*);
   typedef const string(*StringizeFunc)(const void*);
   typedef void*(*CloneFunc)(const void*);
   typedef void*(*AllocFunc)();

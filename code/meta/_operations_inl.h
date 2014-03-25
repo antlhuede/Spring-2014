@@ -8,19 +8,23 @@ inline const type& typeof(const char_t* name) { return *internal::meta_registry:
 
 template <class T> void PlacementNew(void* memory)
 {
-  new (memory)T();
+  new (memory) T();
 }
 template <class T> void CopyMemory(void* dest, const void* source)
 {
-  new (dest)T(*((T*)source));
+  new (dest) T(*reinterpret_cast<const T*>(source));
 }
 template <class T> void CallDestructor(void* object)
 {
-  ((T*)object)->~T();
+  reinterpret_cast<T*>(object)->~T();
+}
+template <class T> void DeletePointer(void* object)
+{
+  delete reinterpret_cast<T*>(object);
 }
 template <class T> void* CloneObject(const void* object)
 {
-  return new T(*((T*)object));
+  return new T(*reinterpret_cast<const T*>(object));
 }
 template <class T> void* AllocMemory()
 {

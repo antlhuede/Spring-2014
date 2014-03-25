@@ -58,9 +58,9 @@ const string to_string_objects(const void* memory)
   return buff.str();*/
 }
 
-#define ITERATE_OBJECTS(CALL_FUNC)                      \
+#define ITERATE_OBJECTS(CALL_FUNC)                    \
 const type& obj_type = typeof<T>();                   \
-const vector<const field*>& field_list = obj_type.fields(); \
+auto field_list = obj_type.fields();                  \
 for (size_t i = 0; i < field_list.size(); ++i)        \
 {                                                     \
 const field& field = *field_list[i];                \

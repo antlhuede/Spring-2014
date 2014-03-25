@@ -94,9 +94,10 @@ shared_ptr<XMLDocument> XmlSerializer::build_xml_document() const
 {
   shared_ptr<XMLDocument> doc(new XMLDocument);
 
-  for (auto value : m_lexicon)
+  auto obj = objects();
+  for (auto value : lexicon())
   {
-    const variant& variant = m_objects[value.second];
+    const variant& variant = obj[value.second];
     doc->InsertEndChild(construct_xml_element(doc.get(), value.first, variant.type(), variant.data()));
   }
 
@@ -112,17 +113,16 @@ void XmlSerializer::write(const string& file) const
 }
 bool XmlSerializer::read(const string& file)
 {
+  clear();
+
   XMLDocument doc;
   doc.LoadFile(file.c_str());
   XMLElement* root = doc.RootElement();
   while (root)
   {
-    m_lexicon[root->Name()] = m_objects.size();
-    const type& type = typeof(root->Attribute("type"));
-    void* object = type.make_new();
-    construct_object(root, type, object);
-
-    m_objects.push_back(variant(type, object, true));
+    //variant object(typeof(root->Attribute("type")));
+    //construct_object(root, object.type(), object.data());
+    //add(root->Name(), object);
 
     root = root->NextSiblingElement();
   }

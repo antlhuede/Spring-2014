@@ -1,22 +1,24 @@
 #pragma once
 
 namespace meta {
-inline variant::variant() : m_type(&typeof<nulltype>()){}
+inline variant::variant() : m_type(&typeof<nulltype>()), m_data(nullptr) {}
+//inline variant::variant(const ::meta::type& type)
+//{
+//  m_type = &type;
+//  m_data = nullptr;
+//}
 
 template <class T>
 variant::variant(const T& obj)
 {
-  m_type = &typeof<T>();
-  copy_memory(*m_type, &obj);
+  copy_memory(typeof<T>(), &obj);
 }
 inline variant::variant(const variant& obj)
 {
-  m_type = obj.m_type;
-  copy_memory(*m_type, obj.m_data);
+  copy_memory(obj.type(), obj.m_data);
 }
 inline variant::variant(const meta::type& type, const void* obj, bool take_ownership)
 {
-  m_type = &type;
   if (take_ownership)
     this->take_ownership(type, const_cast<void*>(obj));
   else
@@ -29,35 +31,23 @@ inline variant::variant(const variant_ref& obj)
 inline variant::variant(const char_t* str)
 {
   string str_obj(str);
-  m_type = &typeof<string>();
-  copy_memory(*m_type, &str_obj);
+  copy_memory(typeof<string>(), &str_obj);
 }
 inline variant::~variant()
 {
   destroy();
 }
-inline void variant::destroy()
-{
-  if (m_type->size() > SMALL_OBJECT_SIZE)
-  {
-    delete m_data;
-    m_data = nullptr;
-  }
-
-  m_type = &typeof<nulltype>();
-}
-
 inline variant& variant::operator=(const variant& rhs)
 {
   destroy();
-
-  m_type = rhs.m_type;
-  copy_memory(*m_type, rhs.m_data);
+  copy_memory(rhs.type(), rhs.m_data);
 
   return *this;
 }
 inline void variant::copy_memory(const meta::type& type, const void* memory)
 {
+  m_type = &type;
+
   if (type.size() <= SMALL_OBJECT_SIZE)
   {
     m_data = m_array;
@@ -66,6 +56,19 @@ inline void variant::copy_memory(const meta::type& type, const void* memory)
   else
     m_data = type.clone(memory);
 }
+inline void variant::destroy()
+{
+  if (m_data != m_array)
+    m_type->delete_ptr(m_data);
+  else
+  {
+    m_type->destruct(m_data);
+    m_data = nullptr;
+  }
+  m_data = nullptr;
+  m_type = &typeof<nulltype>();
+}
+
 template <class T>
 bool variant::is_type() const
 {

@@ -84,6 +84,19 @@ TEST(Meta_CORE, typeof)
 #undef TEST_TYPEOF_BASIC_TYPES
 #undef TEST_TYPEOF
 }
+struct test_construct
+{
+  test_construct() { m_constructed = true; }
+  ~test_construct() { m_destructed = true; }
+
+  static bool m_constructed;
+  static bool m_destructed;
+};
+bool test_construct::m_constructed = false;
+bool test_construct::m_destructed = false;
+
+DECLARE_META_OBJECT(test_construct)
+END_META_OBJECT()
 
 void run_serializer_test(meta::serializer* serializer, const string& file1, const string& file2)
 {
@@ -91,43 +104,51 @@ void run_serializer_test(meta::serializer* serializer, const string& file1, cons
   test_class tc2(test_int2, test_string2, test_float2, test_double2, test_bool2);
 
   serializer->add("test_class1", tc);
-  serializer->add("test_class2", tc2);
+  //serializer->add("test_class2", tc2);
   serializer->write(file1);
   serializer->clear();
 
   test_class read_test1;
-  test_class read_test2;
-
+  //test_class read_test2;
+  
   serializer->read(file1);
   serializer->get("test_class1", read_test1);
-  serializer->get("test_class2", read_test2);
+  //serializer->get("test_class2", read_test2);
   serializer->clear();
-  serializer->add("read_test1", read_test1);
-  serializer->add("read_test2", read_test2);
-  serializer->write(file2);
-  serializer->clear();
+  //serializer->add("read_test1", read_test1);
+  //serializer->add("read_test2", read_test2);
+  //serializer->write(file2);
+  //serializer->clear();
 }
 void run_basic_test_code()
 {
-  meta::variant variant;
-  variant = 5;
-  assert(variant.is_type<int>());
-  std::cout << "variant is int:" << variant.get_as<int>() << "\n";
-  variant = 15.32413;
-  assert(variant.is_type<double>());
-  std::cout << "variant is double:" << variant.get_as<double>() << "\n";
+  //meta::variant variant(meta::typeof<string>());
+  //meta::variant copy1(variant);
+  //meta::variant copy2(copy1.type(), copy1.data());
 
-  variant = 2.32f;
-  assert(variant.is_type<float>());
-  std::cout << "variant is float:" << variant.get_as<float>() << "\n";
+  //variant = test_construct();
 
-  variant = false;
-  assert(variant.is_type<bool>());
-  std::cout << "variant is bool:" << variant.get_as<bool>() << "\n";
+  //variant = 5;
+  //assert(variant.is_type<int>());
+  //assert(test_construct::m_constructed == true);
+  //assert(test_construct::m_destructed == true);
 
-  variant = "hello world";
-  assert(variant.is_type<string>());
-  std::cout << "variant is string:" << variant.get_as<string>() << "\n";
+  //std::cout << "variant is int:" << variant.get_as<int>() << "\n";
+  //variant = 15.32413;
+  //assert(variant.is_type<double>());
+  //std::cout << "variant is double:" << variant.get_as<double>() << "\n";
+
+  //variant = 2.32f;
+  //assert(variant.is_type<float>());
+  //std::cout << "variant is float:" << variant.get_as<float>() << "\n";
+
+  //variant = false;
+  //assert(variant.is_type<bool>());
+  //std::cout << "variant is bool:" << variant.get_as<bool>() << "\n";
+
+  //variant = "hello world";
+  //assert(variant.is_type<string>());
+  //std::cout << "variant is string:" << variant.get_as<string>() << "\n";
 
 
   meta::type type = meta::typeof<test_class>();
@@ -138,33 +159,33 @@ void run_basic_test_code()
   test_class tc(test_int1, test_string1, test_float1, test_double1, test_bool1);
   test_class tc2(test_int2, test_string2, test_float2, test_double2, test_bool2);
 
-  run_serializer_test(&xml_serializer, "test.xml", "test2.xml");
+  //run_serializer_test(&xml_serializer, "test.xml", "test2.xml");
   run_serializer_test(&json_serializer, "test.json", "test2.json");
 
-  Json::Value root;
-  const vector<const meta::field*>& fields = type.fields();
+  //Json::Value root;
+  //auto fields = type.fields();
 
-  for (size_t i = 0; i < fields.size(); ++i)
-  {
-    Json::Value value;
-    value[fields[i]->name()] = fields[i]->to_string(&tc);
-    root[type.to_string(&tc)].append(value);
-    //std::cout << fields[i]->type().name() << " " << fields[i]->name() << " " << fields[i]->offset() << std::endl;
-  }
-  Json::StyledWriter writer;
-  string output = writer.write(root);
-  std::cout << output;
+  //for (size_t i = 0; i < fields.size(); ++i)
+  //{
+  //  Json::Value value;
+  //  value[fields[i]->name()] = fields[i]->to_string(&tc);
+  //  root[type.to_string(&tc)].append(value);
+  //  //std::cout << fields[i]->type().name() << " " << fields[i]->name() << " " << fields[i]->offset() << std::endl;
+  //}
+  //Json::StyledWriter writer;
+  //string output = writer.write(root);
+  //std::cout << output;
 
 
-  float testint = 12.5;
-  string teststr = "\nteststr";
-  meta::type test = meta::typeof(testint);
-  test.write(std::cout, &testint);
-  test = meta::typeof(teststr);
-  //test.read(std::cin, &teststr);
-  //test.write(std::cout, &teststr);
+  //float testint = 12.5;
+  //string teststr = "\nteststr";
+  //meta::type test = meta::typeof(testint);
+  //test.write(std::cout, &testint);
+  //test = meta::typeof(teststr);
+  ////test.read(std::cin, &teststr);
+  ////test.write(std::cout, &teststr);
 
-  std::cout << test.name() << " " << test.size() << "\n\n";
+  //std::cout << test.name() << " " << test.size() << "\n\n";
 }
 
 //

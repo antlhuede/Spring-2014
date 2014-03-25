@@ -53,7 +53,7 @@ void JSonSerializer::construct_object(const Json::Value& value, const type& type
 Json::Value JSonSerializer::construct_json_value(const type& type, const void* obj) const
 {
   Json::Value value;
-  const vector<const meta::field*>& fields = type.fields();
+  auto fields = type.fields();
 
   value["type"] = type.name();
 
@@ -84,9 +84,10 @@ Json::Value JSonSerializer::build_json_tree() const
 {
   Json::Value root;
   
-  for (auto value : m_lexicon)
+  auto obj = objects();
+  for (auto value : lexicon())
   {
-    const variant& variant = m_objects[value.second];
+    const variant& variant = obj[value.second];
     root[value.first] = construct_json_value(variant.type(), variant.data());
   }
 
@@ -100,8 +101,9 @@ void JSonSerializer::write(const string& file) const
 }
 bool JSonSerializer::read(const string& file)
 {
-  std::ifstream stream(file.c_str());
   clear();
+
+  std::ifstream stream(file.c_str());
 
   Json::Value root;
   Json::Reader reader;
@@ -112,12 +114,12 @@ bool JSonSerializer::read(const string& file)
   for (auto member : root.getMemberNames())
   {
     Json::Value value = root.get(member, "");
-    m_lexicon[member] = m_objects.size();
-    const type& type = typeof(value["type"].asString().c_str());
-    void* object = type.make_new();
-    construct_object(value, type, object);
-
-    m_objects.push_back(variant(type, object, true));
+    //variant object;//(typeof(value["type"].asString().c_str()));
+    type type = typeof(value["type"].asString().c_str());
+    void* memory = type.make_new();
+    construct_object(value, type, memory);
+    add(member, variant(type, memory, true));
+    //type.delete_ptr(memory);
   }
   return true;
 }

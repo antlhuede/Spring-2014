@@ -7,6 +7,7 @@ class variant
 {
 public:
   variant();
+  variant(const type& type);
   template <class T>
   variant(const T& obj);
   variant(const variant& rhs);
@@ -38,6 +39,7 @@ private:
   char m_array[SMALL_OBJECT_SIZE];
   void* m_data = nullptr;
   const type* m_type = nullptr;
+  bool m_ownMemory;
 
 public:
   const type& type() const { return *m_type; }
