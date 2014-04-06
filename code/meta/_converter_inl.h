@@ -3,12 +3,9 @@
 namespace meta {
 
 template <typename T>
-static T converter::convert(const type& t, const void* obj)
+static T& converter::convert(const type& t, const void* obj)
 {
-  if (t == typeof<T>())
-    return *((T*)obj);
-
-  return T();
+  return *((T*)obj);
 }
 
 template <typename T>
@@ -58,16 +55,14 @@ const string to_string_objects(const void* memory)
   return buff.str();*/
 }
 
-#define ITERATE_OBJECTS(CALL_FUNC)                    \
+#define ITERATE_OBJECTS(CALL_FUNC)                      \
 const type& obj_type = typeof<T>();                   \
-auto field_list = obj_type.fields();                  \
+const vector<const field>& field_list = obj_type.fields(); \
 for (size_t i = 0; i < field_list.size(); ++i)        \
 {                                                     \
-const field& field = *field_list[i];                \
+const field& field = field_list[i];                \
 const type& field_type = field.type();              \
-char* field_memory = ((char*)memory) + field.offset();  \
-\
-field_type.CALL_FUNC(stream, field_memory);         \
+field_type.CALL_FUNC(stream, field.member_ptr(memory));         \
 }
 
 template <class T>

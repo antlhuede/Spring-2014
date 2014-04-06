@@ -12,7 +12,7 @@ struct converter
   static string toString(const type& t, const void* obj);
 
   template <typename T>
-  static T convert(const type& t, const void* obj);
+  static T& convert(const type& t, const void* obj);
 
   template <typename T>
   static bool safe_convert(const type& t, const void* obj, T* result);

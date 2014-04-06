@@ -30,4 +30,12 @@ template <class T> void* AllocMemory()
 {
   return new T;
 }
+template <class T> void DeleteMemory(void* memory)
+{
+  delete reinterpret_cast<T*>(memory);
+}
+template <class T> void AssignMemory(void* dest, const void* source)
+{
+  *reinterpret_cast<T*>(dest) = *reinterpret_cast<const T*>(source);
+}
 }

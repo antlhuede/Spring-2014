@@ -6,7 +6,7 @@ namespace meta {
 class JSonSerializer : public serializer
 {
 public:
-  JSonSerializer() {}
+  JSonSerializer();
   ~JSonSerializer() {}
 
   virtual void write(const string& file) const;

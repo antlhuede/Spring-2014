@@ -1,11 +1,23 @@
 #include "meta\meta.h"
 #include "xml\tinyxml2.h"
 #include <fstream>
+#include <iostream>
 
 namespace meta
 {
 using namespace xml;
+XmlSerializer::XmlSerializer()
+{
+  if (m_names.size() > 0)
+  {
 
+  }
+
+  if (m_objects.size() > 0)
+  {
+
+  }
+}
 void XmlSerializer::construct_object(const XMLElement* element, const type& type, void* obj) const
 {
   if (element->NoChildren() == false)
@@ -15,39 +27,38 @@ void XmlSerializer::construct_object(const XMLElement* element, const type& type
 
     for (auto field : type.fields())
     {
-      construct_object(xml_fields->FirstChildElement(field->name().c_str()), field->type(), field->member_ptr(obj));
+      construct_object(xml_fields->FirstChildElement(field.name().c_str()), field.type(), field.member_ptr(obj));
     }
   }
   else
   {
-
 #define ASSERT_CORRECT_TYPE(TYPE) (assert(type.id() == meta::typeof<TYPE>().id()), true)
 #define CHECK_ELEMENT_TYPE(TYPE) (typeof(element->Attribute("type")) == typeof<TYPE>() && ASSERT_CORRECT_TYPE(TYPE))
 
     if (CHECK_ELEMENT_TYPE(int))
     {
       int result = element->IntAttribute("value");
-      type.copy(obj, &result);
+      type.assign(obj, &result);
     }
     else if (CHECK_ELEMENT_TYPE(bool))
     {
       bool result = element->BoolAttribute("value");
-      type.copy(obj, &result);
+      type.assign(obj, &result);
     }
     else if (CHECK_ELEMENT_TYPE(double)) //let it fall back to converting to real otherwise
     {
       double result = element->DoubleAttribute("value");
-      type.copy(obj, &result);
+      type.assign(obj, &result);
     }
     else if (CHECK_ELEMENT_TYPE(float))
     {
       float result = element->FloatAttribute("value");
-      type.copy(obj, &result);
+      type.assign(obj, &result);
     }
     else if (CHECK_ELEMENT_TYPE(string))
     {
       string result = element->Attribute("value");
-      type.copy(obj, &result);
+      type.assign(obj, &result);
     }
     else
     {
@@ -68,7 +79,7 @@ XMLElement* XmlSerializer::construct_xml_element(XMLDocument* doc, const string&
     xml::XMLElement* xml_fields = doc->NewElement("fields");
 
     for (size_t i = 0; i < fields.size(); ++i)
-      xml_fields->InsertEndChild(construct_xml_element(doc, fields[i]->name(), fields[i]->type(), fields[i]->member_ptr(obj))); 
+      xml_fields->InsertEndChild(construct_xml_element(doc, fields[i].name(), fields[i].type(), fields[i].member_ptr(obj))); 
 
     node->InsertEndChild(xml_fields);
   }
@@ -94,10 +105,9 @@ shared_ptr<XMLDocument> XmlSerializer::build_xml_document() const
 {
   shared_ptr<XMLDocument> doc(new XMLDocument);
 
-  auto obj = objects();
-  for (auto value : lexicon())
+  for (auto value : m_names)
   {
-    const variant& variant = obj[value.second];
+    const variant& variant = m_objects[value.second];
     doc->InsertEndChild(construct_xml_element(doc.get(), value.first, variant.type(), variant.data()));
   }
 
@@ -113,16 +123,18 @@ void XmlSerializer::write(const string& file) const
 }
 bool XmlSerializer::read(const string& file)
 {
-  clear();
-
   XMLDocument doc;
   doc.LoadFile(file.c_str());
   XMLElement* root = doc.RootElement();
   while (root)
   {
-    //variant object(typeof(root->Attribute("type")));
-    //construct_object(root, object.type(), object.data());
-    //add(root->Name(), object);
+    m_names[root->Name()] = m_objects.size();
+    const type& type = typeof(root->Attribute("type"));
+    std::cout << "xml serializing member: " << root->Name() << std::endl;
+    std::cout << "xml reading type: " << type.name() << std::endl;
+    m_objects.push_back(variant(type));
+    variant& var = m_objects.back();
+    construct_object(root, var.type(), var.data());
 
     root = root->NextSiblingElement();
   }

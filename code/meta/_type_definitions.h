@@ -36,6 +36,7 @@ namespace meta
   typedef const string(*StringizeFunc)(const void*);
   typedef void*(*CloneFunc)(const void*);
   typedef void*(*AllocFunc)();
+  typedef void(*AssignFunc)(void*, const void*);
 }
 
 typedef hash_map<string, const meta::type*> type_map;

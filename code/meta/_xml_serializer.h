@@ -7,7 +7,7 @@ namespace xml = ::tinyxml2;
 class XmlSerializer : public serializer
 {
 public:
-  XmlSerializer() {}
+  XmlSerializer();
   ~XmlSerializer() {}
 
   virtual void write(const string& file) const;

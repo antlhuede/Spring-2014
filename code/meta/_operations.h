@@ -12,6 +12,6 @@ template <class T> void CallDestructor(void* object);
 template <class T> void DeletePointer(void* object);
 template <class T> void* CloneObject(const void* object);
 template <class T> void* AllocMemory();
-
+template <class T> void DeleteMemory();
 
 }

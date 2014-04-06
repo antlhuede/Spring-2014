@@ -4,6 +4,10 @@
 
 namespace meta
 {
+JSonSerializer::JSonSerializer()
+{
+
+}
 void JSonSerializer::construct_object(const Json::Value& value, const type& type, void* obj) const
 {
   if (value.isObject())
@@ -12,7 +16,7 @@ void JSonSerializer::construct_object(const Json::Value& value, const type& type
 
     for (auto field : type.fields())
     {
-      construct_object(json_fields[field->name()], field->type(), field->member_ptr(obj));
+      construct_object(json_fields[field.name()], field.type(), field.member_ptr(obj));
     }
   }
   else
@@ -21,27 +25,27 @@ void JSonSerializer::construct_object(const Json::Value& value, const type& type
     if (value.isInt() && ASSERT_CORRECT_TYPE(int))
     {
       int result = value.asInt();
-      type.copy(obj, &result);
+      type.assign(obj, &result);
     }
     else if (value.isBool() && ASSERT_CORRECT_TYPE(bool))
     {
       bool result = value.asBool();
-      type.copy(obj, &result);
+      type.assign(obj, &result);
     }
     else if (value.isDouble() && type == meta::typeof<double>()) //let it fall back to converting to real otherwise
     {
       double result = value.asDouble();
-      type.copy(obj, &result);
+      type.assign(obj, &result);
     }
     else if (value.isConvertibleTo(Json::ValueType::realValue) && ASSERT_CORRECT_TYPE(float))
     {
       float result = static_cast<float>(value.asDouble());
-      type.copy(obj, &result);
+      type.assign(obj, &result);
     }
     else if (value.isString() && ASSERT_CORRECT_TYPE(string))
     {
       string result = value.asString();
-      type.copy(obj, &result);
+      type.assign(obj, &result);
     }
     else
     {
@@ -53,14 +57,14 @@ void JSonSerializer::construct_object(const Json::Value& value, const type& type
 Json::Value JSonSerializer::construct_json_value(const type& type, const void* obj) const
 {
   Json::Value value;
-  auto fields = type.fields();
+  const vector<const meta::field>& fields = type.fields();
 
   value["type"] = type.name();
 
   if (fields.size())
   {
     for (size_t i = 0; i < fields.size(); ++i)
-      value["fields"][fields[i]->name()] = construct_json_value(fields[i]->type(), fields[i]->member_ptr(obj));
+      value["fields"][fields[i].name()] = construct_json_value(fields[i].type(), fields[i].member_ptr(obj));
   }
   else
   {
@@ -84,10 +88,9 @@ Json::Value JSonSerializer::build_json_tree() const
 {
   Json::Value root;
   
-  auto obj = objects();
-  for (auto value : lexicon())
+  for (auto value : m_names)
   {
-    const variant& variant = obj[value.second];
+    const variant& variant = m_objects[value.second];
     root[value.first] = construct_json_value(variant.type(), variant.data());
   }
 
@@ -101,9 +104,8 @@ void JSonSerializer::write(const string& file) const
 }
 bool JSonSerializer::read(const string& file)
 {
-  clear();
-
   std::ifstream stream(file.c_str());
+  m_objects.clear();
 
   Json::Value root;
   Json::Reader reader;
@@ -114,12 +116,10 @@ bool JSonSerializer::read(const string& file)
   for (auto member : root.getMemberNames())
   {
     Json::Value value = root.get(member, "");
-    //variant object;//(typeof(value["type"].asString().c_str()));
-    type type = typeof(value["type"].asString().c_str());
-    void* memory = type.make_new();
-    construct_object(value, type, memory);
-    add(member, variant(type, memory, true));
-    //type.delete_ptr(memory);
+    m_names[member] = m_objects.size();
+    m_objects.push_back(variant(typeof(value["type"].asString().c_str())));
+    variant& var = m_objects.back();
+    construct_object(value, var.type(), var.data());
   }
   return true;
 }
