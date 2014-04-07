@@ -2,8 +2,8 @@
 
 namespace meta
 {
-template <class T> const type& typeof(const T& var) { return *internal::meta_holder<std::remove_cv<std::remove_reference<T>::type>::type>::s_pType; }
-template <class T> const type& typeof() { return *internal::meta_holder<std::remove_cv<std::remove_reference<T>::type>::type>::s_pType; }
+template <class T> const type& typeof(const T& var) { return *internal::meta_holder<std::remove_cv<std::remove_pointer<std::remove_reference<T>::type>::type>::type>::s_pType; }
+template <class T> const type& typeof() { return *internal::meta_holder<std::remove_cv<std::remove_pointer<std::remove_reference<T>::type>::type>::type>::s_pType; }
 inline const type& typeof(const char_t* name) { return *internal::meta_registry::find(name); }
 
 template <class T> void PlacementNew(void* memory)
@@ -37,5 +37,9 @@ template <class T> void DeleteMemory(void* memory)
 template <class T> void AssignMemory(void* dest, const void* source)
 {
   *reinterpret_cast<T*>(dest) = *reinterpret_cast<const T*>(source);
+}
+template <class T> T& ConvertMemory(void* memory)
+{
+  return *reinterpret_cast<T*>(memory);
 }
 }

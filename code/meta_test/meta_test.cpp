@@ -144,7 +144,10 @@ void func_test1() {}
 void func_test2(int a) {}
 void func_test3(int a, float b) {}
 void func_test4(int a, float b, double c) {}
-void func_test5(int a, float b, double c, const string& d) {}
+void func_test5(int a, float b, double c, const string& d) 
+{
+  std::cout << d << std::endl;
+}
 
 void run_basic_test_code()
 {
@@ -231,17 +234,17 @@ void run_basic_test_code()
   print_args("function4", func4);
   print_args("function5", func5);
 
-  print_args("member function1", mfunc1);
-  print_args("member function2", mfunc2);
-  print_args("member function3", mfunc3);
-  print_args("member function4", mfunc4);
-  print_args("member function5", mfunc5);
-
+  //print_args("member function1", mfunc1);
+  //print_args("member function2", mfunc2);
+  //print_args("member function3", mfunc3);
+  //print_args("member function4", mfunc4);
+  //print_args("member function5", mfunc5);
+  string hello_world("Hello World");
   func1();
   func2(3);
   func3(3, 3.5f);
   func4(3, 3.5f, 123.0);
-  func5(3, 3.5f, 123.0, string("Hello World"));
+  func5(3, 3.5f, 123.0, hello_world);
   delete_test_memory();
 }
 
