@@ -139,7 +139,7 @@ inline bool function_traits::operator==(const function_traits& rhs) const
     return false;
 
   for (unsigned i = 0; i < numArguments; ++i)
-    if (*argTypes[i] != *rhs.argTypes[i])
+    if (*args[i].type != *rhs.args[i].type)
       return false;
 
   return true;

@@ -38,7 +38,6 @@ struct function_traits
 
   const type* classType = nullptr;
   const type* returnType = nullptr;
-  const type* argTypes[MAX_ARGS];
 
   arg_traits args[MAX_ARGS];
 };
