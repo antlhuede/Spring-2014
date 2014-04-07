@@ -6,18 +6,7 @@
 namespace meta
 {
 using namespace xml;
-XmlSerializer::XmlSerializer()
-{
-  if (m_names.size() > 0)
-  {
-
-  }
-
-  if (m_objects.size() > 0)
-  {
-
-  }
-}
+XmlSerializer::XmlSerializer() {}
 void XmlSerializer::construct_object(const XMLElement* element, const type& type, void* obj) const
 {
   if (element->NoChildren() == false)
@@ -130,8 +119,6 @@ bool XmlSerializer::read(const string& file)
   {
     m_names[root->Name()] = m_objects.size();
     const type& type = typeof(root->Attribute("type"));
-    std::cout << "xml serializing member: " << root->Name() << std::endl;
-    std::cout << "xml reading type: " << type.name() << std::endl;
     m_objects.push_back(variant(type));
     variant& var = m_objects.back();
     construct_object(root, var.type(), var.data());

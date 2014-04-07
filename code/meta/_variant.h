@@ -7,12 +7,13 @@ class variant
 {
 public:
   variant();
-  template <class T>
-  variant(const T& obj);
+  
   variant(const variant& other);
   variant(variant&& other);
   variant(const variant_ref& other);
   variant(const char_t* str);
+  template <class T> 
+  variant(const T& obj);
   explicit variant(const type& type, const void* obj = nullptr);
 
   ~variant();

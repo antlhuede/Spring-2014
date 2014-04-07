@@ -4,10 +4,7 @@
 
 namespace meta
 {
-JSonSerializer::JSonSerializer()
-{
-
-}
+JSonSerializer::JSonSerializer() {}
 void JSonSerializer::construct_object(const Json::Value& value, const type& type, void* obj) const
 {
   if (value.isObject())

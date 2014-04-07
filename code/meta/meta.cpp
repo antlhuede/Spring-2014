@@ -11,41 +11,41 @@ END_META_OBJECT();
 
 namespace meta
 {
-  unsigned type::S_ID_COUNTER = 0;
-  type_map* internal::meta_registry::m_registry = nullptr;
+unsigned type::S_ID_COUNTER = 0;
+type_map* internal::meta_registry::m_registry = nullptr;
 
-  void initialize()
+void initialize()
+{
+  internal::meta_registry::m_registry = new type_map;
+
+  internal::type_initializer* it = internal::type_initializer::head();
+  while (it != nullptr)
   {
-    internal::meta_registry::m_registry = new type_map;
-
-    internal::type_initializer* it = internal::type_initializer::head();
-    while (it != nullptr)
-    {
-      assert(it->create_func);
-      assert(it->destroy_func);
-      it->create_func();
-      it = it->next();
-    }
-
-    it = internal::type_initializer::head();
-    while (it != nullptr)
-    {
-      if (it->init_func)
-        it->init_func();
-      it = it->next();
-    }
+    assert(it->create_func);
+    assert(it->destroy_func);
+    it->create_func();
+    it = it->next();
   }
+
+  it = internal::type_initializer::head();
+  while (it != nullptr)
+  {
+    if (it->init_func)
+      it->init_func();
+    it = it->next();
+  }
+}
   
-  void destroy()
+void destroy()
+{
+  internal::type_initializer* it = internal::type_initializer::head();
+  while (it != nullptr)
   {
-    internal::type_initializer* it = internal::type_initializer::head();
-    while (it != nullptr)
-    {
-      it->destroy_func();
-      it = it->next();
-    }
-
-    delete internal::meta_registry::m_registry;
-    internal::meta_registry::m_registry = nullptr;
+    it->destroy_func();
+    it = it->next();
   }
+
+  delete internal::meta_registry::m_registry;
+  internal::meta_registry::m_registry = nullptr;
+}
 }

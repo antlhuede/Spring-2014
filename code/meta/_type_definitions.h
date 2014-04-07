@@ -4,6 +4,8 @@
 #include <memory>
 #include <unordered_map>
 #include <string>
+#include <tuple>
+#include <functional>
 #include <iostream>
 #include <sstream>
 #include <cassert>

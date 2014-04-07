@@ -16,7 +16,7 @@ void run_basic_test_code();
 int main(int argc, char** argv)
 {
   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-  _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
+  //_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
   //_crtBreakAlloc = 146;
 
   meta::initialize();

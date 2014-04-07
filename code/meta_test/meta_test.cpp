@@ -55,6 +55,8 @@ bool test_bool2 = false;
 
 test_class* test_class1 = nullptr;
 test_class* test_class2 = nullptr;
+meta::XmlSerializer* xml_serializer = nullptr;
+meta::JSonSerializer* json_serializer = nullptr;
 
 void make_test_memory()
 {
@@ -62,9 +64,15 @@ void make_test_memory()
   test_string2 = new string("123 boogaloo");
   test_class1 = new test_class(test_int1, *test_string1, test_float1, test_double1, test_bool1);
   test_class2 = new test_class(test_int2, *test_string2, test_float2, test_double2, test_bool2);
+
+  xml_serializer = new meta::XmlSerializer;
+  json_serializer = new meta::JSonSerializer;
 }
 void delete_test_memory()
 {
+  delete json_serializer;
+  delete xml_serializer;
+
   delete test_string1;
   delete test_string2;
   delete test_class1;
@@ -121,6 +129,22 @@ void run_serializer_test(meta::serializer* serializer, const string& file1, cons
   serializer->write(file2);
   serializer->clear();
 }
+
+class test_funcs_class
+{
+public:
+  void func_test1() {}
+  void func_test2(int a) {}
+  void func_test3(int a, float b) {}
+  void func_test4(int a, float b, double c) {}
+  void func_test5(int a, float b, double c, string d) {}
+};
+void func_test1() {}
+void func_test2(int a) {}
+void func_test3(int a, float b) {}
+void func_test4(int a, float b, double c) {}
+void func_test5(int a, float b, double c, string d) {}
+
 void run_basic_test_code()
 {
   make_test_memory();
@@ -147,8 +171,6 @@ void run_basic_test_code()
   
   meta::type type = meta::typeof<test_class>();
   
-  meta::XmlSerializer* xml_serializer = new meta::XmlSerializer;
-  meta::JSonSerializer* json_serializer = new meta::JSonSerializer;
   
   test_class tc(test_int1, *test_string1, test_float1, test_double1, test_bool1);
   test_class tc2(test_int2, *test_string2, test_float2, test_double2, test_bool2);
@@ -181,10 +203,42 @@ void run_basic_test_code()
   
   std::cout << test.name() << " " << test.size() << "\n\n";
 
-  delete_test_memory();
+  test_funcs_class tfc;
 
-  delete xml_serializer;
-  delete json_serializer;
+  meta::function func1(func_test1);
+  meta::function func2(func_test2);
+  meta::function func3(func_test3);
+  meta::function func4(func_test4);
+  meta::function func5(func_test5);
+
+  meta::function mfunc1(&test_funcs_class::func_test1, &tfc);
+  meta::function mfunc2(&test_funcs_class::func_test2, &tfc);
+  meta::function mfunc3(&test_funcs_class::func_test3, &tfc);
+  meta::function mfunc4(&test_funcs_class::func_test4, &tfc);
+  meta::function mfunc5(&test_funcs_class::func_test5, &tfc);
+
+  auto print_args = [](const string& name, meta::function& func) -> void {
+    std::cout << name << " test: " << std::endl;
+    for (size_t i = 0; i < func.traits().numArguments; ++i)
+      std::cout << "  arg " << i << ": " << func.traits().argTypes[i]->name() << std::endl;
+    std::cout << "  member func: " << func.traits().isMemberFunction << std::endl;
+  };
+
+  print_args("function1", func1);
+  print_args("function2", func2);
+  print_args("function3", func3);
+  print_args("function4", func4);
+  print_args("function5", func5);
+
+  print_args("member function1", mfunc1);
+  print_args("member function2", mfunc2);
+  print_args("member function3", mfunc3);
+  print_args("member function4", mfunc4);
+  print_args("member function5", mfunc5);
+
+  func1(3);
+  func2(3);
+  delete_test_memory();
 }
 
 //
