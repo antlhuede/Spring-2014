@@ -139,11 +139,12 @@ public:
   void func_test4(int a, float b, double c) {}
   void func_test5(int a, float b, double c, string d) {}
 };
+DECLARE_META_OBJECT(test_funcs_class) END_META_OBJECT()
 void func_test1() {}
 void func_test2(int a) {}
 void func_test3(int a, float b) {}
 void func_test4(int a, float b, double c) {}
-void func_test5(int a, float b, double c, string d) {}
+void func_test5(int a, float b, double c, const string& d) {}
 
 void run_basic_test_code()
 {
@@ -220,7 +221,7 @@ void run_basic_test_code()
   auto print_args = [](const string& name, meta::function& func) -> void {
     std::cout << name << " test: " << std::endl;
     for (size_t i = 0; i < func.traits().numArguments; ++i)
-      std::cout << "  arg " << i << ": " << func.traits().argTypes[i]->name() << std::endl;
+      std::cout << "  arg " << i << ": " << func.traits().args[i].type->name() << std::endl;
     std::cout << "  member func: " << func.traits().isMemberFunction << std::endl;
   };
 
@@ -236,8 +237,11 @@ void run_basic_test_code()
   print_args("member function4", mfunc4);
   print_args("member function5", mfunc5);
 
-  func1(3);
+  func1();
   func2(3);
+  func3(3, 3.5f);
+  func4(3, 3.5f, 123.0);
+  func5(3, 3.5f, 123.0, string("Hello World"));
   delete_test_memory();
 }
 
