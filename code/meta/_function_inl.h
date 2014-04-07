@@ -2,17 +2,8 @@
 
 namespace meta
 {
-
-#define IMPLEMENT_FUNC_TRAITS_DEDUCER(CLASS_TYPE, IS_MEM_FUNC, IS_CONST)                                         \
-typedef CLASS_TYPE class_type;                                                                                   \
-typedef typename std::conditional<std::is_same<R, void>::value, void_, R>::type return_type;                     \
-enum {                                                                                                           \
-  num_args = sizeof...(Args),                                                                                    \
-  has_return_value = (std::is_same<R, void>::value == false),                                                    \
-  is_member_func = IS_MEM_FUNC,                                                                                  \
-  is_const = IS_CONST,                                                                                           \
-};
-
+namespace internal
+{
 template <class R, class... Args>
 struct function_operator
 {
@@ -81,8 +72,16 @@ struct function_operator
   }
 };
 
-namespace internal
-{
+#define IMPLEMENT_FUNC_TRAITS_DEDUCER(CLASS_TYPE, IS_MEM_FUNC, IS_CONST)                        \
+  typedef CLASS_TYPE class_type;                                                                \
+  typedef typename std::conditional<std::is_same<R, void>::value, void_, R>::type return_type;  \
+  enum {                                                                                        \
+    num_args = sizeof...(Args),                                                                 \
+    has_return_value = (std::is_same<R, void>::value == false),                                 \
+    is_member_func = IS_MEM_FUNC,                                                               \
+    is_const = IS_CONST,                                                                        \
+  };
+
 template <class R, class... Args>
 struct function_traits_deducer<R(*)(Args...)> : public function_operator<R, Args...>
 {
