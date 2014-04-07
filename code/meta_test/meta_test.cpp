@@ -146,7 +146,7 @@ void func_test3(int a, float b) {}
 void func_test4(int a, float b, double c) {}
 void func_test5(int a, float b, double c, const string& d) 
 {
-  std::cout << d << std::endl;
+  std::cout << a << " " << b << " " << c << " " << d << std::endl;
 }
 
 void run_basic_test_code()
@@ -202,8 +202,6 @@ void run_basic_test_code()
   meta::type test = meta::typeof(testint);
   test.write(std::cout, &testint);
   test = meta::typeof(teststr);
-  test.read(std::cin, &teststr);
-  test.write(std::cout, &teststr);
   
   std::cout << test.name() << " " << test.size() << "\n\n";
 
@@ -244,7 +242,7 @@ void run_basic_test_code()
   func2(3);
   func3(3, 3.5f);
   func4(3, 3.5f, 123.0);
-  func5(123.0, 3.5f, 123.0, hello_world);
+  func5(3, 3.5f, 123.0, hello_world);
   delete_test_memory();
 }
 
