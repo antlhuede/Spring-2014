@@ -139,7 +139,7 @@ struct function_traits_deducer<R(*)(Args...)>
   typedef nulltype class_type;
   typedef typename std::conditional<std::is_same<R, void>::value, void_, R>::type return_type;
   typedef std::tuple<Args...> arg_tuple;
-  enum {
+  enum { 
     num_args = sizeof...(Args),
     has_return_value = (std::is_same<R, void>::value == false),
     is_const = false,
