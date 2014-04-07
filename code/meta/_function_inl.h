@@ -87,8 +87,66 @@ static void call(base_function* function, const arg_traits* traits, void** args)
 template <class R, class... Args>
 struct function_traits_deducer<R(*)(Args...)>
 {
-  IMPLEMENT_FUNCTION_TRAITS_DEDUCER(nulltype, true, false)
+  typedef nulltype class_type;
+  typedef typename std::conditional<std::is_same<R, void>::value, void_, R>::type return_type;
+  typedef std::tuple<Args...> arg_tuple;
+  enum {
+    num_args = sizeof...(Args), 
+    has_return_value = (std::is_same<R, void>::value == false), 
+    is_const = false, 
+    is_member_func = false,
+  };
+  template <size_t> struct unwrap;                                                              
+  template <size_t N> struct unwrap {                                                           
+  static void args(arg_traits* args) {                                                          
+      typedef std::tuple_element<sizeof...(Args)-N, arg_tuple>::type ElementType;                 
+      arg_traits& arg = args[sizeof...(Args)-N];                                                  
+      arg.type = &typeof<ElementType>();                                                          
+      arg.isPointer = std::is_pointer<ElementType>::value;                                        
+      arg.isReference = std::is_reference<ElementType>::value;                                    
+      arg.isConst = std::is_const<ElementType>::value;                                            
+      unwrap<N - 1>::args(args);                                                                  
+    }                                                                                             
+    static bool check_args(const arg_traits* traits) {                                            
+      typedef typename std::tuple_element<sizeof...(Args)-N, arg_tuple>::type ExpectedType;       
+      const type& arg_type = *traits[sizeof...(Args)-N].type;                                     
+      const type& expected_type = typeof<ExpectedType>();                                         
+      if (arg_type != expected_type)                                                              
+        return false;                                                                               
+      return unwrap<N - 1>::check_args(traits);                                                   
+    }                                                                                             
+    template <class... ArgsT>                                                                     
+    static R call(base_function* function, const arg_traits* traits, void** args, ArgsT... parameters)  
+    {                                                                                             
+      const int index = sizeof...(Args)-N;                                                        
+      typedef typename std::tuple_element<index, arg_tuple>::type ParameterType;                  
+      if (traits[index].isReference)                                                              
+        unwrap<N - 1>::call(function, traits, args, std::forward<ArgsT>(parameters)..., static_cast<ParameterType>(*static_cast<std::remove_reference<ParameterType>::type*>(args[index])));      
+      else                                                                                                                                                                                        
+        unwrap<N - 1>::call(function, traits, args, std::forward<ArgsT>(parameters)..., *static_cast<std::remove_reference<ParameterType>::type*>(args[index]));                                  
+    }                                                                                             
+  };                                                                                              
+  template <> struct unwrap<0> {                                                                  
+    static void args(arg_traits* args) { /*end recursion*/ }                                      
+    static bool check_args(const arg_traits* traits) { return true; /*end recursion*/ }           
+    template <class... ArgsT>                                                                     
+    static R call(base_function* function, const arg_traits* traits, void** args, ArgsT... parameters) 
+    {                                                                                               
+      typedef function_holder<R(*)(Args...)> FuncType;                                              
+      static_cast<FuncType*>(function)->function_ptr(std::forward<Args>(parameters)...);            
+    }                                                                                               
+  };                                                                                              
+  static void args(arg_traits* args)                                                              
+  {                                                                                               
+    unwrap<sizeof...(Args)>::args(args);                                                          
+  }                                                                                               
+  static void call(base_function* function, const arg_traits* traits, void** args)                
+  {                                                                                               
+    assert((unwrap<sizeof...(Args)>::check_args(traits)));                                        
+    unwrap<sizeof...(Args)>::call(function, traits, args);                                        
+  }
 };
+
 template <class R, class U, class... Args>
 struct function_traits_deducer<R(U::*)(Args...)>
 {
@@ -110,7 +168,8 @@ struct function_traits_deducer<R(U::*)(Args...)const>
   , numArguments(function_traits_deducer<TYPE>::num_args)               \
 {                                                                     \
   function_traits_deducer<TYPE>::args(args);                          \
-  }
+}
+
 template <class T>
 function_traits::function_traits(T func) IMPLEMENT_FUNCTION_TRAITS_CONSTRUCTOR(T)
 template <class T>

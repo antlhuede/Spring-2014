@@ -244,7 +244,7 @@ void run_basic_test_code()
   func2(3);
   func3(3, 3.5f);
   func4(3, 3.5f, 123.0);
-  func5(3, 3.5f, 123.0, hello_world);
+  func5(123.0, 3.5f, 123.0, hello_world);
   delete_test_memory();
 }
 
