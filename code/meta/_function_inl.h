@@ -6,85 +6,95 @@ namespace meta
 #define IMPLEMENT_FUNC_TRAITS_DEDUCER(CLASS_TYPE, IS_MEM_FUNC, IS_CONST)                                         \
 typedef CLASS_TYPE class_type;                                                                                   \
 typedef typename std::conditional<std::is_same<R, void>::value, void_, R>::type return_type;                     \
-typedef std::tuple<Args...> arg_tuple;                                                                           \
 enum {                                                                                                           \
   num_args = sizeof...(Args),                                                                                    \
   has_return_value = (std::is_same<R, void>::value == false),                                                    \
   is_member_func = IS_MEM_FUNC,                                                                                  \
   is_const = IS_CONST,                                                                                           \
-};                                                                                                               \
-template <size_t> struct unwrap;                                                                                 \
-template <size_t N> struct unwrap {                                                                              \
-  static void args(arg_traits* args) {                                                                           \
-    typedef std::tuple_element<sizeof...(Args)-N, arg_tuple>::type ElementType;                                  \
-    arg_traits& arg = args[sizeof...(Args)-N];                                                                   \
-    arg.type = &typeof<ElementType>();                                                                           \
-    arg.isPointer = std::is_pointer<ElementType>::value;                                                         \
-    arg.isReference = std::is_reference<ElementType>::value;                                                     \
-    arg.isConst = std::is_const<ElementType>::value;                                                             \
-    unwrap<N - 1>::args(args);                                                                                   \
-  }                                                                                                              \
-  static bool check_args(const type** arg_types) {                                                               \
-    typedef typename std::tuple_element<sizeof...(Args)-N, arg_tuple>::type ExpectedType;                        \
-    const type& arg_type = *arg_types[sizeof...(Args)-N];                                                        \
-    const type& expected_type = typeof<ExpectedType>();                                                          \
-    if (arg_type != expected_type)                                                                               \
-      return false;                                                                                              \
-    return unwrap<N - 1>::check_args(arg_types);                                                                 \
-  }                                                                                                              \
-  template <class... ArgsT>                                                                                      \
-  static R call(base_function* function, const arg_traits* traits, void** args, ArgsT... parameters)             \
-  {                                                                                                              \
-    const int index = sizeof...(Args)-N;                                                                         \
-    typedef typename std::tuple_element<index, arg_tuple>::type ParameterType;                                   \
-    if (traits[index].isReference)                                                                               \
-    {                                                                                                            \
-      unwrap<N - 1>::call(function, traits, args, std::forward<ArgsT>(parameters)...,                            \
-        static_cast<ParameterType>(*static_cast<std::remove_reference<ParameterType>::type*>(args[index])));     \
-    }                                                                                                            \
-    else                                                                                                         \
-    {                                                                                                            \
-      unwrap<N - 1>::call(function, traits, args, std::forward<ArgsT>(parameters)...,                            \
-        *static_cast<std::remove_reference<ParameterType>::type*>(args[index]));                                 \
-    }                                                                                                            \
-  }                                                                                                              \
-};                                                                                                               \
-template <> struct unwrap<0> {                                                                                   \
-  static void args(arg_traits* args) { /*end recursion*/ }                                                       \
-  static bool check_args(const type** arg_types) { return true; /*end recursion*/ }                              \
-  template <class... ArgsT>                                                                                      \
-  static R call(base_function* function, const arg_traits* traits, void** args, ArgsT... parameters)             \
-  {                                                                                                              \
-    typedef function_holder<R(*)(Args...)> FuncType;                                                             \
-    static_cast<FuncType*>(function)->function_ptr(std::forward<Args>(parameters)...);                           \
-  }                                                                                                              \
-};                                                                                                               \
-static void args(arg_traits* args)                                                                               \
-{                                                                                                                \
-  unwrap<sizeof...(Args)>::args(args);                                                                           \
-}                                                                                                                \
-static bool check_args(const type** arg_types)                                                                   \
-{                                                                                                                \
-  return unwrap<sizeof...(Args)>::check_args(arg_types);                                                         \
-}                                                                                                                \
-static void call(base_function* function, const arg_traits* traits, void** args)                                 \
-{                                                                                                                \
-  unwrap<sizeof...(Args)>::call(function, traits, args);                                                         \
-}
+};
+
+template <class R, class... Args>
+struct function_operator
+{
+  typedef std::tuple<Args...> arg_tuple;
+  template <size_t> struct unwrap;
+  template <size_t N> struct unwrap
+  {
+    static void args(arg_traits* args)
+    {
+      typedef std::tuple_element<sizeof...(Args)-N, arg_tuple>::type ElementType;
+      arg_traits& arg = args[sizeof...(Args)-N];
+      arg.type = &typeof<ElementType>();
+      arg.isPointer = std::is_pointer<ElementType>::value;
+      arg.isReference = std::is_reference<ElementType>::value;
+      arg.isConst = std::is_const<ElementType>::value;
+      unwrap<N - 1>::args(args);
+    }
+    static bool check_args(const type** arg_types)
+    {
+      typedef typename std::tuple_element<sizeof...(Args)-N, arg_tuple>::type ExpectedType;
+      const type& arg_type = *arg_types[sizeof...(Args)-N];
+      const type& expected_type = typeof<ExpectedType>();
+      if (arg_type != expected_type)
+        return false;
+      return unwrap<N - 1>::check_args(arg_types);
+    }
+    template <class... ArgsT>
+    static R call(base_function* function, const arg_traits* traits, void** args, ArgsT... parameters)
+    {
+      const int index = sizeof...(Args)-N;
+      typedef typename std::tuple_element<index, arg_tuple>::type ParameterType;
+      if (traits[index].isReference)
+      {
+        unwrap<N - 1>::call(function, traits, args, std::forward<ArgsT>(parameters)...,
+          static_cast<ParameterType>(*static_cast<std::remove_reference<ParameterType>::type*>(args[index])));
+      }
+      else
+      {
+        unwrap<N - 1>::call(function, traits, args, std::forward<ArgsT>(parameters)...,
+          *static_cast<std::remove_reference<ParameterType>::type*>(args[index]));
+      }
+    }
+  };
+  template <> struct unwrap<0>
+  {
+    static void args(arg_traits* args) { /*end recursion*/ }
+    static bool check_args(const type** arg_types) { return true; /*end recursion*/ }
+    template <class... ArgsT>
+    static R call(base_function* function, const arg_traits* traits, void** args, ArgsT... parameters)
+    {
+      typedef function_holder<R(*)(Args...)> FuncType;
+      static_cast<FuncType*>(function)->function_ptr(std::forward<Args>(parameters)...);
+    }
+  };
+  static void args(arg_traits* args)
+  {
+    unwrap<sizeof...(Args)>::args(args);
+  }
+  static bool check_args(const type** arg_types)
+  {
+    return unwrap<sizeof...(Args)>::check_args(arg_types);
+  }
+  static void call(base_function* function, const arg_traits* traits, void** args)
+  {
+    unwrap<sizeof...(Args)>::call(function, traits, args);
+  }
+};
+
 namespace internal
 {
 template <class R, class... Args>
-struct function_traits_deducer<R(*)(Args...)>
+struct function_traits_deducer<R(*)(Args...)> : public function_operator<R, Args...>
 {
   IMPLEMENT_FUNC_TRAITS_DEDUCER(nulltype, true, false)
 };
 template <class R, class U, class... Args>
-struct function_traits_deducer<R(U::*)(Args...)>
+struct function_traits_deducer<R(U::*)(Args...)> : public function_operator<R, Args...>
 {
   IMPLEMENT_FUNC_TRAITS_DEDUCER(U, false, false)
 };
 template <class R, class U, class... Args>
-struct function_traits_deducer<R(U::*)(Args...)const>
+struct function_traits_deducer<R(U::*)(Args...)const> : public function_operator<R, Args...>
 {
   IMPLEMENT_FUNC_TRAITS_DEDUCER(U, true, true)
 };
