@@ -65,7 +65,7 @@ private:
   bool m_initialized = false;
   void* m_object = nullptr;
   base_function* m_function = nullptr;
-  typedef void(*Caller)(base_function* function, const arg_traits* traits, void** args);
+  typedef void(*Caller)(base_function* function, void* object, const arg_traits* traits, void** args);
   typedef bool(*ArgChecker)(const type** arg_types);
 
   Caller m_caller = nullptr;
