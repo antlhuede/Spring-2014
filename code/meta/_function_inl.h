@@ -4,10 +4,55 @@ namespace meta
 {
 namespace internal
 {
+
+template <class T> struct caller;
+
 template <class R, class... Args>
+struct caller<R(*)(Args...)>
+{
+  typedef function_holder<R(*)(Args...)> FuncType;
+  template <class... Args>
+  static R call(base_function* function, Args... parameters)
+  {
+    static_cast<FuncType*>(function)->function_ptr(std::forward<Args>(parameters)...);
+  }
+};
+
+template <class R, class U, class... Args>
+struct caller<R(U::*)(Args...)>
+{
+  typedef function_holder<R(U::*)(Args...)> FuncType;
+  template <class... Args>
+  static R call(base_function* function, Args... parameters)
+  {
+    //static_cast<FuncType*>(function)->function_ptr(std::forward<Args>(parameters)...);
+  }
+};
+
+template <class R, class U, class... Args>
+struct caller<R(U::*)(Args...)const>
+{
+  typedef function_holder<R(U::*)(Args...)const> FuncType;
+  template <class... Args>
+  static R call(base_function* function, Args... parameters)
+  {
+    //static_cast<FuncType*>(function)->function_ptr(std::forward<Args>(parameters)...);
+  }
+};
+#undef IMPLEMENT_CALLER
+
+template <class R, class U, bool is_const, class... Args>
 struct function_operator
 {
   typedef std::tuple<Args...> arg_tuple;
+  static const bool is_member_func = (std::is_same<U, nulltype>::value == false);
+  typedef R(*GlobalFuncType)(Args...);
+  typedef R(U::*MemberFuncType)(Args...);
+  typedef R(U::*ConstMemberFuncType)(Args...)const;
+
+  typedef typename std::conditional<is_member_func == false, GlobalFuncType, 
+              typename std::conditional<is_const == false, MemberFuncType, ConstMemberFuncType>::type>::type FuncType;
+  
   template <size_t> struct unwrap;
   template <size_t N> struct unwrap
   {
@@ -54,8 +99,7 @@ struct function_operator
     template <class... ArgsT>
     static R call(base_function* function, const arg_traits* traits, void** args, ArgsT... parameters)
     {
-      typedef function_holder<R(*)(Args...)> FuncType;
-      static_cast<FuncType*>(function)->function_ptr(std::forward<Args>(parameters)...);
+      caller<FuncType>::call(function, std::forward<Args>(parameters)...);
     }
   };
   static void args(arg_traits* args)
@@ -83,17 +127,17 @@ struct function_operator
   };
 
 template <class R, class... Args>
-struct function_traits_deducer<R(*)(Args...)> : public function_operator<R, Args...>
+struct function_traits_deducer<R(*)(Args...)> : public function_operator<R, nulltype, false, Args...>
 {
   IMPLEMENT_FUNC_TRAITS_DEDUCER(nulltype, true, false)
 };
 template <class R, class U, class... Args>
-struct function_traits_deducer<R(U::*)(Args...)> : public function_operator<R, Args...>
+struct function_traits_deducer<R(U::*)(Args...)> : public function_operator<R, U, false, Args...>
 {
   IMPLEMENT_FUNC_TRAITS_DEDUCER(U, false, false)
 };
 template <class R, class U, class... Args>
-struct function_traits_deducer<R(U::*)(Args...)const> : public function_operator<R, Args...>
+struct function_traits_deducer<R(U::*)(Args...)const> : public function_operator<R, U, true, Args...>
 {
   IMPLEMENT_FUNC_TRAITS_DEDUCER(U, true, true)
 };
