@@ -117,8 +117,8 @@ void run_serializer_test(meta::serializer* serializer, const string& file1, cons
   serializer->write(file1);
   serializer->clear();
   
-  meta::variant read_test1;
-  meta::variant read_test2;
+  test_class read_test1;
+  test_class read_test2;
   
   serializer->read(file1);
   serializer->get("test_class1", read_test1);
