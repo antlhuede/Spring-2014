@@ -32,7 +32,7 @@ struct caller<R(U::*)(Args...)const>
   }
 };
 
-template <class U, bool is_const, class R, class... Args>
+template <class T, class U, class R, class... Args>
 struct function_operator
 {
   template <size_t> struct unwrap;
@@ -52,13 +52,7 @@ struct function_operator
   }
 
   typedef std::tuple<Args...> arg_tuple;
-  typedef R(*GlobalFuncType)(Args...);
-  typedef R(U::*MemberFuncType)(Args...);
-  typedef R(U::*ConstMemberFuncType)(Args...)const;
-  static const bool is_member_func = (std::is_same<U, nulltype>::value == false);
-
-  typedef typename std::conditional<is_member_func == false, GlobalFuncType,
-    typename std::conditional<is_const == false, MemberFuncType, ConstMemberFuncType>::type>::type FuncType;
+  typedef T FuncType;
 
   template <size_t N> struct unwrap
   {
@@ -86,16 +80,10 @@ struct function_operator
     {
       const int index = sizeof...(Args)-N;
       typedef typename std::tuple_element<index, arg_tuple>::type ParameterType;
-      if (traits[index].isReference)
-      {
+
         unwrap<N - 1>::call(function, object, traits, args, std::forward<ArgsT>(parameters)...,
           static_cast<ParameterType>(*static_cast<std::remove_reference<ParameterType>::type*>(args[index])));
-      }
-      else
-      {
-        unwrap<N - 1>::call(function, object, traits, args, std::forward<ArgsT>(parameters)...,
-          *static_cast<std::remove_reference<ParameterType>::type*>(args[index]));
-      }
+
     }
   };
   template <> struct unwrap<0>
@@ -110,36 +98,50 @@ struct function_operator
   };
 };
 
-template <class U, bool isConst, class R, class... Args>
-struct base_deducer : public function_operator<U, isConst, R, Args...>
+template <class T, class U, class R, class... Args>
+struct base_deducer : public function_operator<T, U, R, Args...>
 {
   enum {
     num_args = sizeof...(Args),
     has_return_value = (std::is_same<R, void>::value == false),
     is_member_func = (std::is_same<U, nulltype>::value == false),
-    is_const = isConst,
   };
 
+  typedef T func_type;
   typedef U class_type;
   typedef typename std::conditional<has_return_value, R, void_>::type return_type;
 };
 
+template <class T>
+struct function_traits_deducer : function_traits_deducer<decltype(&T::operator())>
+{
+  typedef typename nulltype class_type;
+  typedef typename base_deducer::return_type return_type;
+  typedef typename base_deducer::FuncType function_type;
+  enum { is_lambda = true, is_const = true };
+};
 template <class R, class... Args>
-struct function_traits_deducer<R(*)(Args...)> : public base_deducer<nulltype, false, R, Args...>
+struct function_traits_deducer<R(*)(Args...)> : public base_deducer<R(*)(Args...), nulltype, R, Args...>
 {
   typedef typename base_deducer::class_type class_type;
   typedef typename base_deducer::return_type return_type;
+  typedef typename base_deducer::FuncType function_type;
+  enum { is_lambda = false, is_const = false };
 };
 template <class U, class R, class... Args>
-struct function_traits_deducer<R(U::*)(Args...)> : public base_deducer<U, false, R, Args...>
+struct function_traits_deducer<R(U::*)(Args...)> : public base_deducer<R(U::*)(Args...), U, R, Args...>
 {
   typedef typename base_deducer::class_type class_type;
   typedef typename base_deducer::return_type return_type;
+  typedef typename base_deducer::FuncType function_type;
+  enum { is_lambda = false, is_const = false };
 };
 template <class U, class R, class... Args>
-struct function_traits_deducer<R(U::*)(Args...)const> : public base_deducer<U, true, R, Args...>
+struct function_traits_deducer<R(U::*)(Args...)const> : public base_deducer<R(U::*)(Args...)const, U, R, Args...>
 {
   typedef typename base_deducer::class_type class_type;
   typedef typename base_deducer::return_type return_type;
+  typedef typename base_deducer::FuncType function_type;
+  enum { is_lambda = false, is_const = true };
 };
 }}

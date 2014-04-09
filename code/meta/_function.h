@@ -41,7 +41,7 @@ public:
   function() = default;
   ~function();
   template <class T> function(T func, void* obj = nullptr);
-
+  
   const function_traits& traits() const { return m_traits; }
 
   template <class... Args>
@@ -61,8 +61,8 @@ private:
 
 namespace internal {
 template <class T> struct caller;
-template <class U, bool is_const, class R, class... Args> struct function_operator;
-template <class U, bool is_const, class R, class... Args> struct base_deducer;
-template <class R, class... Args> struct function_traits_deducer;
+template <class T, class U, class R, class... Args> struct function_operator;
+template <class T, class U, class R, class... Args> struct base_deducer;
+template <class T> struct function_traits_deducer;
 }
 }

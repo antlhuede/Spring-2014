@@ -151,8 +151,53 @@ void func_test5(int a, float b, double c, const string& d)
   std::cout << a << " " << b << " " << c << " " << d << std::endl;
 }
 
+struct base_function {};
+template <class T> 
+struct func_holder : public base_function
+{
+  func_holder(T func_) : func(func_) {}
+  T func;
+};
+
+template <class U, class T>
+struct caller
+{
+  typedef func_holder<T> func_type;
+  static void call(base_function* func, void* obj)
+  {
+    (static_cast<U*>(obj)->*(static_cast<func_type*>(func)->func))();
+  }
+};
+
+template <class T>
+struct store_lambda
+{
+  typedef T obj_type;
+
+  store_lambda(T& lambda)
+    : obj(&lambda)
+    , func(&T::operator())
+    , call(&caller<obj_type, decltype(&T::operator())>::call)
+  {
+
+  }
+  void operator()()
+  {
+    call(&func, obj);
+  }
+  func_holder<decltype(&T::operator())> func;
+  void* obj;
+  typedef void(*Caller)(base_function*, void*);
+  Caller call;
+};
+
 void run_basic_test_code()
 {
+  auto lambda_func = [](const string& name)->void {
+    std::cout << "IN LAMBDA: " << name <<  std::endl;
+  };
+  //store_lambda<decltype(lambda_func)> store(lambda_func);
+  //store();
   make_test_memory();
 
   meta::variant variant;
@@ -214,6 +259,9 @@ void run_basic_test_code()
   meta::function func3(func_test3);
   meta::function func4(func_test4);
   meta::function func5(func_test5);
+  
+  meta::function funcl(lambda_func);
+  funcl(string("hello world"));
 
   meta::function mfunc1(&test_funcs_class::func_test1, &tfc);
   meta::function mfunc2(&test_funcs_class::func_test2, &tfc);
