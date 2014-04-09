@@ -4,7 +4,6 @@ namespace meta
 {
 namespace internal
 {
-
 template <class T> struct caller;
 
 template <class R, class... Args>
@@ -25,7 +24,7 @@ struct caller<R(U::*)(Args...)>
   template <class... Args>
   static R call(base_function* function, void* object, Args... parameters)
   {
-    //static_cast<FuncType*>(function)->function_ptr(std::forward<Args>(parameters)...);
+    (static_cast<U*>(object)->*(static_cast<FuncType*>(function)->function_ptr))(std::forward<Args>(parameters)...);
   }
 };
 
@@ -36,7 +35,7 @@ struct caller<R(U::*)(Args...)const>
   template <class... Args>
   static R call(base_function* function, void* object, Args... parameters)
   {
-    //static_cast<FuncType*>(function)->function_ptr(std::forward<Args>(parameters)...);
+    (static_cast<const U*>(object)->*(static_cast<FuncType*>(function)->function_ptr))(std::forward<Args>(parameters)...);
   }
 };
 
@@ -50,7 +49,7 @@ struct function_operator
   typedef R(U::*ConstMemberFuncType)(Args...)const;
 
   typedef typename std::conditional<is_member_func == false, GlobalFuncType, 
-              typename std::conditional<is_const == false, MemberFuncType, ConstMemberFuncType>::type>::type FuncType;
+            typename std::conditional<is_const == false, MemberFuncType, ConstMemberFuncType>::type>::type FuncType;
   
   template <size_t> struct unwrap;
   template <size_t N> struct unwrap
@@ -156,8 +155,7 @@ struct function_traits_deducer<R(U::*)(Args...)const> : public function_operator
 
 template <class T>
 function_traits::function_traits(T func) IMPLEMENT_FUNCTION_TRAITS_CONSTRUCTOR(T)
-template <class T>
-function_traits::function_traits(decl<T>) IMPLEMENT_FUNCTION_TRAITS_CONSTRUCTOR(T)
+
 #undef IMPLEMENT_FUNCTION_TRAITS_CONSTRUCTOR
 
 template <class... Args>

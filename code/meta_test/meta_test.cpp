@@ -137,7 +137,9 @@ public:
   void func_test2(int a) {}
   void func_test3(int a, float b) {}
   void func_test4(int a, float b, double c) {}
-  void func_test5(int a, float b, double c, string d) {}
+  void func_test5(int a, float b, double c, const string& d) const {
+    std::cout << a << " " << b << " " << c << " " << d << std::endl;
+  }
 };
 DECLARE_META_OBJECT(test_funcs_class) END_META_OBJECT()
 void func_test1() {}
@@ -243,6 +245,11 @@ void run_basic_test_code()
   func3(3, 3.5f);
   func4(3, 3.5f, 123.0);
   func5(3, 3.5f, 123.0, hello_world);
+  mfunc1();
+  mfunc2(3);
+  mfunc3(3, 3.5f);
+  mfunc4(3, 3.5f, 123.0);
+  mfunc5(3, 3.5f, 123.0, hello_world);
   delete_test_memory();
 }
 

@@ -12,19 +12,19 @@ template <class T> void PlacementNew(void* memory)
 }
 template <class T> void CopyMemory(void* dest, const void* source)
 {
-  new (dest) T(*reinterpret_cast<const T*>(source));
+  new (dest)T(*static_cast<const T*>(source));
 }
 template <class T> void CallDestructor(void* object)
 {
-  reinterpret_cast<T*>(object)->~T();
+  static_cast<T*>(object)->~T();
 }
 template <class T> void DeletePointer(void* object)
 {
-  delete reinterpret_cast<T*>(object);
+  delete static_cast<T*>(object);
 }
 template <class T> void* CloneObject(const void* object)
 {
-  return new T(*reinterpret_cast<const T*>(object));
+  return new T(*static_cast<const T*>(object));
 }
 template <class T> void* AllocMemory()
 {
@@ -32,14 +32,14 @@ template <class T> void* AllocMemory()
 }
 template <class T> void DeleteMemory(void* memory)
 {
-  delete reinterpret_cast<T*>(memory);
+  delete static_cast<T*>(memory);
 }
 template <class T> void AssignMemory(void* dest, const void* source)
 {
-  *reinterpret_cast<T*>(dest) = *reinterpret_cast<const T*>(source);
+  *static_cast<T*>(dest) = *static_cast<const T*>(source);
 }
 template <class T> T& ConvertMemory(void* memory)
 {
-  return *reinterpret_cast<T*>(memory);
+  return *static_cast<T*>(memory);
 }
 }
