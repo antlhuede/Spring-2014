@@ -2,13 +2,8 @@
 
 namespace meta {
 
-struct base_function { virtual ~base_function() {} };
-
-template <class T>
-struct function_holder : public base_function {
-  function_holder(T function_) : function_ptr(function_) {}
-  T function_ptr;
-};
+struct base_function;
+template <class T> struct function_holder;
 
 struct arg_traits
 {
@@ -40,17 +35,11 @@ struct function_traits
   arg_traits args[MAX_ARGS];
 };
 
-namespace internal {
-template <class U, bool is_const, class R, class... Args>
-struct function_operator;
-template <class T> struct function_traits_deducer;
-}
-
 class function
 {
 public:
   function() = default;
-  ~function() { if (m_function) delete m_function; }
+  ~function();
   template <class T> function(T func, void* obj = nullptr);
 
   const function_traits& traits() const { return m_traits; }
@@ -69,4 +58,11 @@ private:
   Caller m_caller = nullptr;
   ArgChecker m_checker = nullptr;
 };
+
+namespace internal {
+template <class T> struct caller;
+template <class U, bool is_const, class R, class... Args> struct function_operator;
+template <class U, bool is_const, class R, class... Args> struct base_deducer;
+template <class R, class... Args> struct function_traits_deducer;
+}
 }
