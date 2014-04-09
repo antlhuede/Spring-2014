@@ -41,7 +41,7 @@ struct function_traits
 };
 
 namespace internal {
-template <class R, class U, bool is_const, class... Args>
+template <class U, bool is_const, class R, class... Args>
 struct function_operator;
 template <class T> struct function_traits_deducer;
 }

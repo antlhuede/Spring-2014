@@ -12,7 +12,7 @@ template <class T> void PlacementNew(void* memory)
 }
 template <class T> void CopyMemory(void* dest, const void* source)
 {
-  new (dest)T(*static_cast<const T*>(source));
+  new (dest) T(*static_cast<const T*>(source));
 }
 template <class T> void CallDestructor(void* object)
 {

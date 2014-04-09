@@ -39,14 +39,14 @@ struct caller<R(U::*)(Args...)const>
   }
 };
 
-template <class R, class U, bool is_const, class... Args>
+template <class U, bool is_const, class R, class... Args>
 struct function_operator
 {
   typedef std::tuple<Args...> arg_tuple;
-  static const bool is_member_func = (std::is_same<U, nulltype>::value == false);
   typedef R(*GlobalFuncType)(Args...);
   typedef R(U::*MemberFuncType)(Args...);
   typedef R(U::*ConstMemberFuncType)(Args...)const;
+  static const bool is_member_func = (std::is_same<U, nulltype>::value == false);
 
   typedef typename std::conditional<is_member_func == false, GlobalFuncType, 
             typename std::conditional<is_const == false, MemberFuncType, ConstMemberFuncType>::type>::type FuncType;
@@ -114,49 +114,53 @@ struct function_operator
   }
 };
 
-#define IMPLEMENT_FUNC_TRAITS_DEDUCER(CLASS_TYPE, IS_MEM_FUNC, IS_CONST)                        \
-  typedef CLASS_TYPE class_type;                                                                \
-  typedef typename std::conditional<std::is_same<R, void>::value, void_, R>::type return_type;  \
-  enum {                                                                                        \
-    num_args = sizeof...(Args),                                                                 \
-    has_return_value = (std::is_same<R, void>::value == false),                                 \
-    is_member_func = IS_MEM_FUNC,                                                               \
-    is_const = IS_CONST,                                                                        \
+template <class U, bool isConst, class R, class... Args>
+struct base_deducer : public function_operator<U, isConst, R, Args...>
+{
+  enum {
+    num_args = sizeof...(Args), 
+    has_return_value = (std::is_same<R, void>::value == false), 
+    is_member_func = (std::is_same<U, nulltype>::value == false),
+    is_const = isConst,
   };
 
-template <class R, class... Args>
-struct function_traits_deducer<R(*)(Args...)> : public function_operator<R, nulltype, false, Args...>
-{
-  IMPLEMENT_FUNC_TRAITS_DEDUCER(nulltype, true, false)
+  typedef U class_type;
+  typedef typename std::conditional<has_return_value, R, void_>::type return_type;
 };
-template <class R, class U, class... Args>
-struct function_traits_deducer<R(U::*)(Args...)> : public function_operator<R, U, false, Args...>
-{
-  IMPLEMENT_FUNC_TRAITS_DEDUCER(U, false, false)
-};
-template <class R, class U, class... Args>
-struct function_traits_deducer<R(U::*)(Args...)const> : public function_operator<R, U, true, Args...>
-{
-  IMPLEMENT_FUNC_TRAITS_DEDUCER(U, true, true)
-};
-#undef IMPLEMENT_FUNC_TRAITS_DEDUCER
-}
 
-#define IMPLEMENT_FUNCTION_TRAITS_CONSTRUCTOR(TYPE)                             \
-  : isMemberFunction(internal::function_traits_deducer<TYPE>::is_member_func)   \
-  , isConst(internal::function_traits_deducer<TYPE>::is_const)                  \
-  , hasReturnValue(internal::function_traits_deducer<TYPE>::has_return_value)   \
-  , classType(&typeof<internal::function_traits_deducer<TYPE>::class_type>())   \
-  , returnType(&typeof<internal::function_traits_deducer<TYPE>::return_type>()) \
-  , numArguments(internal::function_traits_deducer<TYPE>::num_args)             \
-{                                                                               \
-  internal::function_traits_deducer<TYPE>::deduce_args(args);                   \
+template <class R, class... Args>
+struct function_traits_deducer<R(*)(Args...)> : public base_deducer<nulltype, false, R, Args...>
+{
+  typedef typename base_deducer::class_type class_type;
+  typedef typename base_deducer::return_type return_type;
+};
+template <class R, class U, class... Args>
+struct function_traits_deducer<R(U::*)(Args...)> : public base_deducer<U, false, R, Args...>
+{
+  typedef typename base_deducer::class_type class_type;
+  typedef typename base_deducer::return_type return_type;
+};
+template <class R, class U, class... Args>
+struct function_traits_deducer<R(U::*)(Args...)const> : public base_deducer<U, true, R, Args...>
+{
+  typedef typename base_deducer::class_type class_type;
+  typedef typename base_deducer::return_type return_type;
+};
 }
 
 template <class T>
-function_traits::function_traits(T func) IMPLEMENT_FUNCTION_TRAITS_CONSTRUCTOR(T)
+function_traits::function_traits(T func)
+  : isMemberFunction(internal::function_traits_deducer<T>::is_member_func)
+  , isConst(internal::function_traits_deducer<T>::is_const)
+  , hasReturnValue(internal::function_traits_deducer<T>::has_return_value)
+  , classType(&typeof<internal::function_traits_deducer<T>::class_type>())
+  , returnType(&typeof<internal::function_traits_deducer<T>::return_type>())
+  , numArguments(internal::function_traits_deducer<T>::num_args)
+{
+  internal::function_traits_deducer<T>::deduce_args(args);
+}
 
-#undef IMPLEMENT_FUNCTION_TRAITS_CONSTRUCTOR
+
 
 template <class... Args>
 void function::operator()(Args... args)
