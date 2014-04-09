@@ -9,7 +9,7 @@ function::function(T func, void* obj)
   , m_caller(&internal::function_traits_deducer<T>::call)
   , m_checker(&internal::function_traits_deducer<T>::check_args)
 {
-  m_function = internal::func_creator<T>::create(func, &m_object);
+  m_function = internal::function_creator<T>::create(func, &m_object);
 }
 
 inline function::~function() { if (m_function) delete m_function; }

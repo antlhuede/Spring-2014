@@ -68,8 +68,9 @@ void make_test_memory()
 
   xml_serializer = new meta::XmlSerializer;
   json_serializer = new meta::JSonSerializer;
-  auto lambda = [](int a, float b, double c, const string& d) { std::cout << a << " " << b << " " << c << " " << d << std::endl; };
-
+  auto lambda = [](int a, float b, double c, const string& d) {
+    std::cout << a << " " << b << " " << c << " " << d << std::endl;
+  };
   pFunc = new meta::function(lambda);
 }
 void delete_test_memory()
@@ -164,8 +165,10 @@ void run_basic_test_code()
   //store_lambda<decltype(lambda_func)> store(lambda_func);
   //store();
   make_test_memory();
+  static const int NUM_ITERATIONS = 1;
+  for (int i = 0; i < NUM_ITERATIONS; ++i)
+    (*pFunc)(i, 3.5f, 123.0, string("fuck you"));
 
-  (*pFunc)(3, 3.5f, 123.0, string("fuck you"));
   meta::variant variant;
   variant = 5;
   assert(variant.is_type<int>());

@@ -5,7 +5,6 @@ template <class R, class... Args>
 struct caller<R(*)(Args...)>
 {
   typedef function_holder<R(*)(Args...)> FuncType;
-  template <class... Args>
   static R call(base_function* function, void* object, Args... parameters)
   {
     static_cast<FuncType*>(function)->function_ptr(std::forward<Args>(parameters)...);
@@ -15,7 +14,6 @@ template <class R, class U, class... Args>
 struct caller<R(U::*)(Args...)>
 {
   typedef function_holder<R(U::*)(Args...)> FuncType;
-  template <class... Args>
   static R call(base_function* function, void* object, Args... parameters)
   {
     (static_cast<U*>(object)->*(static_cast<FuncType*>(function)->function_ptr))(std::forward<Args>(parameters)...);
@@ -25,7 +23,6 @@ template <class R, class U, class... Args>
 struct caller<R(U::*)(Args...)const>
 {
   typedef function_holder<R(U::*)(Args...)const> FuncType;
-  template <class... Args>
   static R call(base_function* function, void* object, Args... parameters)
   {
     (static_cast<const U*>(object)->*(static_cast<FuncType*>(function)->function_ptr))(std::forward<Args>(parameters)...);
@@ -78,12 +75,9 @@ struct function_operator
     template <class... ArgsT>
     static R call(base_function* function, void* object, const arg_traits* traits, void** args, ArgsT... parameters)
     {
-      const int index = sizeof...(Args)-N;
-      typedef typename std::tuple_element<index, arg_tuple>::type ParameterType;
-
-        unwrap<N - 1>::call(function, object, traits, args, std::forward<ArgsT>(parameters)...,
-          static_cast<ParameterType>(*static_cast<std::remove_reference<ParameterType>::type*>(args[index])));
-
+      typedef typename std::tuple_element<sizeof...(Args)-N, arg_tuple>::type ParameterType;
+      unwrap<N - 1>::call(function, object, traits, args, std::forward<ArgsT>(parameters)...,
+        static_cast<ParameterType>(*static_cast<std::remove_reference<ParameterType>::type*>(args[sizeof...(Args)-N])));
     }
   };
   template <> struct unwrap<0>
@@ -161,19 +155,18 @@ template <class T> struct base_creator
     return new function_holder<T>(func);
   }
 };
-template <class T> struct func_creator;
+template <class T> struct function_creator;
 
 //creator for functors / lambda objects
-template <class T> struct func_creator
+template <class T> struct function_creator
 {
-  static base_function* create(T& func, void** pObj)
+  static base_function* create(T func, void** pObj)
   {
     *pObj = &func;
     return new function_holder<decltype(&T::operator())>(&T::operator());
   }
 };
-template <class R, class... Args> struct func_creator<R(*)(Args...)> : public base_creator<R(*)(Args...)>{};
-template <class U, class R, class... Args> struct func_creator<R(U::*)(Args...)> : public base_creator<R(U::*)(Args...)>{};
-template <class U, class R, class... Args> struct func_creator<R(U::*)(Args...)const> : public base_creator<R(U::*)(Args...)const>{};
-
+template <class R, class... Args> struct function_creator<R(*)(Args...)> : public base_creator<R(*)(Args...)>{};
+template <class U, class R, class... Args> struct function_creator<R(U::*)(Args...)> : public base_creator<R(U::*)(Args...)>{};
+template <class U, class R, class... Args> struct function_creator<R(U::*)(Args...)const> : public base_creator<R(U::*)(Args...)const>{};
 }}
