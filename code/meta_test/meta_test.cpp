@@ -57,6 +57,7 @@ test_class* test_class1 = nullptr;
 test_class* test_class2 = nullptr;
 meta::XmlSerializer* xml_serializer = nullptr;
 meta::JSonSerializer* json_serializer = nullptr;
+meta::function* pFunc = nullptr;
 
 void make_test_memory()
 {
@@ -67,9 +68,13 @@ void make_test_memory()
 
   xml_serializer = new meta::XmlSerializer;
   json_serializer = new meta::JSonSerializer;
+  auto lambda = [](int a, float b, double c, const string& d) { std::cout << a << " " << b << " " << c << " " << d << std::endl; };
+
+  pFunc = new meta::function(lambda);
 }
 void delete_test_memory()
 {
+  delete pFunc;
   delete json_serializer;
   delete xml_serializer;
 
@@ -151,46 +156,6 @@ void func_test5(int a, float b, double c, const string& d)
   std::cout << a << " " << b << " " << c << " " << d << std::endl;
 }
 
-struct base_function {};
-template <class T> 
-struct func_holder : public base_function
-{
-  func_holder(T func_) : func(func_) {}
-  T func;
-};
-
-template <class U, class T>
-struct caller
-{
-  typedef func_holder<T> func_type;
-  static void call(base_function* func, void* obj)
-  {
-    (static_cast<U*>(obj)->*(static_cast<func_type*>(func)->func))();
-  }
-};
-
-template <class T>
-struct store_lambda
-{
-  typedef T obj_type;
-
-  store_lambda(T& lambda)
-    : obj(&lambda)
-    , func(&T::operator())
-    , call(&caller<obj_type, decltype(&T::operator())>::call)
-  {
-
-  }
-  void operator()()
-  {
-    call(&func, obj);
-  }
-  func_holder<decltype(&T::operator())> func;
-  void* obj;
-  typedef void(*Caller)(base_function*, void*);
-  Caller call;
-};
-
 void run_basic_test_code()
 {
   auto lambda_func = [](const string& name)->void {
@@ -200,6 +165,7 @@ void run_basic_test_code()
   //store();
   make_test_memory();
 
+  (*pFunc)(3, 3.5f, 123.0, string("fuck you"));
   meta::variant variant;
   variant = 5;
   assert(variant.is_type<int>());

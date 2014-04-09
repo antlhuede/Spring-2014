@@ -2,8 +2,10 @@
 
 namespace meta {
 
+namespace internal {
 struct base_function;
 template <class T> struct function_holder;
+}
 
 struct arg_traits
 {
@@ -48,6 +50,7 @@ public:
   void operator()(Args... args);
 
 private:
+  typedef internal::base_function base_function;
   function_traits m_traits;
   bool m_initialized = false;
   void* m_object = nullptr;
@@ -61,7 +64,7 @@ private:
 
 namespace internal {
 template <class T> struct caller;
-template <class T, class U, class R, class... Args> struct function_operator;
+template <class T, class R, class... Args> struct function_operator;
 template <class T, class U, class R, class... Args> struct base_deducer;
 template <class T> struct function_traits_deducer;
 }
