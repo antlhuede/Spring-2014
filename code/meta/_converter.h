@@ -5,17 +5,17 @@ namespace meta
 
 struct converter
 {
-  static int toInt(const type& t, const void* obj);
-  static bool toBool(const type& t, const void* obj);
-  static float toFloat(const type& t, const void* obj);
-  static double toDouble(const type& t, const void* obj);
-  static string toString(const type& t, const void* obj);
+  static int toInt(const type* t, const void* obj);
+  static bool toBool(const type* t, const void* obj);
+  static float toFloat(const type* t, const void* obj);
+  static double toDouble(const type* t, const void* obj);
+  static string toString(const type* t, const void* obj);
 
   template <typename T>
-  static T& convert(const type& t, const void* obj);
+  static T& convert(const type* t, const void* obj);
 
   template <typename T>
-  static bool safe_convert(const type& t, const void* obj, T* result);
+  static bool safe_convert(const type* t, const void* obj, T* result);
 };
 
 template <class T> const string to_string_basic_types(const void* var);

@@ -242,7 +242,7 @@ void run_basic_test_code()
   assert(variant.is_type<string>());
   std::cout << "variant is string:" << variant.get_as<string>() << "\n";
   
-  meta::type type = meta::typeof<test_class>();
+  const meta::type* type = meta::typeof<test_class>();
   
   
   test_class tc(test_int1, *test_string1, test_float1, test_double1, test_bool1);
@@ -252,13 +252,13 @@ void run_basic_test_code()
   run_serializer_test(json_serializer, "test.json", "test2.json");
   
   Json::Value root;
-  const vector<const meta::field>& fields = type.fields();
+  const vector<const meta::field>& fields = type->fields();
   
   for (size_t i = 0; i < fields.size(); ++i)
   {
     Json::Value value;
     value[fields[i].name()] = fields[i].to_string(&tc);
-    root[type.to_string(&tc)].append(value);
+    root[type->to_string(&tc)].append(value);
     //std::cout << fields[i]->type().name() << " " << fields[i]->name() << " " << fields[i]->offset() << std::endl;
   }
   Json::StyledWriter writer;
@@ -268,11 +268,11 @@ void run_basic_test_code()
   
   float testint = 12.5;
   string teststr = "\nteststr";
-  meta::type test = meta::typeof(testint);
-  test.write(std::cout, &testint);
+  const meta::type* test = meta::typeof(testint);
+  test->write(std::cout, &testint);
   test = meta::typeof(teststr);
   
-  std::cout << test.name() << " " << test.size() << "\n\n";
+  std::cout << test->name() << " " << test->size() << "\n\n";
 
   test_funcs_class tfc;
 

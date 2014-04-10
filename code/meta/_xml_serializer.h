@@ -15,7 +15,7 @@ public:
 
 private:
   shared_ptr<xml::XMLDocument> build_xml_document() const;
-  xml::XMLElement* construct_xml_element(xml::XMLDocument* doc, const string& name, const type& type, const void* obj) const;
-  void construct_object(const xml::XMLElement* element, const type& type, void* obj) const;
+  xml::XMLElement* construct_xml_element(xml::XMLDocument* doc, const string& name, const type* type, const void* obj) const;
+  void construct_object(const xml::XMLElement* element, const type* type, void* obj) const;
 };
 }

@@ -16,6 +16,6 @@
   void EXX(InitializeMeta, __LINE__)(); \
   ::meta::internal::type_initializer EXX(g_typeInitializer, __LINE__)(&EXX(CreateMeta, __LINE__), &EXX(DeleteMeta, __LINE__), &EXX(InitializeMeta, __LINE__)); \
   void EXX(InitializeMeta, __LINE__)() {  \
-  const_cast<::meta::type&>(::meta::typeof<class>())
+  const_cast<::meta::type&>(*::meta::typeof<class>())
 
 #define END_META_OBJECT() ;}}

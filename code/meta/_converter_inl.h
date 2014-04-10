@@ -3,15 +3,15 @@
 namespace meta {
 
 template <typename T>
-static T& converter::convert(const type& t, const void* obj)
+static T& converter::convert(const type* t, const void* obj)
 {
   return *((T*)obj);
 }
 
 template <typename T>
-static bool converter::safe_convert(const type& t, const void* obj, T* result)
+static bool converter::safe_convert(const type* t, const void* obj, T* result)
 {
-  if (t != typeof<T>())
+  if (*t != *typeof<T>())
     return false;
 
   *result = *((T*)obj);
@@ -40,7 +40,7 @@ void write_basic_types(ostream& stream, void* memory)
 template <class T>
 const string to_string_objects(const void* memory)
 {
-  return typeof<T>().name();
+  return typeof<T>()->name();
   /*const type& obj_type = typeof<T>();
   const vector<const field*>& field_list = obj_type.fields();
   ostringstream buff;
@@ -56,13 +56,13 @@ const string to_string_objects(const void* memory)
 }
 
 #define ITERATE_OBJECTS(CALL_FUNC)                      \
-const type& obj_type = typeof<T>();                   \
-const vector<const field>& field_list = obj_type.fields(); \
+const type* obj_type = typeof<T>();                   \
+const vector<const field>& field_list = obj_type->fields(); \
 for (size_t i = 0; i < field_list.size(); ++i)        \
 {                                                     \
 const field& field = field_list[i];                \
-const type& field_type = field.type();              \
-field_type.CALL_FUNC(stream, field.member_ptr(memory));         \
+const type* field_type = field.type();              \
+field_type->CALL_FUNC(stream, field.member_ptr(memory));         \
 }
 
 template <class T>
@@ -77,23 +77,23 @@ void write_objects(ostream& stream, void* memory)
 }
 #undef ITERATE_OBJECTS
 
-inline int converter::toInt(const type& t, const void* obj)
+inline int converter::toInt(const type* t, const void* obj)
 {
   return convert<int>(t, obj);
 }
-inline bool converter::toBool(const type& t, const void* obj)
+inline bool converter::toBool(const type* t, const void* obj)
 {
   return convert<bool>(t, obj);
 }
-inline float converter::toFloat(const type& t, const void* obj)
+inline float converter::toFloat(const type* t, const void* obj)
 {
   return convert<float>(t, obj);
 }
-inline double converter::toDouble(const type& t, const void* obj)
+inline double converter::toDouble(const type* t, const void* obj)
 {
   return convert<double>(t, obj);
 }
-inline string converter::toString(const type& t, const void* obj)
+inline string converter::toString(const type* t, const void* obj)
 {
   return convert<string>(t, obj);
 }

@@ -7,6 +7,7 @@ struct base_function;
 template <class T> struct function_holder;
 }
 
+//describes an argument to a function
 struct arg_traits
 {
   bool isReference = false;
@@ -15,6 +16,7 @@ struct arg_traits
   const type* type = nullptr;
 };
 
+//stores information about function pointers
 struct function_traits
 {
   static const unsigned MAX_ARGS = 10;
@@ -39,6 +41,7 @@ struct function_traits
   arg_traits args[MAX_ARGS];
 };
 
+//generic function object able to store and call pointers to any function
 class function
 {
 public:

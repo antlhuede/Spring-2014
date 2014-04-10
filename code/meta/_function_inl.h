@@ -6,8 +6,8 @@ namespace meta {
 template <class T> 
 function::function(T func, void* obj)
   : m_traits(func), m_initialized(true), m_object(obj)
-  , m_caller(&internal::function_traits_deducer<T>::call)
-  , m_checker(&internal::function_traits_deducer<T>::check_args)
+  , m_caller(&internal::function_traits_deducer<T>::Call)
+  , m_checker(&internal::function_traits_deducer<T>::CheckArgs)
 {
   m_function = internal::function_creator<T>::create(func, &m_object);
 }
@@ -42,7 +42,7 @@ void function::operator()(Args&&... args)
   assert(m_traits.hasReturnValue == false);
   const int size = sizeof...(args)+1;
   void* args_ptr[size] = { &args... };
-  const type* types_ptr[size] = { &typeof(args)... };
+  const type* types_ptr[size] = { typeof(args)... };
   assert(m_checker && m_checker(types_ptr));
   m_caller(m_function, m_object, m_traits.args, args_ptr);
 }
@@ -53,11 +53,11 @@ function_traits::function_traits(T func)
   , isConst(internal::function_traits_deducer<T>::is_const)
   , hasReturnValue(internal::function_traits_deducer<T>::has_return_value)
   , isLambda(internal::function_traits_deducer<T>::is_lambda)
-  , classType(&typeof<internal::function_traits_deducer<T>::class_type>())
-  , returnType(&typeof<internal::function_traits_deducer<T>::return_type>())
+  , classType(typeof<internal::function_traits_deducer<T>::class_type>())
+  , returnType(typeof<internal::function_traits_deducer<T>::return_type>())
   , numArguments(internal::function_traits_deducer<T>::num_args)
 {
-  internal::function_traits_deducer<T>::deduce_args(args);
+  internal::function_traits_deducer<T>::DeduceArgs(args);
 }
 inline bool function_traits::operator==(const function_traits& rhs) const
 {

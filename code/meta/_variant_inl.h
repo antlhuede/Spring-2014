@@ -1,7 +1,7 @@
 #pragma once
 
 namespace meta {
-inline variant::variant() : m_type(&typeof<nulltype>()){}
+inline variant::variant() : m_type(typeof<nulltype>()){}
 inline variant::variant(variant&& other)
 {
   m_type = other.m_type;
@@ -14,7 +14,7 @@ inline variant::variant(variant&& other)
   else
   {
     m_data = other.m_data;
-    other.m_type = &typeof<nulltype>();
+    other.m_type = typeof<nulltype>();
     other.m_data = nullptr;
   }
 }
@@ -27,7 +27,7 @@ inline variant::variant(const variant& obj)
 {
   construct(obj.type(), obj.data());
 }
-inline variant::variant(const meta::type& type, const void* obj)
+inline variant::variant(const meta::type* type, const void* obj)
 {
   construct(type, obj);
 }
@@ -58,7 +58,7 @@ inline void variant::destroy()
 
   m_data = nullptr;
 
-  m_type = &typeof<nulltype>();
+  m_type = typeof<nulltype>();
 }
 
 inline variant& variant::operator=(const variant& rhs)
@@ -71,35 +71,36 @@ inline variant& variant::operator=(const variant& rhs)
 
   return *this;
 }
-inline void variant::construct(const meta::type& type, const void* memory)
+inline void variant::construct(const meta::type* type, const void* memory)
 {
-  m_type = &type;
+  m_type = type;
   
   //conditionals:
   //if type can fit in array, assign to array pointer and appropriately construct memory
   //otherwise, appropriately either new up or clone a pointer to the object
-  if (type.size() <= SMALL_OBJECT_SIZE)
+  if (type->size() <= SMALL_OBJECT_SIZE)
   {
     m_data = m_array;
 
     if (memory == nullptr)
-      type.construct(m_data);
+      type->construct(m_data);
     else
-      type.copy(m_data, memory);
+      type->copy(m_data, memory);
   }
   else if (memory == nullptr)
   {
-    m_data = type.allocate();
+    m_data = type->allocate();
   }
   else
   {
-    m_data = type.clone(memory);
+    m_data = type->clone(memory);
   }
 }
 template <class T>
 bool variant::is_type() const
 {
-  return typeof<T>() == *m_type;
+  assert(m_type);
+  return *typeof<T>() == *m_type;
 }
 template <class T>
 bool variant::is_same_as(const T& obj) const
@@ -114,12 +115,13 @@ const T& variant::get_as() const
 template <class T>
 T& variant::get_as()
 {
-  return converter::convert<T>(*m_type, m_data);
+  return converter::convert<T>(m_type, m_data);
 }
 
-inline bool variant::can_convert(const meta::type& type) const
+inline bool variant::can_convert(const meta::type* type) const
 {
-  return *m_type == type;
+  assert(m_type && type);
+  return *m_type == *type;
 }
 inline const string variant::to_string() const
 {
@@ -131,7 +133,7 @@ void variant::take_ownership(T* pData)
 {
   destroy();
 
-  m_type = &typeof<T>();
+  m_type = typeof<T>();
   m_data = pData;
 }
 inline void variant::take_ownership(variant_ref& data)
@@ -141,9 +143,9 @@ inline void variant::take_ownership(variant_ref& data)
 
 template <class T> variant_ref::variant_ref(const T& obj)
   : m_data(&const_cast<T&>(obj))
-  , m_type(&typeof<T>()) {}
+  , m_type(typeof<T>()) {}
 
-inline variant_ref::variant_ref() : m_data(nullptr), m_type(&typeof<nulltype>()) {}
+inline variant_ref::variant_ref() : m_data(nullptr), m_type(typeof<nulltype>()) {}
 inline variant_ref::variant_ref(const variant& other) : m_data(other.m_data), m_type(other.m_type) {}
 inline variant_ref::variant_ref(const variant_ref& other) : m_data(other.m_data), m_type(other.m_type) {}
 inline variant_ref::variant_ref(variant_ref&& other) : m_data(other.m_data), m_type(other.m_type) {}

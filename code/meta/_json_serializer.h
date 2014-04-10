@@ -14,7 +14,7 @@ public:
 
 private:
   Json::Value build_json_tree() const;
-  Json::Value construct_json_value(const type& type, const void* obj) const;
-  void construct_object(const Json::Value& value, const type& type, void* obj) const;
+  Json::Value construct_json_value(const type* type, const void* obj) const;
+  void construct_object(const Json::Value& value, const type* type, void* obj) const;
 };
 }

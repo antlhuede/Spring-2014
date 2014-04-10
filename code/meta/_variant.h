@@ -14,7 +14,7 @@ public:
   variant(const char_t* str);
   template <class T> 
   variant(const T& obj);
-  explicit variant(const type& type, const void* obj = nullptr);
+  explicit variant(const type* type, const void* obj = nullptr);
 
   ~variant();
 
@@ -25,7 +25,7 @@ public:
   template <class T> const T& get_as() const;
   template <class T> T& get_as(); 
 
-  bool can_convert(const type& to_type) const;
+  bool can_convert(const type* to_type) const;
 
   template <class T>
   void take_ownership(T* pData);
@@ -35,7 +35,7 @@ public:
   const string to_string() const;
 
 private:
-  void construct(const type& type, const void* memory);
+  void construct(const type* type, const void* memory);
   void destroy();
   static const unsigned SMALL_OBJECT_SIZE = 16;
   char m_array[SMALL_OBJECT_SIZE];
@@ -43,7 +43,7 @@ private:
   const type* m_type = nullptr;
 
 public:
-  const type& type() const { return *m_type; }
+  const type* type() const { return m_type; }
   const void* data() const { return m_data; }
   void* data() { return m_data; }
 
@@ -70,7 +70,7 @@ public:
   template <class T> T& get_as();
 
   template <class T> bool can_convert() const;
-  bool can_convert(const type& to_type) const;
+  bool can_convert(const type* to_type) const;
 
 private:
   void* m_data = nullptr;
@@ -79,6 +79,6 @@ private:
 public:
   const void* data() const { return m_data; }
   void* data() { return m_data; }
-  const meta::type& type() const { return *m_type; }
+  const meta::type* type() const { return m_type; }
 };
 }
