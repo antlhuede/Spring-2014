@@ -25,10 +25,12 @@ struct function_traits
   function_traits(T func);
 
   bool operator==(const function_traits& rhs) const;
+  bool operator!=(const function_traits& rhs) const;
 
   bool isMemberFunction = false;
   bool isConst = false;
   bool hasReturnValue = false;
+  bool isLambda = false;
   unsigned numArguments = 0;
 
   const type* classType = nullptr;
@@ -42,12 +44,14 @@ class function
 public:
   function() = default;
   ~function();
+  function(function&& other);
+  function(const function& other);
   template <class T> function(T func, void* obj = nullptr);
   
   const function_traits& traits() const { return m_traits; }
 
   template <class... Args>
-  void operator()(Args... args);
+  void operator()(Args&&... args);
 
 private:
   typedef internal::base_function base_function;

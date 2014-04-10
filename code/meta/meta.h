@@ -16,6 +16,7 @@ namespace meta { void initialize(); void destroy(); }
 #include "meta\_variant.h"
 #include "meta\_object_container.h"
 #include "meta\_function.h"
+#include "meta\_message.h"
 
 #include "meta\_serializer.h"
 #include "meta\_json_serializer.h"

@@ -33,6 +33,20 @@ public:
   double test_double = 0.0;
   bool test_bool = false;
 };
+struct global_message_table
+{
+  static meta::messenger* m_table;
+  template <class... Args>
+  static bool DispatchMessage(const string& name, Args&&... args)
+  {
+    return m_table->DispatchMessage(name, std::forward<Args&&>(args)...);
+  }
+  static bool AddListener(const string& name, const meta::function& func)
+  {
+    return m_table->AddListener(name, func);
+  }
+};
+meta::messenger* global_message_table::m_table = nullptr;
 
 DECLARE_META_OBJECT(test_class)
   .Field("test_string", &test_class::test_string)
@@ -61,6 +75,7 @@ meta::function* pFunc = nullptr;
 
 void make_test_memory()
 {
+  global_message_table::m_table = new meta::messenger;
   test_string1 = new string("test123");
   test_string2 = new string("123 boogaloo");
   test_class1 = new test_class(test_int1, *test_string1, test_float1, test_double1, test_bool1);
@@ -75,6 +90,7 @@ void make_test_memory()
 }
 void delete_test_memory()
 {
+  delete global_message_table::m_table;
   delete pFunc;
   delete json_serializer;
   delete xml_serializer;
@@ -113,6 +129,10 @@ void delete_test_memory()
 //#undef TEST_TYPEOF
 //}
 
+struct player
+{
+  int lives = 10;
+};
 void run_serializer_test(meta::serializer* serializer, const string& file1, const string& file2)
 {
   test_class tc(test_int1, *test_string1, test_float1, test_double1, test_bool1);
@@ -146,8 +166,26 @@ public:
   void func_test5(int a, float b, double c, const string& d) const {
     std::cout << a << " " << b << " " << c << " " << d << std::endl;
   }
+  void func_test6(const test_class& d) const
+  {
+    std::cout << d.test_int << " " << d.test_float << " " << d.test_double << " " << d.test_string << std::endl;
+  }
+};
+class test_message_class : public meta::messenger
+{
+public:
+  test_message_class()
+  {
+    AddListener("Player Dead", meta::function(&test_message_class::PlayerDeadFunc, this));
+  }
+  void PlayerDeadFunc(int lives_left)
+  {
+    std::cout << "Player Dead Func: lives_left(" << lives_left << ")" << std::endl;
+  }
+private:
 };
 DECLARE_META_OBJECT(test_funcs_class) END_META_OBJECT()
+DECLARE_META_OBJECT(test_message_class) END_META_OBJECT()
 void func_test1() {}
 void func_test2(int a) {}
 void func_test3(int a, float b) {}
@@ -156,15 +194,30 @@ void func_test5(int a, float b, double c, const string& d)
 {
   std::cout << a << " " << b << " " << c << " " << d << std::endl;
 }
-
+void func_test6(const test_class& d)
+{
+  std::cout << d.test_int << " " << d.test_float << " " << d.test_double << " " << d.test_string << std::endl;
+}
+void GlobalPlayerDeadFunc(int lives_left)
+{
+  std::cout << "In global player dead func: lives left(" << lives_left << ")" << std::endl;
+}
 void run_basic_test_code()
 {
+  std::cout << "start run basic test" << std::endl;
+  make_test_memory();
+
+  test_message_class tm;
+  //tm.DispatchMessage("Player Dead", 2);
+  global_message_table::AddListener("Player Dead", meta::function(&test_message_class::PlayerDeadFunc, &tm));
+  global_message_table::AddListener("Player Dead", meta::function(&GlobalPlayerDeadFunc));
+  global_message_table::DispatchMessage("Player Dead", 2);
+
   auto lambda_func = [](const string& name)->void {
     std::cout << "IN LAMBDA: " << name <<  std::endl;
   };
   //store_lambda<decltype(lambda_func)> store(lambda_func);
   //store();
-  make_test_memory();
   static const int NUM_ITERATIONS = 1;
   for (int i = 0; i < NUM_ITERATIONS; ++i)
     (*pFunc)(i, 3.5f, 123.0, string("fuck you"));
@@ -228,6 +281,7 @@ void run_basic_test_code()
   meta::function func3(func_test3);
   meta::function func4(func_test4);
   meta::function func5(func_test5);
+  meta::function func6(func_test6);
   
   meta::function funcl(lambda_func);
   funcl(string("hello world"));
@@ -237,6 +291,7 @@ void run_basic_test_code()
   meta::function mfunc3(&test_funcs_class::func_test3, &tfc);
   meta::function mfunc4(&test_funcs_class::func_test4, &tfc);
   meta::function mfunc5(&test_funcs_class::func_test5, &tfc);
+  meta::function mfunc6(&test_funcs_class::func_test6, &tfc);
 
   auto print_args = [](const string& name, meta::function& func) -> void {
     std::cout << name << " test: " << std::endl;
@@ -267,6 +322,9 @@ void run_basic_test_code()
   mfunc3(3, 3.5f);
   mfunc4(3, 3.5f, 123.0);
   mfunc5(3, 3.5f, 123.0, hello_world);
+
+  func6(tc);
+  mfunc6(tc2);
   delete_test_memory();
 }
 

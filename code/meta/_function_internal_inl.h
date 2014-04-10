@@ -5,27 +5,27 @@ template <class R, class... Args>
 struct caller<R(*)(Args...)>
 {
   typedef function_holder<R(*)(Args...)> FuncType;
-  static R call(base_function* function, void* object, Args... parameters)
+  static R call(base_function* function, void* object, Args&&... parameters)
   {
-    static_cast<FuncType*>(function)->function_ptr(std::forward<Args>(parameters)...);
+    static_cast<FuncType*>(function)->function_ptr(std::forward<Args&&>(parameters)...);
   }
 };
 template <class R, class U, class... Args>
 struct caller<R(U::*)(Args...)>
 {
   typedef function_holder<R(U::*)(Args...)> FuncType;
-  static R call(base_function* function, void* object, Args... parameters)
+  static R call(base_function* function, void* object, Args&&... parameters)
   {
-    (static_cast<U*>(object)->*(static_cast<FuncType*>(function)->function_ptr))(std::forward<Args>(parameters)...);
+    (static_cast<U*>(object)->*(static_cast<FuncType*>(function)->function_ptr))(std::forward<Args&&>(parameters)...);
   }
 };
 template <class R, class U, class... Args>
 struct caller<R(U::*)(Args...)const>
 {
   typedef function_holder<R(U::*)(Args...)const> FuncType;
-  static R call(base_function* function, void* object, Args... parameters)
+  static R call(base_function* function, void* object, Args&&... parameters)
   {
-    (static_cast<const U*>(object)->*(static_cast<FuncType*>(function)->function_ptr))(std::forward<Args>(parameters)...);
+    (static_cast<const U*>(object)->*(static_cast<FuncType*>(function)->function_ptr))(std::forward<Args&&>(parameters)...);
   }
 };
 
@@ -73,10 +73,10 @@ struct function_operator
       return unwrap<N - 1>::check_args(arg_types);
     }
     template <class... ArgsT>
-    static R call(base_function* function, void* object, const arg_traits* traits, void** args, ArgsT... parameters)
+    static R call(base_function* function, void* object, const arg_traits* traits, void** args, ArgsT&&... parameters)
     {
       typedef typename std::tuple_element<sizeof...(Args)-N, arg_tuple>::type ParameterType;
-      unwrap<N - 1>::call(function, object, traits, args, std::forward<ArgsT>(parameters)...,
+      unwrap<N - 1>::call(function, object, traits, args, std::forward<ArgsT&&>(parameters)...,
         static_cast<ParameterType>(*static_cast<std::remove_reference<ParameterType>::type*>(args[sizeof...(Args)-N])));
     }
   };
@@ -85,9 +85,9 @@ struct function_operator
     static void deduce_args(arg_traits* args) { /*end recursion*/ }
     static bool check_args(const type** arg_types) { return true; /*end recursion*/ }
     template <class... ArgsT>
-    static R call(base_function* function, void* object, const arg_traits* traits, void** args, ArgsT... parameters)
+    static R call(base_function* function, void* object, const arg_traits* traits, void** args, ArgsT&&... parameters)
     {
-      caller<function_type>::call(function, object, std::forward<Args>(parameters)...);
+      caller<function_type>::call(function, object, std::forward<Args&&>(parameters)...);
     }
   };
 };
@@ -139,11 +139,12 @@ struct function_traits_deducer<R(U::*)(Args...)const> : public base_deducer<R(U:
   enum { is_lambda = false, is_const = true };
 };
 
-struct base_function { virtual ~base_function() {} };
+struct base_function { virtual ~base_function() {} virtual base_function* clone() const = 0; };
 template <class T>
 struct function_holder : public base_function
 {
   function_holder(T function_) : function_ptr(function_) {}
+  virtual base_function* clone() const { return new function_holder<T>(function_ptr); }
   T function_ptr;
 };
 
