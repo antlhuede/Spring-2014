@@ -17,9 +17,7 @@ inline function::function(const function& other)
   , m_caller(other.m_caller)
   , m_checker(other.m_checker)
   , m_initialized(true)
-  , m_object(other.m_object)
-{
-}
+  , m_object(other.m_object) {}
 
 inline function::function(function&& other)
   : m_function(other.m_function)
