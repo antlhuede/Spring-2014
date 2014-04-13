@@ -18,7 +18,7 @@ void JSonSerializer::construct_object(const Json::Value& value, const type* type
   }
   else
   {
-#define ASSERT_CORRECT_TYPE(TYPE) (assert(type->id() == meta::typeof<TYPE>()->id()), true)
+#define ASSERT_CORRECT_TYPE(TYPE) (assert(type == meta::typeof<TYPE>()), true)
     if (value.isInt() && ASSERT_CORRECT_TYPE(int))
     {
       int result = value.asInt();
@@ -65,15 +65,15 @@ Json::Value JSonSerializer::construct_json_value(const type* type, const void* o
   }
   else
   {
-    if (type->id() == meta::typeof<int>()->id())
+    if (type == meta::typeof<int>())
       value = meta::converter::toInt(type, obj);
-    else if (type->id() == meta::typeof<bool>()->id())
+    else if (type == meta::typeof<bool>())
       value = meta::converter::toBool(type, obj);
-    else if (type->id() == meta::typeof<float>()->id())
+    else if (type == meta::typeof<float>())
       value = meta::converter::toFloat(type, obj);
-    else if (type->id() == meta::typeof<double>()->id())
+    else if (type == meta::typeof<double>())
       value = meta::converter::toDouble(type, obj);
-    else if (type->id() == meta::typeof<string>()->id())
+    else if (type == meta::typeof<string>())
       value = meta::converter::toString(type, obj);
     else
       value = type->to_string(obj);

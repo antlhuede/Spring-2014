@@ -66,12 +66,12 @@ inline bool function_traits::operator==(const function_traits& rhs) const
     numArguments != rhs.numArguments)
     return false;
 
-  if ((isMemberFunction && *classType != *rhs.classType) ||
-      (hasReturnValue && *returnType != *rhs.returnType))
+  if ((classType != rhs.classType) ||
+      (returnType != rhs.returnType))
     return false;
 
   for (unsigned i = 0; i < numArguments; ++i)
-    if (*args[i].type != *rhs.args[i].type)
+    if (args[i].type != rhs.args[i].type)
       return false;
 
   return true;

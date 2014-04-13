@@ -1,0 +1,12 @@
+
+void WriteFile(string name)
+{
+	tempFile = MakeTempFile();
+	
+	writeStuffTo(tempFile);
+	
+	if (File.Exists(name))
+		MoveToHistory(name);
+		
+	CopyFromTo(tempFile, name);
+}

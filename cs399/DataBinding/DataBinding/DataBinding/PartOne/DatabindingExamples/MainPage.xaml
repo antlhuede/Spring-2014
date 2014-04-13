@@ -1,0 +1,67 @@
+﻿<UserControl x:Class="DatabindingExamples.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk" 
+    mc:Ignorable="d"
+    Height="140" Width="220">
+  
+  <UserControl.Resources>
+    <Style TargetType="TextBlock">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="3"/>
+    </Style>
+    <Style TargetType="TextBox">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="3"/>
+    </Style>
+    <Style TargetType="Button">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="3"/>
+    </Style>
+    <Style TargetType="sdk:DatePicker">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="3"/>
+    </Style>
+  </UserControl.Resources>
+
+  <Border BorderBrush="LightGray"
+          BorderThickness="3"
+          CornerRadius="3" Margin="10">
+    <Grid x:Name="LayoutRoot" Background="White">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition/>
+      </Grid.ColumnDefinitions>
+
+      <TextBlock Text="Event"
+                 FontWeight="Bold"
+                 HorizontalAlignment="Center"
+                 Grid.ColumnSpan="2"/>
+
+      <TextBlock Text="Name:"
+                 Grid.Row="1"/>
+      <TextBox x:Name="EventTitle"
+               TextChanged="EventTitle_TextChanged"
+               Grid.Row="1" Grid.Column="1"/>
+
+      <TextBlock Text="Date:"
+                 Grid.Row="2"/>
+      <sdk:DatePicker x:Name="EventDate"
+                      SelectedDateChanged="EventDate_SelectedDateChanged"
+                      Grid.Row="2" Grid.Column="1"/>
+
+      <Button Content="Modify Event"
+              Click="Button_Click"
+              Grid.Row="3" Grid.Column="1"
+              HorizontalAlignment="Right"/>
+    </Grid>
+  </Border>
+</UserControl>

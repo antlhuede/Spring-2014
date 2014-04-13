@@ -1,0 +1,11 @@
+﻿<Window x:Class="WpfTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="752" Width="1133" xmlns:my="clr-namespace:WpfTest" xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock" xmlns:my1="clr-namespace:AvalonDock;assembly=AvalonDock">
+    <Grid>
+        <my1:DockingManager HorizontalAlignment="Stretch" Name="dockingManager1" VerticalAlignment="Stretch" />
+        <Button Content="Button" Height="23" HorizontalAlignment="Left" Margin="12,60,0,0" Name="button1" VerticalAlignment="Top" Width="75" Click="button1_Click" />
+        <TextBox Height="19" HorizontalAlignment="Left" Margin="12,35,0,0" Name="textBox1" VerticalAlignment="Top" Width="80" VerticalScrollBarVisibility="Auto" AcceptsReturn="False" IsReadOnly="True" IsReadOnlyCaretVisible="True" Background="Black" Foreground="White" Text="Hello world!" FontFamily="Lucida Console" />
+        <TextBox Height="23" Margin="12,6,1064,0" Name="textBox2" VerticalAlignment="Top" />
+    </Grid>
+</Window>

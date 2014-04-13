@@ -1,0 +1,31 @@
+
+class Status
+{
+	static const int Success = 0;
+	static const int Fail = 1;
+	
+	Status()
+	{
+		ErrorCode = Success;
+	}
+	
+	bool IgnoreMessage;
+	int ErrorCode;
+	string Message;
+};
+
+GameObject* ResolveGamePath(Status& status, string path)
+{
+	....
+	
+	if (childMissing)
+	{
+		status.ErrorCode = Status::Fail;
+		if (!status.IgnoreMessage)
+			status.Message = "We did not have permission to open " + name;
+		return nullptr;
+	}
+}
+
+
+

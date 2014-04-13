@@ -1,0 +1,29 @@
+{
+   "Bomb" :
+   [
+    {"Dependency":"Transform"}
+	{"Name":"Tint", "Type":"Uint", "Editor":"Color", "MinRange":0, "MaxRange":100 }
+    {"Name":"Fuse", "Type":"Float", "Mode":"DevOnly" }
+   ]
+   
+   
+[0x092234, 3.5
+   
+   
+   
+   
+   
+   {
+      
+	  "Tint": "Color",
+      "Fuse" : "500",
+      "SpawnTime" : "1744436378",
+      "SubSpawnCount" : "4"
+   },
+   "GameComponent" : {},
+   "Transform" :
+   {
+      "Position" : "Vector3",
+      "Rotation" : "float"
+   }
+}

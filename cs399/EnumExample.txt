@@ -1,0 +1,16 @@
+DeclareEnum3(name, value0, value1, value2);
+ namespace name
+ {
+	cstr Names = [#value0, #value1, #value2];
+	enum Enum {value0, value1, value2};
+ }
+ 
+ DeclareEnum3(GameMode, DeathMatch, Ctf, Tdm);
+ 
+ cstr name = GameMode::Name[DeathMatch];
+ 
+ GameMode::DeathMatch
+ 
+ 
+ 
+ 

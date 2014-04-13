@@ -100,7 +100,7 @@ template <class T>
 bool variant::is_type() const
 {
   assert(m_type);
-  return *typeof<T>() == *m_type;
+  return typeof<T>() == m_type;
 }
 template <class T>
 bool variant::is_same_as(const T& obj) const
@@ -121,7 +121,7 @@ T& variant::get_as()
 inline bool variant::can_convert(const meta::type* type) const
 {
   assert(m_type && type);
-  return *m_type == *type;
+  return m_type == type;
 }
 inline const string variant::to_string() const
 {

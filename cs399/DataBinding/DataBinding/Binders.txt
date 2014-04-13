@@ -1,0 +1,27 @@
+      <StackPanel DataContext="{Binding HomeAddress}">
+                <Label Content="Address" Height="28" Name="AddressLabel" />
+                <TextBox  Name="Street" Text="{Binding Path=Street, Mode=TwoWay}" HorizontalAlignment="Stretch"/>
+                <TextBox Name="City" Text="{Binding Path=City, Mode=TwoWay}" HorizontalAlignment="Stretch" />
+            </StackPanel>
+			
+			           <StackPanel>
+                <TextBox  Name="FirstNameBox"  Text="{Binding Path=FirstName, Mode=TwoWay}" HorizontalAlignment="Stretch" />
+                <TextBox Name="LastNameBox"  Text="{Binding Path=LastName, Mode=TwoWay}" HorizontalAlignment="Stretch"/>
+                <TextBox  Name="RoleBox" Text="{Binding Path=Role, Mode=TwoWay}" HorizontalAlignment="Stretch"/>
+                <DatePicker Name="DatePicker" HorizontalAlignment="Stretch" />
+            </StackPanel>
+			
+			
+			<StackPanel>
+                <TextBox  Name="FirstNameBox"  Text="" HorizontalAlignment="Stretch" />
+                <TextBox Name="LastNameBox"  Text="" HorizontalAlignment="Stretch"/>
+                <TextBox  Name="RoleBox" Text="" HorizontalAlignment="Stretch"/>
+                <DatePicker Name="DatePicker" HorizontalAlignment="Stretch" />
+            </StackPanel>
+			
+			         <GroupBox Header="Address" DataContext="{Binding HomeAddress}" HorizontalAlignment="Stretch">
+                <StackPanel HorizontalAlignment="Stretch">
+                    <TextBox  Name="Street" Text="{Binding Path=Street, Mode=TwoWay}" HorizontalAlignment="Stretch"/>
+                    <TextBox Name="City" Text="{Binding Path=City, Mode=TwoWay}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+            </GroupBox>

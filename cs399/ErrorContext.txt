@@ -1,0 +1,41 @@
+
+__declspec(thread) stack<ErrorContext*>* ErrorStack;
+
+class ErrorContext
+{
+	ErrorContext() { ErrorStack.push(this); }
+	~ErrorContext() { ErrorStack.pop(); }
+	virtual String GetMessage() = 0;
+};
+
+
+class LevelContext : public ErrorContext
+{
+	Level* mLevel;
+	
+	String GetMessage()
+	{
+		return "Loading level " + mLevel->name;
+	}
+};
+
+
+LevelContext context;
+context.mLevel = currentLevel;
+LoadLevel();
+
+	GameObjectContext context;
+	context.id = id;
+	DeserializeObject(blah blah);
+
+DoNotify(
+Error("Failed to serialize property %s", propName);
+
+
+Failed to serialize property Lives
+  while Loading Object: Player, 3467
+  while Loading level: Dam
+
+  
+  
+  

@@ -46,18 +46,30 @@ configuration "Debug"
     buildoptions { "-wd4201 -wd4505" } -- nonstandard struct union
 
 
-project "Meta"
+project "Test"
   kind("ConsoleApp")
-  files { "meta/**.*" }
+  files { "meta_test/**.*" }
 
-  includedirs { "./", "gmock/", "gtest/", "meta/", "json/" }
+  includedirs { "./", "meta/", "meta_test/", "gmock/", "gtest/", "json/" }
   libdirs { "bin/" }
   --linkoptions{"/ENTRY:WinMainCRTStartup"}
 
-  links { "Serializers", "Test" }
+  links { "Meta", "Serializers", "Google" }
   links { "gdi32", "opengl32" }
   links { "winmm", "comctl32", "rpcrt4" }
 
+  vpaths({ ["source"] = {"**.cpp", "**.c", "**.h"} })
+
+  configuration "Release"
+    targetname( "meta_test_r" )
+    
+  configuration "Debug"
+    targetname( "meta_test_d" )
+
+project "Meta"
+  kind("StaticLib")
+  files { "meta/**.*" }
+  includedirs { "./", "gmock/", "gtest/", "meta/", "json/" }
   vpaths({ ["source"] = {"**.cpp", "**.c", "**.h"} })
 
   configuration "Release"
@@ -82,7 +94,7 @@ project "Serializers"
     targetname( "serialize_d" )
 
 
-project "Test"
+project "Google"
   kind("StaticLib")
   files { "gmock/*", "gtest/*" }
   includedirs { "./", "gmock/", "gtest/" }

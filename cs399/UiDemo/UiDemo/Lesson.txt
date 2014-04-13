@@ -1,0 +1,21 @@
+// Msvc dllexporting
+http://msdn.microsoft.com/en-us/library/a90k134d.aspx
+
+// Interoping between C# and C++ with dlls (dllexport and DllImport)
+http://www.dotnetperls.com/dllimport
+
+// WPF HwndHost
+// Not that great because we let all the window init take place in an external dll, but in depth
+http://msdn.microsoft.com/en-us/library/ms752055(v=vs.110).aspx
+
+// Custom controls in WPF or Winforms not showing in toolbox:
+http://stackoverflow.com/questions/288047/user-controls-not-showing-up-in-the-toolbox
+
+// Wpf Timer:
+http://stackoverflow.com/questions/5410430/wpf-timer-like-c-sharp-timer
+
+// Docking system like Visual Studio 2010!
+http://avalondock.codeplex.com/
+
+Hwnd focus issue (wont get WM_CHAR or WM_KEYDOWN, need to call SetFocus on mouse move or something similar)
+

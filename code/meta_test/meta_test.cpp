@@ -86,6 +86,7 @@ void make_test_memory()
   auto lambda = [](int a, float b, double c, const string& d) {
     std::cout << a << " " << b << " " << c << " " << d << std::endl;
   };
+
   pFunc = new meta::function(lambda);
 }
 void delete_test_memory()
@@ -305,6 +306,11 @@ void run_basic_test_code()
   print_args("function3", func3);
   print_args("function4", func4);
   print_args("function5", func5);
+  print_args("member-function1", mfunc1);
+  print_args("member-function2", mfunc2);
+  print_args("member-function3", mfunc3);
+  print_args("member-function4", mfunc4);
+  print_args("member-function5", mfunc5);
 
   //print_args("member function1", mfunc1);
   //print_args("member function2", mfunc2);
