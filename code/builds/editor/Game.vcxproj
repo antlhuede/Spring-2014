@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7FA9857C-6BE0-860D-14CD-6C1000E3020F}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Game</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\..\bin\editor\</OutDir>
+    <IntDir>obj\Release\Game\</IntDir>
+    <TargetName>game_r</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\..\bin\editor\</OutDir>
+    <IntDir>obj\Debug\Game\</IntDir>
+    <TargetName>game_d</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;WIN32;NDEBUG;JSON_LESS_MEMORY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..;..\..\game;$(DXSDK_DIR)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ProgramDataBaseFileName>$(OutDir)game_r.pdb</ProgramDataBaseFileName>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <AdditionalOptions>-wd4201 -wd4505 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;WIN32;NDEBUG;JSON_LESS_MEMORY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..;..\..\game;$(DXSDK_DIR)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;WIN32;_DEBUG;JSON_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..;..\..\game;$(DXSDK_DIR)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ProgramDataBaseFileName>$(OutDir)game_d.pdb</ProgramDataBaseFileName>
+      <Optimization>Disabled</Optimization>
+      <MinimalRebuild>false</MinimalRebuild>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <AdditionalOptions>-wd4201 -wd4505 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;WIN32;_DEBUG;JSON_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..;..\..\game;$(DXSDK_DIR)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\game\Body.h" />
+    <ClInclude Include="..\..\game\Camera.h" />
+    <ClInclude Include="..\..\game\Collision.h" />
+    <ClInclude Include="..\..\game\Component.h" />
+    <ClInclude Include="..\..\game\ComponentCreator.h" />
+    <ClInclude Include="..\..\game\ComponentTypeIds.h" />
+    <ClInclude Include="..\..\game\Composition.h" />
+    <ClInclude Include="..\..\game\Containers.h" />
+    <ClInclude Include="..\..\game\Core.h" />
+    <ClInclude Include="..\..\game\DebugDiagnostic.h" />
+    <ClInclude Include="..\..\game\DebugDraw.h" />
+    <ClInclude Include="..\..\game\DirectXIncludes.h" />
+    <ClInclude Include="..\..\game\Engine.h" />
+    <ClInclude Include="..\..\game\Factory.h" />
+    <ClInclude Include="..\..\game\FilePath.h" />
+    <ClInclude Include="..\..\game\GameLogic.h" />
+    <ClInclude Include="..\..\game\Graphics.h" />
+    <ClInclude Include="..\..\game\Message.h" />
+    <ClInclude Include="..\..\game\ObjectLinkedList.h" />
+    <ClInclude Include="..\..\game\Physics.h" />
+    <ClInclude Include="..\..\game\Precompiled.h" />
+    <ClInclude Include="..\..\game\Resolution.h" />
+    <ClInclude Include="..\..\game\Serialization.h" />
+    <ClInclude Include="..\..\game\Sprite.h" />
+    <ClInclude Include="..\..\game\Startup.h" />
+    <ClInclude Include="..\..\game\System.h" />
+    <ClInclude Include="..\..\game\TextSerialization.h" />
+    <ClInclude Include="..\..\game\Transform.h" />
+    <ClInclude Include="..\..\game\VMath.h" />
+    <ClInclude Include="..\..\game\VertexTypes.h" />
+    <ClInclude Include="..\..\game\WindowsIncludes.h" />
+    <ClInclude Include="..\..\game\WindowsSystem.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\game\Body.cpp" />
+    <ClCompile Include="..\..\game\Camera.cpp" />
+    <ClCompile Include="..\..\game\Collision.cpp" />
+    <ClCompile Include="..\..\game\Composition.cpp" />
+    <ClCompile Include="..\..\game\Core.cpp" />
+    <ClCompile Include="..\..\game\DebugDraw.cpp" />
+    <ClCompile Include="..\..\game\Factory.cpp" />
+    <ClCompile Include="..\..\game\FilePath.cpp" />
+    <ClCompile Include="..\..\game\GameLogic.cpp" />
+    <ClCompile Include="..\..\game\Graphics.cpp" />
+    <ClCompile Include="..\..\game\Physics.cpp" />
+    <ClCompile Include="..\..\game\Precompiled.cpp" />
+    <ClCompile Include="..\..\game\Resolution.cpp" />
+    <ClCompile Include="..\..\game\Socket.cpp" />
+    <ClCompile Include="..\..\game\Sprite.cpp" />
+    <ClCompile Include="..\..\game\Startup.cpp" />
+    <ClCompile Include="..\..\game\TextSerialization.cpp" />
+    <ClCompile Include="..\..\game\Transform.cpp" />
+    <ClCompile Include="..\..\game\WinMain.cpp" />
+    <ClCompile Include="..\..\game\WindowsSystem.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

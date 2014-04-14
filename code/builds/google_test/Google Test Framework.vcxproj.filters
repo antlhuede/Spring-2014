@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{76FF3A1C-62A1-65F2-4B5C-7946379DEC42}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\google_test\gtest\gtest-internal-inl.h">
+      <Filter>source</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\google_test\gmock\gmock-cardinalities.cc">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\google_test\gmock\gmock-internal-utils.cc">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\google_test\gmock\gmock-matchers.cc">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\google_test\gmock\gmock-spec-builders.cc">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\google_test\gmock\gmock.cc">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\google_test\gtest\gtest-death-test.cc">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\google_test\gtest\gtest-filepath.cc">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\google_test\gtest\gtest-port.cc">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\google_test\gtest\gtest-printers.cc">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\google_test\gtest\gtest-test-part.cc">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\google_test\gtest\gtest-typed-test.cc">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\google_test\gtest\gtest.cc">
+      <Filter>source</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

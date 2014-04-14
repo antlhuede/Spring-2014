@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{76FF3A1C-62A1-65F2-4B5C-7946379DEC42}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\game\Body.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Camera.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Collision.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Component.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\ComponentCreator.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\ComponentTypeIds.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Composition.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Containers.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Core.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\DebugDiagnostic.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\DebugDraw.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\DirectXIncludes.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Engine.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Factory.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\FilePath.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\GameLogic.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Graphics.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Message.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\ObjectLinkedList.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Physics.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Precompiled.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Resolution.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Serialization.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Sprite.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Startup.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\System.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\TextSerialization.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\Transform.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\VMath.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\VertexTypes.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\WindowsIncludes.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\WindowsSystem.h">
+      <Filter>source</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\game\Body.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\Camera.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\Collision.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\Composition.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\Core.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\DebugDraw.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\Factory.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\FilePath.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\GameLogic.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\Graphics.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\Physics.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\Precompiled.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\Resolution.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\Socket.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\Sprite.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\Startup.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\TextSerialization.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\Transform.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\WinMain.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\WindowsSystem.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

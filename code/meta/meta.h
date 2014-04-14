@@ -18,10 +18,6 @@ namespace meta { void initialize(); void destroy(); }
 #include "meta\_function.h"
 #include "meta\_message.h"
 
-#include "meta\_serializer.h"
-#include "meta\_json_serializer.h"
-#include "meta\_xml_serializer.h"
-
 #include "meta\_type_inl.h"
 #include "meta\_registry_inl.h"
 #include "meta\_converter_inl.h"
