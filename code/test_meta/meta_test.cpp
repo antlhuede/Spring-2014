@@ -130,30 +130,30 @@ void delete_test_memory()
 //#undef TEST_TYPEOF
 //}
 
-struct player
-{
-  int lives = 10;
-};
 void run_serializer_test(serializers::base_serializer_ptr serializer, const string& file1, const string& file2)
 {
+  string file_path("documents/");
+  string first_file = file_path + file1;
+  string second_file = file_path + file2;
+
   test_class tc(test_int1, *test_string1, test_float1, test_double1, test_bool1);
   test_class tc2(test_int2, *test_string2, test_float2, test_double2, test_bool2);
   
   serializer->add("test_class1", tc);
   serializer->add("test_class2", tc2);
-  serializer->write(file1);
+  serializer->write(first_file);
   serializer->clear();
   
   test_class read_test1;
   test_class read_test2;
   
-  serializer->read(file1);
+  serializer->read(first_file);
   serializer->get("test_class1", read_test1);
   serializer->get("test_class2", read_test2);
   serializer->clear();
   serializer->add("read_test1", read_test1);
   serializer->add("read_test2", read_test2);
-  serializer->write(file2);
+  serializer->write(second_file);
   serializer->clear();
 }
 
