@@ -4,15 +4,6 @@
 
 namespace meta {
 
-template <class T>
-void function::construct(T func)
-{
-  typedef internal::function_descriptor<T> descriptor;
-
-  m_function = descriptor::Create(func);
-  m_caller = &descriptor::Call;
-  m_checker = &descriptor::CheckArgs;
-}
 template <class T> 
 function::function(T func)
   : m_traits(func), m_initialized(true), m_object(&func)
@@ -36,6 +27,16 @@ function::function(R(U::*func)(Args...)const, const U* obj)
   : m_traits(func), m_initialized(true), m_object(const_cast<U*>(obj))
 {
   construct(func);
+}
+
+template <class T>
+void function::construct(T func)
+{
+  typedef internal::function_descriptor<T> descriptor;
+
+  m_function = descriptor::Create(func);
+  m_caller = &descriptor::Call;
+  m_checker = &descriptor::CheckArgs;
 }
 
 inline function::function(const function& other)
@@ -104,7 +105,6 @@ bool function::check_types() const
 
   return true;
 }
-
 
 template <class T>
 function_traits::function_traits(T func)

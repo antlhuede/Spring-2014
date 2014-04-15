@@ -8,16 +8,14 @@ public:
     : m_name(name), m_get(get), m_set(set) 
   {
     assert(get.traits().classType == set.traits().classType);
-    
-    assert(get.traits().numArguments == 1);
-    assert(set.traits().numArguments == 1);
-    assert(get.traits().args[0].type == set.traits().args[0].type);
 
-    assert(get.traits().args[0].isPointer == true);
-    assert(set.traits().args[0].isReference == true);
+    assert(get.traits().numArguments == 0);
+    assert(set.traits().numArguments == 1);
+    assert(get.traits().returnType == set.traits().args[0].type);
+    assert(set.traits().hasReturnValue == false);
 
     m_classType = get.traits().classType;
-    m_type = get.traits().args[0].type;
+    m_type = get.traits().returnType;
   }
 
   const string& name() const { return m_name; }

@@ -35,7 +35,7 @@ public:
 
 
   void set_property(const string& test) { m_property = test; }
-  void get_property(string* obj) const { assert(obj); *obj = m_property; }
+  const string& get_property() const { return m_property; }
 
 private:
   string m_property;

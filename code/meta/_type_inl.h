@@ -102,12 +102,10 @@ inline type& type::Property(const string& name, const function& get, const funct
   assert(get.traits().classType == this);
   assert(set.traits().classType == this);
   
-  assert(get.traits().numArguments == 1);
+  assert(get.traits().numArguments == 0);
   assert(set.traits().numArguments == 1);
-  assert(get.traits().args[0].type == set.traits().args[0].type);
-  
-  assert(get.traits().args[0].isPointer == true);
-  assert(set.traits().args[0].isReference == true);
+  assert(get.traits().returnType == set.traits().args[0].type);
+  assert(set.traits().hasReturnValue == false);
 
   assert(m_propertyMap.find(name) == m_propertyMap.end());
   m_propertyMap[name] = m_properties.size();
