@@ -27,12 +27,16 @@ public:
   bool operator==(const type& rhs) const;
   bool operator!=(const type& rhs) const;
 
-  template <class U, class T>
+  template <class T, class U>
   type& Field(const string& name, T U::*var);
 
-  template <class U, class T>
+  template <class T, class U>
   type& Property(const string& name, T(U::*get)()const, void(U::*set)(T));
-
+  
+  template <class T, class U>
+  type& Property(const string& name, void*, void(U::*set)(T));
+  template <class T, class U>
+  type& Property(const string& name, T(U::*get)()const, void*);
   //template <class U, class R, class... Args>
   //type& Event(const string& name, R(U::*func)(Args...));
 

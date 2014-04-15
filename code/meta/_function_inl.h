@@ -40,11 +40,11 @@ void function::construct(T func)
 }
 
 inline function::function(const function& other)
-  : m_function(other.m_function->clone())
+  : m_function(other.m_function ? other.m_function->clone() : nullptr)
   , m_traits(other.m_traits)
   , m_caller(other.m_caller)
   , m_checker(other.m_checker)
-  , m_initialized(true)
+  , m_initialized(other.m_initialized)
   , m_object(other.m_object) {}
 
 inline function::function(function&& other)
@@ -52,7 +52,7 @@ inline function::function(function&& other)
   , m_traits(other.m_traits)
   , m_caller(other.m_caller)
   , m_checker(other.m_checker)
-  , m_initialized(true)
+  , m_initialized(other.m_initialized)
   , m_object(other.m_object)
 {
   other.m_object = nullptr;

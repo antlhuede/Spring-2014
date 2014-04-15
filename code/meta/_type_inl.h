@@ -87,7 +87,7 @@ inline const vector<const field>& type::fields() const
   return m_fields;
 }
 
-template <class U, class T>
+template <class T, class U>
 type& type::Field(const string& name, T U::*var)
 {
   assert(typeof<U>() == this);
@@ -97,13 +97,25 @@ type& type::Field(const string& name, T U::*var)
   return *this;
 }
 
-template <class U, class T>
+template <class T, class U>
 type& type::Property(const string& name, T(U::*get)()const, void(U::*set)(T))
 {
   assert(m_propertyMap.find(name) == m_propertyMap.end());
   m_propertyMap[name] = m_properties.size();
   m_properties.push_back(::meta::property(name, get, set));
   return *this;
+}
+template <class T, class U>
+type& type::Property(const string& name, void*, void(U::*set)(T))
+{
+  typedef T(U::*getter_type)()const;
+  return Property(name, (getter_type)nullptr, set);
+}
+template <class T, class U>
+type& type::Property(const string& name, T(U::*get)()const, void*)
+{
+  typedef void(U::*setter_type)(T);
+  return Property(name, get, (setter_type)nullptr);
 }
 //template <class U, class T>
 //type& type::Event(const string& name, T(U::*get)()const, void(U::*set)(const T&))

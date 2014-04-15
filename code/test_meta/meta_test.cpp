@@ -62,6 +62,7 @@ DECLARE_META_OBJECT(test_class)
   .Field("test_double", &test_class::test_double)
   .Field("test_bool", &test_class::test_bool)
   .Property("test_property", &test_class::get_property, &test_class::set_property)
+  .Property("test_getter_only", &test_class::get_property, nullptr)
 END_META_OBJECT()
 
 int test_int1 = 5;
@@ -214,10 +215,14 @@ void GlobalPlayerDeadFunc(int lives_left)
 void test_properties()
 {
   test_class tc;
-  const meta::property p = meta::typeof(tc)->property("test_property");
+  const meta::type* tc_type = meta::typeof(tc);
+  const meta::property p1 = tc_type->property("test_property");
   string value("initial test");
-  p.set(&tc, value);
-  std::cout << p.get_as<string>(&tc) << std::endl;
+  p1.set(&tc, value);
+  std::cout << p1.get_as<string>(&tc) << std::endl;
+
+  const meta::property p2 = tc_type->property("test_getter_only");
+  std::cout << p2.get_as<string>(&tc) << std::endl;
 }
 void run_basic_test_code()
 {
