@@ -78,6 +78,9 @@
     <ClInclude Include="..\..\meta\_event.h">
       <Filter>source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\meta\_function_caller.h">
+      <Filter>source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\meta\meta.cpp">

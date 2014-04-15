@@ -1,41 +1,26 @@
 #pragma once
 
+#include "_function_caller.h"
+
 namespace meta { namespace internal {
 
-template <class T> struct caller;
+//so we can have a handle to a function
+struct base_function { virtual ~base_function() {} virtual base_function* clone() const = 0; };
+//so we can store the function as its correct type
+template <class T>
+struct function_holder : public base_function
+{
+  function_holder(T function_) : function_ptr(function_) {}
+  //clone is to allow copy construction of functions, 
+  //otherwise we need to know the actual type of underlying function of rhs object, which is impossible.
+  virtual base_function* clone() const { return new function_holder<T>(function_ptr); }
+  T function_ptr;
+};
+
 template <class T, class R, class... Args> struct function_operator;
 template <class T, class U, class R, class... Args> struct base_deducer;
 template <class T> struct function_traits_deducer;
 
-//caller: used to correctly cast the base function pointer and call the function pointer
-//lambda functions fall under the category of const member function
-template <class R, class... Args>
-struct caller<R(*)(Args...)>
-{
-  typedef function_holder<R(*)(Args...)> FuncType;
-  static inline R Call(base_function* function, void* object, Args&&... parameters)
-  {
-    static_cast<FuncType*>(function)->function_ptr(std::forward<Args&&>(parameters)...);
-  }
-};
-template <class R, class U, class... Args>
-struct caller<R(U::*)(Args...)>
-{
-  typedef function_holder<R(U::*)(Args...)> FuncType;
-  static inline R Call(base_function* function, void* object, Args&&... parameters)
-  {
-    (static_cast<U*>(object)->*(static_cast<FuncType*>(function)->function_ptr))(std::forward<Args&&>(parameters)...);
-  }
-};
-template <class R, class U, class... Args>
-struct caller<R(U::*)(Args...)const>
-{
-  typedef function_holder<R(U::*)(Args...)const> FuncType;
-  static inline R Call(base_function* function, void* object, Args&&... parameters)
-  {
-    (static_cast<const U*>(object)->*(static_cast<FuncType*>(function)->function_ptr))(std::forward<Args&&>(parameters)...);
-  }
-};
 //inherited class that gives function_traits_deducer abilities to operate
 //on generic representations of data
 template <class T, class R, class... Args>
@@ -43,20 +28,6 @@ struct function_operator
 {
   template <size_t> struct unwrap;
   typedef typename unwrap<sizeof...(Args)> unwrapper;
-
-  static inline void DeduceArgs(arg_traits* args)
-  {
-    unwrapper::DeduceArgs(args);
-  }
-  static inline bool CheckArgs(const type** arg_types)
-  {
-    return unwrapper::CheckArgs(arg_types);
-  }
-  static inline void Call(base_function* function, void* object, const arg_traits* traits, void** args)
-  {
-    unwrapper::Call(function, object, traits, args);
-  }
-
   typedef std::tuple<Args...> arg_tuple;
   typedef T function_type;
 
@@ -93,7 +64,7 @@ struct function_operator
       //results in references being passed in as their correct type so we dont get corrupted stack memory
       //  static_cast<ParameterType>(*static_cast<std::remove_reference<ParameterType>::type*>(memory))
       typedef typename std::tuple_element<sizeof...(Args)-N, arg_tuple>::type ParameterType;
-      unwrap<N - 1>::Call(function, object, traits, args, std::forward<ArgsT&&>(parameters)...,
+      return unwrap<N - 1>::Call(function, object, traits, args, std::forward<ArgsT&&>(parameters)...,
         static_cast<ParameterType>(*static_cast<std::remove_reference<ParameterType>::type*>(args[sizeof...(Args)-N])));
     }
   };
@@ -104,9 +75,21 @@ struct function_operator
     template <class... ArgsT>
     static inline R Call(base_function* function, void* object, const arg_traits* traits, void** args, ArgsT&&... parameters)
     {
-      caller<function_type>::Call(function, object, std::forward<Args&&>(parameters)...);
+      return caller<R, function_type>::Call(function, object, std::forward<Args&&>(parameters)...);
     }
   };
+};
+
+template <class T> struct check_return
+{
+  enum { is_void = false };
+  typedef T type;
+};
+
+template <> struct check_return<void>
+{
+  enum { is_void = true };
+  typedef void_ type;
 };
 
 template <class T> struct deducer;
@@ -115,7 +98,7 @@ template <class R, class... Args>
 struct deducer<R(*)(Args...)>
 {
   typedef R(*func_type)(Args...);
-  typedef R return_type;
+  typedef typename check_return<R>::type return_type;
   typedef nulltype class_type;
   typedef function_operator<func_type, return_type, Args...> func_operator;
   enum { num_args = sizeof...(Args), is_member_func = false, is_const = false, is_lambda = false };
@@ -126,7 +109,7 @@ template <class R, class U, class... Args>
 struct deducer<R(U::*)(Args...)>
 {
   typedef R(U::*func_type)(Args...);
-  typedef R return_type;
+  typedef typename check_return<R>::type return_type;
   typedef U class_type;
   typedef function_operator<func_type, return_type, Args...> func_operator;
   enum { num_args = sizeof...(Args), is_member_func = true, is_const = false, is_lambda = false };
@@ -137,7 +120,7 @@ template <class R, class U, class... Args>
 struct deducer<R(U::*)(Args...)const>
 {
   typedef R(U::*func_type)(Args...)const;
-  typedef R return_type;
+  typedef typename check_return<R>::type return_type;
   typedef U class_type;
   typedef function_operator<func_type, return_type, Args...> func_operator;
   enum { num_args = sizeof...(Args), is_member_func = true, is_const = true, is_lambda = false };
@@ -161,20 +144,17 @@ struct deducer
 template <class T>
 struct function_descriptor : public deducer<T>
 {
-private:
-  typedef typename deducer<T>::return_type possible_return_type;
 public:
   enum {
     num_args = deducer<T>::num_args,
     is_member_function = deducer<T>::is_member_func,
     is_const = deducer<T>::is_const,
     is_lambda = deducer<T>::is_lambda,
-    has_return_value = (std::is_same<return_type, void>::value == false),
+    has_return_value = (std::is_same<return_type, void_>::value == false),
   };
 
-  typedef typename std::conditional<has_return_value, possible_return_type, void_>::type return_type;
-
   typedef typename deducer<T>::class_type class_type;
+  typedef typename deducer<T>::return_type return_type;
   typedef typename deducer<T>::func_type func_type;
   typedef typename deducer<T>::func_operator func_operator;
 
@@ -191,18 +171,5 @@ public:
     func_operator::unwrapper::Call(function, object, traits, args);
   }
   static inline base_function* Create(T func) { return deducer<T>::Create(func); }
-};
-
-//so we can have a handle to a function
-struct base_function { virtual ~base_function() {} virtual base_function* clone() const = 0; };
-//so we can store the function as its correct type
-template <class T>
-struct function_holder : public base_function
-{
-  function_holder(T function_) : function_ptr(function_) {}
-  //clone is to allow copy construction of functions, 
-  //otherwise we need to know the actual type of underlying function of rhs object, which is impossible.
-  virtual base_function* clone() const { return new function_holder<T>(function_ptr); }
-  T function_ptr;
 };
 }}
