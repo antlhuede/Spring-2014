@@ -27,10 +27,11 @@ public:
   bool operator==(const type& rhs) const;
   bool operator!=(const type& rhs) const;
 
-  template <class T, class U >
+  template <class U, class T>
   type& Field(const string& name, T U::*var);
 
-  type& Property(const string& name, const function& get, const function& set);
+  template <class U, class T>
+  type& Property(const string& name, T(U::*get)()const, void(U::*set)(T));
 
   //template <class U, class R, class... Args>
   //type& Event(const string& name, R(U::*func)(Args...));
@@ -58,17 +59,17 @@ private:
   vector<const ::meta::event> m_events;
   hash_map<string, size_t> m_eventMap;
 
-  const ReadFunc m_read;
-  const WriteFunc m_write;
-  const StringizeFunc m_to_string;
+  const ReadFunc m_read = nullptr;
+  const WriteFunc m_write = nullptr;
+  const StringizeFunc m_to_string = nullptr;
 
-  const PlacementNewFunc m_construct;
-  const CopyFunc m_copy;
-  const DestructFunc m_destruct;
-  const AllocFunc m_allocate;
-  const DeleteFunc m_deallocate;
-  const CloneFunc m_clone;
-  const AssignFunc m_assign;
+  const PlacementNewFunc m_construct = nullptr;
+  const CopyFunc m_copy = nullptr;
+  const DestructFunc m_destruct = nullptr;
+  const AllocFunc m_allocate = nullptr;
+  const DeleteFunc m_deallocate = nullptr;
+  const CloneFunc m_clone = nullptr;
+  const AssignFunc m_assign = nullptr;
 };
 
 }

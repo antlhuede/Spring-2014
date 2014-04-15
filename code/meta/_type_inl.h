@@ -87,7 +87,7 @@ inline const vector<const field>& type::fields() const
   return m_fields;
 }
 
-template <typename T, typename U>
+template <class U, class T>
 type& type::Field(const string& name, T U::*var)
 {
   assert(typeof<U>() == this);
@@ -97,16 +97,9 @@ type& type::Field(const string& name, T U::*var)
   return *this;
 }
 
-inline type& type::Property(const string& name, const function& get, const function& set)
+template <class U, class T>
+type& type::Property(const string& name, T(U::*get)()const, void(U::*set)(T))
 {
-  assert(get.traits().classType == this);
-  assert(set.traits().classType == this);
-  
-  assert(get.traits().numArguments == 0);
-  assert(set.traits().numArguments == 1);
-  assert(get.traits().returnType == set.traits().args[0].type);
-  assert(set.traits().hasReturnValue == false);
-
   assert(m_propertyMap.find(name) == m_propertyMap.end());
   m_propertyMap[name] = m_properties.size();
   m_properties.push_back(::meta::property(name, get, set));
@@ -126,7 +119,7 @@ inline const field type::field(const string& name, bool assert_on_failure) const
 {
   auto index = m_fieldMap.find(name);
   if (index == m_fieldMap.end() && (assert_on_failure ? assert(false), true : true))
-    return ::meta::field("empty_field", typeof<nulltype>(), 0);
+    return ::meta::field();
     
   return m_fields[index->second];
 }
@@ -134,7 +127,7 @@ inline const property type::property(const string& name, bool assert_on_failure)
 {
   auto index = m_propertyMap.find(name);
   if (index == m_propertyMap.end() && (assert_on_failure ? assert(false), true : true))
-    return ::meta::property("empty_property", meta::function(), meta::function());
+    return ::meta::property();
 
   return m_properties[index->second];
 }

@@ -4,6 +4,7 @@ namespace meta {
 class field
 {
 public:
+  field() = default;
   field(const string& name, const ::meta::type* type, size_t offset)
     : m_name(name), m_type(type), m_offset(offset) {}
 
@@ -26,7 +27,7 @@ public:
 
 private:
   string m_name = "uninitialized_field";
-  const ::meta::type* m_type;
+  const ::meta::type* m_type = typeof<nulltype>();
   size_t m_offset = 0;
 };
 }

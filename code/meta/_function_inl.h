@@ -5,10 +5,10 @@
 namespace meta {
 
 template <class T> 
-function::function(T func)
-  : m_traits(func), m_initialized(true), m_object(&func)
+function::function(T lambda)
+  : m_traits(lambda), m_initialized(true), m_object(&lambda)
 {
-  construct(func);
+  construct(lambda);
 }
 template <class R, class... Args>
 function::function(R(*func)(Args...))

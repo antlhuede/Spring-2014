@@ -51,9 +51,8 @@ public:
   function(function&& other);
   function(const function& other);
 
-
   template <class T> 
-  function(T func);
+  function(T lambda);
 
   template <class R, class... Args>
   function(R(*func)(Args...));
