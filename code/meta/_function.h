@@ -5,6 +5,7 @@ namespace meta {
 namespace internal {
   struct base_function;
   template <class T> struct function_holder;
+  template <class T> struct signature;
 }
 
 //describes an argument to a function

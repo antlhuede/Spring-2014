@@ -12,6 +12,11 @@ function::function(T func)
 {
   typedef decltype(&T::operator()) func_type;
   m_function = new internal::function_holder<func_type>(&T::operator());
+  m_traits.isConst = true;
+  m_traits.isLambda = true;
+  m_traits.classType = typeof<nulltype>();
+  m_traits.isMemberFunction = false;
+  //m_traits.numArguments
 }
 template <class R, class... Args>
 function::function(R(*func)(Args...))

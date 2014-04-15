@@ -108,6 +108,54 @@ struct function_operator
     }
   };
 };
+
+template <class R, class... Args>
+struct signature<R(*)(Args...)>
+{
+  enum {
+    num_args = sizeof...(Args),
+    has_return_value = (std::is_same<R, void>::value == false),
+    is_member_func = false,
+    is_const = false
+  };
+  typedef typename std::conditional<has_return_value, R, void_>::type return_type;
+  typedef nulltype class_type;
+  typedef R(*function_type)(Args...);
+  typedef function_operator<function_type, R, Args...> function_operator;
+};
+
+template <class R, class U, class... Args>
+struct signature<R(U::*)(Args...)>
+{
+  enum {
+    num_args = sizeof...(Args),
+    has_return_value = (std::is_same<R, void>::value == false),
+    is_member_func = true,
+    is_const = false
+  };
+  typedef typename std::conditional<has_return_value, R, void_>::type return_type;
+  typedef nulltype class_type;
+  typedef R(*function_type)(Args...);
+  typedef function_operator<function_type, R, Args...> function_operator;
+};
+
+template <class R, class U, class... Args>
+struct signature<R(U::*)(Args...)const>
+{
+  enum {
+    num_args = sizeof...(Args),
+    has_return_value = (std::is_same<R, void>::value == false),
+    is_member_func = true,
+    is_const = true
+  };
+  typedef typename std::conditional<has_return_value, R, void_>::type return_type;
+  typedef nulltype class_type;
+  typedef R(*function_type)(Args...);
+  typedef function_operator<function_type, R, Args...> function_operator;
+};
+
+
+
 //deductions that are common among all function pointers
 template <class T, class U, class R, class... Args>
 struct base_deducer : public function_operator<T, R, Args...>
