@@ -169,9 +169,9 @@ class test_funcs_class
 {
 public:
   void func_test1() {}
-  void func_test2(int a) {}
-  void func_test3(int a, float b) {}
-  void func_test4(int a, float b, double c) {}
+  void func_test2(int a) { std::cout << a << std::endl; }
+  void func_test3(int a, float b) { std::cout << a << " " << b << std::endl; }
+  void func_test4(int a, float b, double c) { std::cout << a << " " << b << " " << c << std::endl; }
   void func_test5(int a, float b, double c, const string& d) const {
     std::cout << a << " " << b << " " << c << " " << d << std::endl;
   }
@@ -284,6 +284,7 @@ void run_basic_test_code()
   std::cout << test->name() << " " << test->size() << "\n\n";
 
   test_funcs_class tfc;
+  string hello_world("Hello World");
 
   meta::function func1(func_test1);
   meta::function func2(func_test2);
@@ -293,7 +294,7 @@ void run_basic_test_code()
   meta::function func6(func_test6);
   
   meta::function funcl(lambda_func);
-  funcl(string("hello world"));
+  funcl(hello_world);
 
   meta::function mfunc1(&test_funcs_class::func_test1, &tfc);
   meta::function mfunc2(&test_funcs_class::func_test2, &tfc);
@@ -301,6 +302,12 @@ void run_basic_test_code()
   meta::function mfunc4(&test_funcs_class::func_test4, &tfc);
   meta::function mfunc5(&test_funcs_class::func_test5, &tfc);
   meta::function mfunc6(&test_funcs_class::func_test6, &tfc);
+
+  mfunc1.call(&tfc);
+  mfunc2.call(&tfc, 3);
+  mfunc3.call(&tfc, 3, 3.5f);
+  mfunc4.call(&tfc, 3, 3.5f, 123.0);
+  mfunc5.call(&tfc, 3, 3.5f, 123.0, hello_world);
 
   auto print_args = [](const string& name, meta::function& func) -> void {
     std::cout << name << " test: " << std::endl;
@@ -325,7 +332,6 @@ void run_basic_test_code()
   //print_args("member function3", mfunc3);
   //print_args("member function4", mfunc4);
   //print_args("member function5", mfunc5);
-  string hello_world("Hello World");
   func1();
   func2(3);
   func3(3, 3.5f);
@@ -339,6 +345,8 @@ void run_basic_test_code()
 
   func6(tc);
   mfunc6(tc2);
+
+
   delete_test_memory();
 }
 

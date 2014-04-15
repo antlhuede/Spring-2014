@@ -105,10 +105,10 @@ template <> struct check_return<void>
   typedef void_ type;
 };
 
-template <class T> struct deducer;
+template <class T> struct function_deducer;
 
 template <class R, class... Args>
-struct deducer<R(*)(Args...)>
+struct function_deducer<R(*)(Args...)>
 {
   typedef R(*func_type)(Args...);
   typedef typename check_return<R>::type return_type;
@@ -119,7 +119,7 @@ struct deducer<R(*)(Args...)>
   static inline base_function* Create(func_type func) { return new function_holder<func_type>(func); }
 };
 template <class R, class U, class... Args>
-struct deducer<R(U::*)(Args...)>
+struct function_deducer<R(U::*)(Args...)>
 {
   typedef R(U::*func_type)(Args...);
   typedef typename check_return<R>::type return_type;
@@ -130,7 +130,7 @@ struct deducer<R(U::*)(Args...)>
   static inline base_function* Create(func_type func) { return new function_holder<func_type>(func); }
 };
 template <class R, class U, class... Args>
-struct deducer<R(U::*)(Args...)const>
+struct function_deducer<R(U::*)(Args...)const>
 {
   typedef R(U::*func_type)(Args...)const;
   typedef typename check_return<R>::type return_type;
@@ -143,33 +143,33 @@ struct deducer<R(U::*)(Args...)const>
 
 //lambda deducer
 template <class S> 
-struct deducer
+struct function_deducer
 {
   typedef decltype(&S::operator()) func_type;
-  typedef typename deducer<func_type>::return_type return_type;
+  typedef typename function_deducer<func_type>::return_type return_type;
   typedef nulltype class_type;
-  typedef typename deducer<func_type>::func_operator func_operator;
+  typedef typename function_deducer<func_type>::func_operator func_operator;
 
-  enum { num_args = deducer<func_type>::num_args, is_member_func = false, is_const = true, is_lambda = true };
+  enum { num_args = function_deducer<func_type>::num_args, is_member_func = false, is_const = true, is_lambda = true };
   static inline base_function* Create(S lambda) { return new function_holder<func_type>(&S::operator()); }
 };
 
 template <class T>
-struct function_descriptor : public deducer<T>
+struct function_descriptor : public function_deducer<T>
 {
 public:
   enum {
-    num_args = deducer<T>::num_args,
-    is_member_function = deducer<T>::is_member_func,
-    is_const = deducer<T>::is_const,
-    is_lambda = deducer<T>::is_lambda,
+    num_args = function_deducer<T>::num_args,
+    is_member_function = function_deducer<T>::is_member_func,
+    is_const = function_deducer<T>::is_const,
+    is_lambda = function_deducer<T>::is_lambda,
     has_return_value = (std::is_same<return_type, void_>::value == false),
   };
 
-  typedef typename deducer<T>::class_type class_type;
-  typedef typename deducer<T>::return_type return_type;
-  typedef typename deducer<T>::func_type func_type;
-  typedef typename deducer<T>::func_operator func_operator;
+  typedef typename function_deducer<T>::class_type class_type;
+  typedef typename function_deducer<T>::return_type return_type;
+  typedef typename function_deducer<T>::func_type func_type;
+  typedef typename function_deducer<T>::func_operator func_operator;
 
   static inline void DeduceArgs(arg_traits* args)
   {
@@ -183,6 +183,6 @@ public:
   {
     return func_operator::Call(function, object, traits, args);
   }
-  static inline base_function* Create(T func) { return deducer<T>::Create(func); }
+  static inline base_function* Create(T func) { return function_deducer<T>::Create(func); }
 };
 }}

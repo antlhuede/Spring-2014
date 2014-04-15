@@ -64,7 +64,6 @@ template <class... Args>
 variant function::operator()(Args&&... args) const
 {
   assert(sizeof...(Args) == m_traits.numArguments);
-  assert(m_traits.hasReturnValue == false);
   const int size = sizeof...(args)+1;
   void* args_ptr[size] = { &args... };
   const type* types_ptr[size] = { typeof(args)... };
@@ -72,21 +71,22 @@ variant function::operator()(Args&&... args) const
   return m_caller(m_function, m_object, m_traits.args, args_ptr);
 }
 template <class U, class... Args>
-void function::call(U* object, Args&&... args)
+variant function::call(U* object, Args&&... args)
 {
+  assert(sizeof...(Args) == m_traits.numArguments);
   assert(typeof<U>() == m_traits.classType);
-  void* temp_obj = m_object;
-  m_object = object;
-  (*const_cast<const function*>(this))(std::forward<Args&&>(args)...);
-  m_object = temp_obj;
+  const int size = sizeof...(args)+1;
+  void* args_ptr[size] = { &args... };
+  const type* types_ptr[size] = { typeof(args)... };
+  assert(m_checker && m_checker(types_ptr));
+  return m_caller(m_function, object, m_traits.args, args_ptr);
 }
 
 template <class U, class... Args>
-void function::call(const U* object, Args&&... args) const
+variant function::call(const U* object, Args&&... args) const
 {
   assert(m_traits.isConst == true);
-  assert(typeof<U>() == m_traits.classType);
-  call(const_cast<U*>(object), std::forward<Args&&>(args)...);
+  return call(const_cast<U*>(object), std::forward<Args&&>(args)...);
 }
 template <class U, class... Args>
 bool function::check_types() const

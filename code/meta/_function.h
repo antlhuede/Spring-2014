@@ -68,10 +68,10 @@ public:
   variant operator()(Args&&... args) const;
 
   template <class U, class... Args>
-  void call(U* object, Args&&... args);
+  variant call(U* object, Args&&... args);
 
   template <class U, class... Args>
-  void call(const U* object, Args&&... args) const;
+  variant call(const U* object, Args&&... args) const;
 
   template <class U, class... Args>
   bool check_types() const;
