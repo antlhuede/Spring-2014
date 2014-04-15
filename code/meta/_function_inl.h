@@ -6,7 +6,7 @@ namespace meta {
 
 template <class T> 
 function::function(T func)
-  : m_traits(func), m_initialized(true), m_object(&func)
+  : m_initialized(true), m_object(&func)
   , m_caller(&internal::function_traits_deducer<T>::Call)
   , m_checker(&internal::function_traits_deducer<T>::CheckArgs)
 {
@@ -16,7 +16,10 @@ function::function(T func)
   m_traits.isLambda = true;
   m_traits.classType = typeof<nulltype>();
   m_traits.isMemberFunction = false;
-  //m_traits.numArguments
+
+  typedef internal::signature<func_type> sig;
+  m_traits.numArguments = sig::num_args;
+  sig::function_operator::DeduceArgs(m_traits.args);
 }
 template <class R, class... Args>
 function::function(R(*func)(Args...))
