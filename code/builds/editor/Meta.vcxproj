@@ -118,6 +118,7 @@
     <ClInclude Include="..\..\meta\_operations.h" />
     <ClInclude Include="..\..\meta\_operations_inl.h" />
     <ClInclude Include="..\..\meta\_property.h" />
+    <ClInclude Include="..\..\meta\_property_inl.h" />
     <ClInclude Include="..\..\meta\_registry.h" />
     <ClInclude Include="..\..\meta\_registry_inl.h" />
     <ClInclude Include="..\..\meta\_type.h" />

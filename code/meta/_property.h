@@ -4,25 +4,15 @@ namespace meta {
 class property
 {
 public:
-  property(const string& name, const function& get, const function& set)
-    : m_name(name), m_get(get), m_set(set) 
-  {
-    assert(get.traits().classType == set.traits().classType);
-
-    assert(get.traits().numArguments == 0);
-    assert(set.traits().numArguments == 1);
-    assert(get.traits().returnType == set.traits().args[0].type);
-    assert(set.traits().hasReturnValue == false);
-
-    m_classType = get.traits().classType;
-    m_type = get.traits().returnType;
-  }
+  property(const string& name, const function& get, const function& set);
 
   const string& name() const { return m_name; }
   const type* type() const { return m_type; }
 
-  const function& get() const { return m_get; }
-  const function& set() const { return m_set; }
+  template <class U, class T>
+  void set(U* object, const T& value) const;
+  template <class U>
+  variant get(U* object) const;
 private:
   string m_name = "uninitialized_property";
   const ::meta::type* m_type;

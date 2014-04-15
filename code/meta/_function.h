@@ -65,13 +65,13 @@ public:
   const function_traits& traits() const { return m_traits; }
 
   template <class... Args>
-  variant operator()(Args&&... args) const;
+  variant operator()(Args... args) const;
 
   template <class U, class... Args>
-  variant call(U* object, Args&&... args);
+  variant call(U* object, Args... args) const;
 
   template <class U, class... Args>
-  variant call(const U* object, Args&&... args) const;
+  variant call(const U* object, Args... args) const;
 
   template <class U, class... Args>
   bool check_types() const;

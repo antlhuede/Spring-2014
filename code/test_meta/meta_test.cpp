@@ -211,8 +211,18 @@ void GlobalPlayerDeadFunc(int lives_left)
 {
   std::cout << "In global player dead func: lives left(" << lives_left << ")" << std::endl;
 }
+void test_properties()
+{
+  test_class tc;
+  const meta::property p = meta::typeof(tc)->property("test_property");
+  string value("initial test");
+  p.set(&tc, value);
+  std::cout << p.get(&tc).get_as<string>() << std::endl;
+}
 void run_basic_test_code()
 {
+  test_properties();
+
   std::cout << "start run basic test" << std::endl;
   make_test_memory();
 

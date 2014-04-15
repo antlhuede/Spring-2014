@@ -25,6 +25,7 @@ namespace meta { void initialize(); void destroy(); }
 
 #include "meta\_function_inl.h"
 #include "meta\_type_inl.h"
+#include "meta\_property_inl.h"
 #include "meta\_registry_inl.h"
 #include "meta\_converter_inl.h"
 #include "meta\_operations_inl.h"

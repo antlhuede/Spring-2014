@@ -125,10 +125,18 @@ inline type& type::Property(const string& name, const function& get, const funct
 inline const field type::field(const string& name, bool assert_on_failure) const
 {
   auto index = m_fieldMap.find(name);
-  if (index == m_fieldMap.end() && (assert_on_failure ? assert(false), false : true))
+  if (index == m_fieldMap.end() && (assert_on_failure ? assert(false), true : true))
     return ::meta::field("empty_field", typeof<nulltype>(), 0);
     
   return m_fields[index->second];
+}
+inline const property type::property(const string& name, bool assert_on_failure) const
+{
+  auto index = m_propertyMap.find(name);
+  if (index == m_propertyMap.end() && (assert_on_failure ? assert(false), true : true))
+    return ::meta::property("empty_property", meta::function(), meta::function());
+
+  return m_properties[index->second];
 }
 
 }
