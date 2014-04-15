@@ -49,8 +49,17 @@ public:
   ~function();
   function(function&& other);
   function(const function& other);
-  template <class T, class U = nulltype> 
-  function(T func, U* obj = nullptr);
+
+
+  template <class T> 
+  function(T func);
+
+  template <class R, class... Args>
+  function(R(*func)(Args...));
+  template <class R, class U, class... Args>
+  function(R(U::*func)(Args...), U* obj = nullptr);
+  template <class R, class U, class... Args>
+  function(R(U::*func)(Args...)const, const U* obj = nullptr);
   
   const function_traits& traits() const { return m_traits; }
 

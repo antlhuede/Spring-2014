@@ -4,17 +4,58 @@
 
 namespace meta {
 
-template <class T, class U> 
-function::function(T func, U* obj)
-  : m_traits(func), m_initialized(true), m_object(obj)
+template <class T> 
+function::function(T func)
+  : m_traits(func), m_initialized(true), m_object(&func)
   , m_caller(&internal::function_traits_deducer<T>::Call)
   , m_checker(&internal::function_traits_deducer<T>::CheckArgs)
 {
-  if (obj)
+  typedef decltype(&T::operator()) func_type;
+  m_function = new internal::function_holder<func_type>(&T::operator());
+}
+template <class R, class... Args>
+function::function(R(*func)(Args...))
+  : m_traits(func), m_initialized(true), m_object(nullptr)
+{
+  typedef R(*func_type)(Args...);
+  typedef internal::function_traits_deducer<func_type> deducer;
+  typedef internal::function_creator<func_type> creator;
+
+  m_caller = &deducer::Call;
+  m_checker = &deducer::CheckArgs;
+  m_function = new internal::function_holder<func_type>(func);
+}
+template <class R, class U, class... Args>
+function::function(R(U::*func)(Args...), U* obj)
+  : m_traits(func), m_initialized(true), m_object(obj)
+{
+  if (m_object)
     assert(typeof<U>() == m_traits.classType);
 
-  m_function = internal::function_creator<T>::create(func, &m_object);
+  typedef R(U::*func_type)(Args...);
+  typedef internal::function_traits_deducer<func_type> deducer;
+  typedef internal::function_creator<func_type> creator;
+
+  m_caller = &deducer::Call;
+  m_checker = &deducer::CheckArgs;
+  m_function = new internal::function_holder<func_type>(func);
 }
+template <class R, class U, class... Args>
+function::function(R(U::*func)(Args...)const, const U* obj)
+  : m_traits(func), m_initialized(true), m_object(const_cast<U*>(obj))
+{
+  if (m_object)
+    assert(typeof<U>() == m_traits.classType);
+
+  typedef R(U::*func_type)(Args...)const;
+  typedef internal::function_traits_deducer<func_type> deducer;
+  typedef internal::function_creator<func_type> creator;
+
+  m_caller = &deducer::Call;
+  m_checker = &deducer::CheckArgs;
+  m_function = new internal::function_holder<func_type>(func);
+}
+
 inline function::function(const function& other)
   : m_function(other.m_function->clone())
   , m_traits(other.m_traits)
