@@ -2,7 +2,6 @@
 
 namespace meta
 {
-
 template <class T>
 type::type(decl<T>, const string name, ReadFunc r, WriteFunc w, StringizeFunc str)
   : m_id(++S_ID_COUNTER)
@@ -18,31 +17,9 @@ type::type(decl<T>, const string name, ReadFunc r, WriteFunc w, StringizeFunc st
   , m_allocate(&AllocMemory<T>)
   , m_deallocate(&DeleteMemory<T>)
   , m_assign(&AssignMemory<T>) 
-  {
-    bool registered = internal::meta_registry::register_type(this);
-    assert(registered == true);
-  }
-
-inline type& type::operator=(const type& rhs)
 {
-  m_id = rhs.m_id;
-  m_size = rhs.m_size;
-  m_name = rhs.m_name;
-  const_cast<ReadFunc&>(m_read) = rhs.m_read;
-  const_cast<WriteFunc&>(m_write) = rhs.m_write;
-  const_cast<StringizeFunc&>(m_to_string) = rhs.m_to_string;
-  const_cast<PlacementNewFunc&>(m_construct) = rhs.m_construct;
-  const_cast<CopyFunc&>(m_copy) = rhs.m_copy;
-  const_cast<DestructFunc&>(m_destruct) = rhs.m_destruct;
-  const_cast<CloneFunc&>(m_clone) = rhs.m_clone;
-  const_cast<AllocFunc&>(m_allocate) = rhs.m_allocate;
-  const_cast<DeleteFunc&>(m_deallocate) = rhs.m_deallocate;
-  const_cast<AssignFunc&>(m_assign) = rhs.m_assign;
-
-  m_fields = rhs.m_fields;
-  m_fieldmap = rhs.m_fieldmap;
-
-  return *this;
+  bool registered = internal::meta_registry::register_type(this);
+  assert(registered == true);
 }
 
 inline void type::read(istream& stream, void* memory) const   
@@ -113,16 +90,44 @@ inline const vector<const field>& type::fields() const
 template <typename T, typename U>
 type& type::Field(const string& name, T U::*var)
 {
-  assert(m_fieldmap.find(name) == m_fieldmap.end());
-  m_fieldmap[name] = m_fields.size();
+  assert(typeof<U>() == this);
+  assert(m_fieldMap.find(name) == m_fieldMap.end());
+  m_fieldMap[name] = m_fields.size();
   m_fields.push_back(::meta::field(name, typeof<T>(), ((size_t)&(((U*)0)->*var))));
   return *this;
 }
 
+inline type& type::Property(const string& name, const function& get, const function& set)
+{
+  assert(get.traits().classType == this);
+  assert(set.traits().classType == this);
+  
+  assert(get.traits().numArguments == 1);
+  assert(set.traits().numArguments == 1);
+  assert(get.traits().args[0].type == set.traits().args[0].type);
+  
+  assert(get.traits().args[0].isPointer == true);
+  assert(set.traits().args[0].isReference == true);
+
+  assert(m_propertyMap.find(name) == m_propertyMap.end());
+  m_propertyMap[name] = m_properties.size();
+  m_properties.push_back(::meta::property(name, get, set));
+  return *this;
+}
+//template <class U, class T>
+//type& type::Event(const string& name, T(U::*get)()const, void(U::*set)(const T&))
+//{
+//  assert(typeof<U>() == this);
+//  assert(m_eventMap.find(name) == m_eventMap.end());
+//  m_eventMap[name] = m_events.size();
+//  m_events.push_back(func);
+//  return *this;
+//}
+
 inline const field type::field(const string& name, bool assert_on_failure) const
 {
-  auto index = m_fieldmap.find(name);
-  if (index == m_fieldmap.end() && (assert_on_failure ? assert(false), false : true))
+  auto index = m_fieldMap.find(name);
+  if (index == m_fieldMap.end() && (assert_on_failure ? assert(false), false : true))
     return ::meta::field("empty_field", typeof<nulltype>(), 0);
     
   return m_fields[index->second];

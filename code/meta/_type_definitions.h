@@ -27,6 +27,13 @@ namespace meta
 {
   class type;
   class field;
+  class property;
+  class event;
+  class messenger;
+
+  class variant;
+  class variant_ref;
+
   template <class T> struct decl {};
 
   typedef void(*ReadFunc)(istream&, void*);

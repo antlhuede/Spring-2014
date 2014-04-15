@@ -9,8 +9,13 @@ template <class ContainerPolicy>
 class XMLSerializer : public serializer<ContainerPolicy>
 {
 public:
+  typedef serializer<ContainerPolicy> base_serializer;
+
   XMLSerializer() = default;
   ~XMLSerializer() = default;
+  XMLSerializer(XMLSerializer&&) = delete;
+  XMLSerializer(const XMLSerializer&) = delete;
+  XMLSerializer& operator=(const XMLSerializer&) = delete;
 
   virtual void write(const string& file) const;
   virtual bool read(const string& file);

@@ -1,10 +1,10 @@
 #pragma once
 
-namespace meta {
+namespace meta { 
 
 namespace internal {
-struct base_function;
-template <class T> struct function_holder;
+  struct base_function;
+  template <class T> struct function_holder;
 }
 
 //describes an argument to a function
@@ -49,13 +49,22 @@ public:
   ~function();
   function(function&& other);
   function(const function& other);
-  template <class T> function(T func, void* obj = nullptr);
+  template <class T, class U = nulltype> 
+  function(T func, U* obj = nullptr);
   
   const function_traits& traits() const { return m_traits; }
 
   template <class... Args>
-  void operator()(Args&&... args);
+  void operator()(Args&&... args) const;
 
+  template <class U, class... Args>
+  void call(U* object, Args&&... args);
+
+  template <class U, class... Args>
+  void call(const U* object, Args&&... args) const;
+
+  template <class U, class... Args>
+  bool check_types() const;
 private:
   typedef internal::base_function base_function;
   function_traits m_traits;
@@ -68,11 +77,4 @@ private:
   Caller m_caller = nullptr;
   ArgChecker m_checker = nullptr;
 };
-
-namespace internal {
-template <class T> struct caller;
-template <class T, class R, class... Args> struct function_operator;
-template <class T, class U, class R, class... Args> struct base_deducer;
-template <class T> struct function_traits_deducer;
-}
 }

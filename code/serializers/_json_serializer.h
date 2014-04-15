@@ -8,8 +8,13 @@ template <class ContainerPolicy>
 class JSonSerializer : public serializer<ContainerPolicy>
 {
 public:
+  typedef serializer<ContainerPolicy> base_serializer;
+
   JSonSerializer() = default;
   ~JSonSerializer() = default;
+  JSonSerializer(JSonSerializer&&) = delete;
+  JSonSerializer(const JSonSerializer&) = delete;
+  JSonSerializer& operator=(const JSonSerializer&) = delete;
 
   virtual void write(const string& file) const;
   virtual bool read(const string& file);

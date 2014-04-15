@@ -54,7 +54,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;WIN32;NDEBUG;JSON_LESS_MEMORY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..;..\..\gmock;..\..\gtest;..\..\meta;..\..\serializers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ProgramDataBaseFileName>$(OutDir)meta_r.pdb</ProgramDataBaseFileName>
@@ -68,7 +68,7 @@
       <AdditionalOptions>-wd4201 -wd4505 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;WIN32;NDEBUG;JSON_LESS_MEMORY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..;..\..\gmock;..\..\gtest;..\..\meta;..\..\serializers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
@@ -82,7 +82,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;WIN32;_DEBUG;JSON_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..;..\..\gmock;..\..\gtest;..\..\meta;..\..\serializers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ProgramDataBaseFileName>$(OutDir)meta_d.pdb</ProgramDataBaseFileName>
@@ -93,7 +93,7 @@
       <AdditionalOptions>-wd4201 -wd4505 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;WIN32;_DEBUG;JSON_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..;..\..\gmock;..\..\gtest;..\..\meta;..\..\serializers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
@@ -104,6 +104,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\meta\_converter.h" />
     <ClInclude Include="..\..\meta\_converter_inl.h" />
+    <ClInclude Include="..\..\meta\_event.h" />
     <ClInclude Include="..\..\meta\_field.h" />
     <ClInclude Include="..\..\meta\_function.h" />
     <ClInclude Include="..\..\meta\_function_inl.h" />
@@ -115,6 +116,7 @@
     <ClInclude Include="..\..\meta\_object_container.h" />
     <ClInclude Include="..\..\meta\_operations.h" />
     <ClInclude Include="..\..\meta\_operations_inl.h" />
+    <ClInclude Include="..\..\meta\_property.h" />
     <ClInclude Include="..\..\meta\_registry.h" />
     <ClInclude Include="..\..\meta\_registry_inl.h" />
     <ClInclude Include="..\..\meta\_type.h" />

@@ -2,6 +2,7 @@
 
 namespace serializers
 {
+//container policy necessary for dependency inversion
 template <class ContainerPolicy = meta::object_container>
 class serializer : public ContainerPolicy
 {

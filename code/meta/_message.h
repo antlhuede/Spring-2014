@@ -1,13 +1,7 @@
 #pragma once
 
-namespace meta
-{
-void initialize();
-void destroy();
-namespace internal {
+namespace meta {
 typedef hash_map<string, vector<function>> message_table;
-typedef shared_ptr<message_table> message_table_ptr;
-}
 
 class messenger
 {
@@ -58,7 +52,6 @@ public:
   }
 
 private:
-  internal::message_table m_table;
+  message_table m_table;
 };
-
 }

@@ -11,7 +11,7 @@ solution "Google Test Framework"
   }
 
 configuration "Release"
-  defines { "NDEBUG", "JSON_LESS_MEMORY" }
+  defines { "NDEBUG" }
   optimize "Speed"
   floatingpoint "fast"
   vectorextensions "SSE2"
@@ -26,7 +26,7 @@ configuration "Release"
   }
 
 configuration "Debug"
-  defines { "_DEBUG", "JSON_DEBUG" }
+  defines { "_DEBUG" }
   optimize "Off"
   floatingpoint "fast"
   vectorextensions "SSE2"

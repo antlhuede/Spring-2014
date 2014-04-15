@@ -32,6 +32,13 @@ public:
   float test_float = 0.0f;
   double test_double = 0.0;
   bool test_bool = false;
+
+
+  void set_property(const string& test) { m_property = test; }
+  void get_property(string* obj) const { assert(obj); *obj = m_property; }
+
+private:
+  string m_property;
 };
 struct global_message_table
 {
@@ -54,6 +61,7 @@ DECLARE_META_OBJECT(test_class)
   .Field("test_float", &test_class::test_float)
   .Field("test_double", &test_class::test_double)
   .Field("test_bool", &test_class::test_bool)
+  .Property("test_property", &test_class::get_property, &test_class::set_property)
 END_META_OBJECT()
 
 int test_int1 = 5;

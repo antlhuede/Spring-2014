@@ -1,7 +1,6 @@
 #pragma once
 
 namespace meta {
-
 class field
 {
 public:
@@ -30,5 +29,4 @@ private:
   const ::meta::type* m_type;
   size_t m_offset = 0;
 };
-
 }

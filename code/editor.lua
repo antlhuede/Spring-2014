@@ -11,7 +11,7 @@ solution "Editor"
   }
 
 configuration "Release"
-  defines { "NDEBUG", "JSON_LESS_MEMORY" }
+  defines { "NDEBUG" }
   optimize "Speed"
   floatingpoint "fast"
   vectorextensions "SSE2"
@@ -26,7 +26,7 @@ configuration "Release"
   }
 
 configuration "Debug"
-  defines { "_DEBUG", "JSON_DEBUG" }
+  defines { "_DEBUG" }
   optimize "Off"
   floatingpoint "fast"
   vectorextensions "SSE2"
@@ -60,12 +60,12 @@ project "Test Meta"
   vpaths({ ["source"] = {"**.cpp", "**.c", "**.h"} })
 
   configuration "Release"
-    targetname( "test_meta_r" )
     links { "google_test_r" }
+    targetname( "test_meta_r" )
     
   configuration "Debug"
-    targetname( "test_meta_d" )
     links { "google_test_d" }
+    targetname( "test_meta_d" )
 
 
 project "Game"
@@ -102,7 +102,9 @@ project "Serializers"
   vpaths({ ["serializers"] = {"serializers/**.cpp", "serializers/**.c", "serializers/**.h"} })
 
   configuration "Release"
+    defines { "JSON_DEBUG" }
     targetname( "serializers_r" )
     
   configuration "Debug"
+    defines { "JSON_LESS_MEMORY" }
     targetname( "serializers_d" )

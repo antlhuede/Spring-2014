@@ -1,14 +1,18 @@
 #pragma once
 
 #include "meta\_function_internal_inl.h"
+
 namespace meta {
 
-template <class T> 
-function::function(T func, void* obj)
+template <class T, class U> 
+function::function(T func, U* obj)
   : m_traits(func), m_initialized(true), m_object(obj)
   , m_caller(&internal::function_traits_deducer<T>::Call)
   , m_checker(&internal::function_traits_deducer<T>::CheckArgs)
 {
+  if (obj)
+    assert(typeof<U>() == m_traits.classType);
+
   m_function = internal::function_creator<T>::create(func, &m_object);
 }
 inline function::function(const function& other)
@@ -34,7 +38,7 @@ inline function::function(function&& other)
 inline function::~function() { if (m_function) delete m_function; }
 
 template <class... Args>
-void function::operator()(Args&&... args)
+void function::operator()(Args&&... args) const
 {
   assert(sizeof...(Args) == m_traits.numArguments);
   assert(m_traits.hasReturnValue == false);
@@ -44,6 +48,40 @@ void function::operator()(Args&&... args)
   assert(m_checker && m_checker(types_ptr));
   m_caller(m_function, m_object, m_traits.args, args_ptr);
 }
+template <class U, class... Args>
+void function::call(U* object, Args&&... args)
+{
+  assert(typeof<U>() == m_traits.classType);
+  void* temp_obj = m_object;
+  m_object = object;
+  (*const_cast<const function*>(this))(std::forward<Args&&>(args)...);
+  m_object = temp_obj;
+}
+
+template <class U, class... Args>
+void function::call(const U* object, Args&&... args) const
+{
+  assert(m_traits.isConst == true);
+  assert(typeof<U>() == m_traits.classType);
+  call(const_cast<U*>(object), std::forward<Args&&>(args)...);
+}
+template <class U, class... Args>
+bool function::check_types() const
+{
+  if(sizeof...(Args) != m_traits.numArguments)
+    return false;
+  if (m_checker == nullptr)
+    return false;
+
+  const int size = sizeof...(args)+1;
+  const type* types_ptr[size] = { typeof(args)... };
+
+  if (m_checker(types_ptr) == false)
+    return false;
+
+  return true;
+}
+
 
 template <class T>
 function_traits::function_traits(T func)

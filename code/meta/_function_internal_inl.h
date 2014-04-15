@@ -1,6 +1,12 @@
 #pragma once
 
 namespace meta { namespace internal {
+
+template <class T> struct caller;
+template <class T, class R, class... Args> struct function_operator;
+template <class T, class U, class R, class... Args> struct base_deducer;
+template <class T> struct function_traits_deducer;
+
 //caller: used to correctly cast the base function pointer and call the function pointer
 //lambda functions fall under the category of const member function
 template <class R, class... Args>
