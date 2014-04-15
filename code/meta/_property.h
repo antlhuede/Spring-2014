@@ -15,6 +15,12 @@ public:
   void set(U* object, const T& value) const;
   template <class U>
   variant get(U* object) const;
+
+  template <class T, class U>
+  T get_as(U* object) const
+  {
+    return get(object).get_as<T>();
+  }
 private:
   string m_name = "uninitialized_property";
   const ::meta::type* m_type = typeof<nulltype>();

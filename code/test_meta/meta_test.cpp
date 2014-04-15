@@ -217,7 +217,7 @@ void test_properties()
   const meta::property p = meta::typeof(tc)->property("test_property");
   string value("initial test");
   p.set(&tc, value);
-  std::cout << p.get(&tc).get_as<string>() << std::endl;
+  std::cout << p.get_as<string>(&tc) << std::endl;
 }
 void run_basic_test_code()
 {
