@@ -105,6 +105,7 @@
     <ClInclude Include="..\..\meta\_converter.h" />
     <ClInclude Include="..\..\meta\_converter_inl.h" />
     <ClInclude Include="..\..\meta\_event.h" />
+    <ClInclude Include="..\..\meta\_event_inl.h" />
     <ClInclude Include="..\..\meta\_field.h" />
     <ClInclude Include="..\..\meta\_function.h" />
     <ClInclude Include="..\..\meta\_function_caller.h" />

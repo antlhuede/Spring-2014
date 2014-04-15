@@ -88,7 +88,7 @@ struct function_operator
     template <class... ArgsT>
     static inline R Call(base_function* function, void* object, const arg_traits* traits, void** args, ArgsT&&... parameters)
     {
-      return caller<R, function_type>::Call(function, object, std::forward<Args&&>(parameters)...);
+      return caller<R, function_type>::Call(function, object, std::forward<Args>(parameters)...);
     }
   };
 };

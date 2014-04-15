@@ -37,6 +37,11 @@ public:
   void set_property(const string& test) { m_property = test; }
   const string& get_property() const { return m_property; }
 
+  const string test_event(const string& arg1, float arg2, int arg3, bool arg4)
+  {
+    std::cout << "test event: " << arg1 << " " << arg2 << " " << arg3 << " " << arg4 << std::endl;
+    return arg1 + " event was processed";
+  }
 private:
   string m_property;
 };
@@ -44,9 +49,9 @@ struct global_message_table
 {
   static meta::messenger* m_table;
   template <class... Args>
-  static bool DispatchMessage(const string& name, Args&&... args)
+  static bool DispatchMessage(const string& name, Args... args)
   {
-    return m_table->DispatchMessage(name, std::forward<Args&&>(args)...);
+    return m_table->DispatchMessage(name, std::forward<Args>(args)...);
   }
   static bool AddListener(const string& name, const meta::function& func)
   {
@@ -62,7 +67,8 @@ DECLARE_META_OBJECT(test_class)
   .Field("test_double", &test_class::test_double)
   .Field("test_bool", &test_class::test_bool)
   .Property("test_property", &test_class::get_property, &test_class::set_property)
-  .Property("test_getter_only", &test_class::get_property, nullptr)
+  .Property("test_getter_only", &test_class::get_property)
+  .Event("test_event", &test_class::test_event)
 END_META_OBJECT()
 
 int test_int1 = 5;
@@ -223,6 +229,9 @@ void test_properties()
 
   const meta::property p2 = tc_type->property("test_getter_only");
   std::cout << p2.get_as<string>(&tc) << std::endl;
+
+  const meta::event e1 = tc_type->event("test_event");
+  std::cout << e1.trigger(&tc, string("hello world"), 13.5f, 255, true).get_as<string>() << std::endl;
 }
 void run_basic_test_code()
 {

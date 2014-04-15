@@ -33,12 +33,17 @@ public:
   template <class T, class U>
   type& Property(const string& name, T(U::*get)()const, void(U::*set)(T));
   
+  //functions to enable passing nullptr into either getter or setter without explicit
+  //casting to the pointer type
   template <class T, class U>
-  type& Property(const string& name, void*, void(U::*set)(T));
+  type& Property(const string& name, void(U::*set)(T));
   template <class T, class U>
-  type& Property(const string& name, T(U::*get)()const, void*);
-  //template <class U, class R, class... Args>
-  //type& Event(const string& name, R(U::*func)(Args...));
+  type& Property(const string& name, T(U::*get)()const);
+
+  template <class U, class R, class... Args>
+  type& Event(const string& name, R(U::*func)(Args...));
+  template <class U, class R, class... Args>
+  type& Event(const string& name, R(U::*func)(Args...)const);
 
   const vector<const field>& fields() const;
   size_t size() const { return m_size; }
@@ -47,7 +52,7 @@ public:
 
   const field field(const string& name, bool assert_on_failure = false) const;
   const property property(const string& name, bool assert_on_failure = false) const;
-
+  const event event(const string& name, bool assert_on_failure = false) const;
 private:
   static unsigned S_ID_COUNTER;
   unsigned m_id = 0;

@@ -7,7 +7,7 @@ class messenger
 {
 public:
   template <class... Args>
-  bool DispatchMessage(const string& name, Args&&... args)
+  bool DispatchMessage(const string& name, Args... args)
   {
     auto item = m_table.find(name);
     if (item == m_table.end())
@@ -15,7 +15,7 @@ public:
 
     vector<function>& listeners = item->second;
     for (function& func : listeners)
-      func(std::forward<Args&&>(args)...);
+      func(std::forward<Args>(args)...);
 
     return true;
   }

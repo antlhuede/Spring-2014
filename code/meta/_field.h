@@ -5,6 +5,7 @@ class field
 {
 public:
   field() = default;
+  ~field() = default;
   field(const string& name, const ::meta::type* type, size_t offset)
     : m_name(name), m_type(type), m_offset(offset) {}
 

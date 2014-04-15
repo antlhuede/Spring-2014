@@ -61,37 +61,35 @@ inline function::function(function&& other)
 }
 inline function::~function() { if (m_function) delete m_function; }
 
+#define IMPLEMENT_CALLER_BODY() \
+  assert(sizeof...(Args) == m_traits.numArguments);           \
+  const int size = sizeof...(args)+1;                         \
+  /*make const now, so we can store pointers to const args*/  \
+  const void* args_ptr[size] = { &args... };                  \
+  const type* types_ptr[size] = { typeof(args)... };          \
+  assert(m_checker && m_checker(types_ptr))
+
 template <class... Args>
 variant function::operator()(Args... args) const
 {
-  assert(sizeof...(Args) == m_traits.numArguments);
-  const int size = sizeof...(args)+1;
-  //make const now, so we can store pointers to const args
-  const void* args_ptr[size] = { &args... };
-  const type* types_ptr[size] = { typeof(args)... };
-  assert(m_checker && m_checker(types_ptr));
+  IMPLEMENT_CALLER_BODY();
   //cast away the const from the args since its expected by the caller
   return m_caller(m_function, m_object, m_traits.args, const_cast<void**>(args_ptr));
 }
 template <class U, class... Args>
 variant function::call(U* object, Args... args) const
 {
-  assert(sizeof...(Args) == m_traits.numArguments);
-  assert(typeof<U>() == m_traits.classType);
-  const int size = sizeof...(args)+1;
-  //make const now, so we can store pointers to const args
-  const void* args_ptr[size] = { &args... };
-  const type* types_ptr[size] = { typeof(args)... };
-  assert(m_checker && m_checker(types_ptr));
+  IMPLEMENT_CALLER_BODY();
   //cast away the const from the args since its expected by the caller
   return m_caller(m_function, object, m_traits.args, const_cast<void**>(args_ptr));
 }
+#undef IMPLEMENT_CALLER_BODY
 
 template <class U, class... Args>
 variant function::call(const U* object, Args... args) const
 {
   assert(m_traits.isConst == true);
-  return const_cast<function*>(this)->call(const_cast<U*>(object), std::forward<Args&&>(args)...);
+  return const_cast<function*>(this)->call(const_cast<U*>(object), std::forward<Args>(args)...);
 }
 template <class U, class... Args>
 bool function::check_types() const

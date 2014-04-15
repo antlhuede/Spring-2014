@@ -5,6 +5,7 @@ class property
 {
 public:
   property() = default;
+  ~property() = default;
   template <class T, class U>
   property(const string& name, T(U::*get)()const, void(U::*set)(T));
 

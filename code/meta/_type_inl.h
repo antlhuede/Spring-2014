@@ -72,7 +72,6 @@ inline void type::assign(void* dest, const void* source) const
   assert(m_assign);
   m_assign(dest, source);
 }
-
 inline bool type::operator==(const type& rhs) const
 {
   return m_id == rhs.m_id;
@@ -81,7 +80,6 @@ inline bool type::operator!=(const type& rhs) const
 {
   return !(*this == rhs);
 }
-
 inline const vector<const field>& type::fields() const
 {
   return m_fields;
@@ -106,42 +104,57 @@ type& type::Property(const string& name, T(U::*get)()const, void(U::*set)(T))
   return *this;
 }
 template <class T, class U>
-type& type::Property(const string& name, void*, void(U::*set)(T))
+type& type::Property(const string& name, void(U::*set)(T))
 {
   typedef T(U::*getter_type)()const;
   return Property(name, (getter_type)nullptr, set);
 }
 template <class T, class U>
-type& type::Property(const string& name, T(U::*get)()const, void*)
+type& type::Property(const string& name, T(U::*get)()const)
 {
   typedef void(U::*setter_type)(T);
   return Property(name, get, (setter_type)nullptr);
 }
-//template <class U, class T>
-//type& type::Event(const string& name, T(U::*get)()const, void(U::*set)(const T&))
-//{
-//  assert(typeof<U>() == this);
-//  assert(m_eventMap.find(name) == m_eventMap.end());
-//  m_eventMap[name] = m_events.size();
-//  m_events.push_back(func);
-//  return *this;
-//}
+
+
+#define IMPLEMENT_EVENT_CONSTRUCTOR()                 \
+  assert(typeof<U>() == this);                        \
+  assert(m_eventMap.find(name) == m_eventMap.end());  \
+  m_eventMap[name] = m_events.size();                 \
+  m_events.push_back(::meta::event(name, func));      \
+  return *this
+
+template <class U, class R, class... Args>
+type& type::Event(const string& name, R(U::*func)(Args...))
+{
+  IMPLEMENT_EVENT_CONSTRUCTOR();
+}
+template <class U, class R, class... Args>
+type& type::Event(const string& name, R(U::*func)(Args...)const)
+{
+  IMPLEMENT_EVENT_CONSTRUCTOR();
+}
+#undef IMPLEMENT_EVENT_CONSTRUCTOR
+
+
+#define IMPLEMENT_META_GET_FUNCTION(data_type, name_map, object_array)                \
+  auto index = name_map.find(name);                                                   \
+  if (index == name_map.end() && (assert_on_failure ? assert(false), true : true))    \
+  return ::meta::data_type();                                                         \
+  return object_array[index->second]
 
 inline const field type::field(const string& name, bool assert_on_failure) const
 {
-  auto index = m_fieldMap.find(name);
-  if (index == m_fieldMap.end() && (assert_on_failure ? assert(false), true : true))
-    return ::meta::field();
-    
-  return m_fields[index->second];
+  IMPLEMENT_META_GET_FUNCTION(field, m_fieldMap, m_fields);
 }
 inline const property type::property(const string& name, bool assert_on_failure) const
 {
-  auto index = m_propertyMap.find(name);
-  if (index == m_propertyMap.end() && (assert_on_failure ? assert(false), true : true))
-    return ::meta::property();
-
-  return m_properties[index->second];
+  IMPLEMENT_META_GET_FUNCTION(property, m_propertyMap, m_properties);
 }
+inline const event type::event(const string& name, bool assert_on_failure) const
+{
+  IMPLEMENT_META_GET_FUNCTION(event, m_eventMap, m_events);
+}
+#undef IMPLEMENT_META_GET_FUNCTION
 
 }
