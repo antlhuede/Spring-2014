@@ -65,7 +65,7 @@ public:
   const function_traits& traits() const { return m_traits; }
 
   template <class... Args>
-  void operator()(Args&&... args) const;
+  variant operator()(Args&&... args) const;
 
   template <class U, class... Args>
   void call(U* object, Args&&... args);
@@ -83,7 +83,7 @@ private:
   bool m_initialized = false;
   void* m_object = nullptr;
   base_function* m_function = nullptr;
-  typedef void(*Caller)(base_function* function, void* object, const arg_traits* traits, void** args);
+  typedef variant(*Caller)(base_function* function, void* object, const arg_traits* traits, void** args);
   typedef bool(*ArgChecker)(const type** arg_types);
 
   Caller m_caller = nullptr;

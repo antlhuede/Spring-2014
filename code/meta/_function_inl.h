@@ -61,7 +61,7 @@ inline function::function(function&& other)
 inline function::~function() { if (m_function) delete m_function; }
 
 template <class... Args>
-void function::operator()(Args&&... args) const
+variant function::operator()(Args&&... args) const
 {
   assert(sizeof...(Args) == m_traits.numArguments);
   assert(m_traits.hasReturnValue == false);
@@ -69,7 +69,7 @@ void function::operator()(Args&&... args) const
   void* args_ptr[size] = { &args... };
   const type* types_ptr[size] = { typeof(args)... };
   assert(m_checker && m_checker(types_ptr));
-  m_caller(m_function, m_object, m_traits.args, args_ptr);
+  return m_caller(m_function, m_object, m_traits.args, args_ptr);
 }
 template <class U, class... Args>
 void function::call(U* object, Args&&... args)

@@ -31,6 +31,19 @@ struct function_operator
   typedef std::tuple<Args...> arg_tuple;
   typedef T function_type;
 
+  static inline void DeduceArgs(arg_traits* args)
+  {
+    unwrapper::DeduceArgs(args);
+  }
+  static inline bool CheckArgs(const type** arg_types)
+  {
+    return unwrapper::CheckArgs(arg_types);
+  }
+  static inline variant Call(base_function* function, void* object, const arg_traits* traits, void** args)
+  {
+    return variant(unwrapper::Call(function, object, traits, args));
+  }
+
   //template recursion to:
   //  deduce function arguments,
   //  check passed argument types
@@ -160,15 +173,15 @@ public:
 
   static inline void DeduceArgs(arg_traits* args)
   {
-    func_operator::unwrapper::DeduceArgs(args);
+    func_operator::DeduceArgs(args);
   }
   static inline bool CheckArgs(const type** arg_types)
   {
-    return func_operator::unwrapper::CheckArgs(arg_types);
+    return func_operator::CheckArgs(arg_types);
   }
-  static inline void Call(base_function* function, void* object, const arg_traits* traits, void** args)
+  static inline variant Call(base_function* function, void* object, const arg_traits* traits, void** args)
   {
-    func_operator::unwrapper::Call(function, object, traits, args);
+    return func_operator::Call(function, object, traits, args);
   }
   static inline base_function* Create(T func) { return deducer<T>::Create(func); }
 };
