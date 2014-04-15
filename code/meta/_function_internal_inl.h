@@ -13,7 +13,7 @@ template <class R, class... Args>
 struct caller<R(*)(Args...)>
 {
   typedef function_holder<R(*)(Args...)> FuncType;
-  static R Call(base_function* function, void* object, Args&&... parameters)
+  static inline R Call(base_function* function, void* object, Args&&... parameters)
   {
     static_cast<FuncType*>(function)->function_ptr(std::forward<Args&&>(parameters)...);
   }
@@ -22,7 +22,7 @@ template <class R, class U, class... Args>
 struct caller<R(U::*)(Args...)>
 {
   typedef function_holder<R(U::*)(Args...)> FuncType;
-  static R Call(base_function* function, void* object, Args&&... parameters)
+  static inline R Call(base_function* function, void* object, Args&&... parameters)
   {
     (static_cast<U*>(object)->*(static_cast<FuncType*>(function)->function_ptr))(std::forward<Args&&>(parameters)...);
   }
@@ -31,7 +31,7 @@ template <class R, class U, class... Args>
 struct caller<R(U::*)(Args...)const>
 {
   typedef function_holder<R(U::*)(Args...)const> FuncType;
-  static R Call(base_function* function, void* object, Args&&... parameters)
+  static inline R Call(base_function* function, void* object, Args&&... parameters)
   {
     (static_cast<const U*>(object)->*(static_cast<FuncType*>(function)->function_ptr))(std::forward<Args&&>(parameters)...);
   }
@@ -44,15 +44,15 @@ struct function_operator
   template <size_t> struct unwrap;
   typedef typename unwrap<sizeof...(Args)> unwrapper;
 
-  static void DeduceArgs(arg_traits* args)
+  static inline void DeduceArgs(arg_traits* args)
   {
     unwrapper::DeduceArgs(args);
   }
-  static bool CheckArgs(const type** arg_types)
+  static inline bool CheckArgs(const type** arg_types)
   {
     return unwrapper::CheckArgs(arg_types);
   }
-  static void Call(base_function* function, void* object, const arg_traits* traits, void** args)
+  static inline void Call(base_function* function, void* object, const arg_traits* traits, void** args)
   {
     unwrapper::Call(function, object, traits, args);
   }
@@ -66,7 +66,7 @@ struct function_operator
   //  forward a function call
   template <size_t N> struct unwrap
   {
-    static void DeduceArgs(arg_traits* args)
+    static inline void DeduceArgs(arg_traits* args)
     {
       typedef std::tuple_element<sizeof...(Args)-N, arg_tuple>::type ElementType;
       arg_traits& arg = args[sizeof...(Args)-N];
@@ -76,7 +76,7 @@ struct function_operator
       arg.isConst = std::is_const<ElementType>::value;
       unwrap<N - 1>::DeduceArgs(args);
     }
-    static bool CheckArgs(const type** arg_types)
+    static inline bool CheckArgs(const type** arg_types)
     {
       typedef typename std::tuple_element<sizeof...(Args)-N, arg_tuple>::type ExpectedType;
       const type* arg_type = arg_types[sizeof...(Args)-N];
@@ -86,7 +86,7 @@ struct function_operator
       return unwrap<N - 1>::CheckArgs(arg_types);
     }
     template <class... ArgsT>
-    static R Call(base_function* function, void* object, const arg_traits* traits, void** args, ArgsT&&... parameters)
+    static inline R Call(base_function* function, void* object, const arg_traits* traits, void** args, ArgsT&&... parameters)
     {
       //remove reference so we can have a pointer to the memory, then cast the reference back if it existed.
       //this results in doing absolutely nothing to things that arent a reference
@@ -99,29 +99,79 @@ struct function_operator
   };
   template <> struct unwrap<0>
   {
-    static void DeduceArgs(arg_traits* args) { /*end recursion*/ }
-    static bool CheckArgs(const type** arg_types) { return true; /*end recursion*/ }
+    static inline void DeduceArgs(arg_traits* args) { /*end recursion*/ }
+    static inline bool CheckArgs(const type** arg_types) { return true; /*end recursion*/ }
     template <class... ArgsT>
-    static R Call(base_function* function, void* object, const arg_traits* traits, void** args, ArgsT&&... parameters)
+    static inline R Call(base_function* function, void* object, const arg_traits* traits, void** args, ArgsT&&... parameters)
     {
       caller<function_type>::Call(function, object, std::forward<Args&&>(parameters)...);
     }
   };
 };
 
+template <class S> struct deducer;
+template <class R, class... Args>
+struct deducer<R(*)(Args...)>
+{
+  typedef R(*func_type)(Args...);
+  typedef R return_type;
+  typedef nulltype class_type;
+  typedef function_operator<func_type, return_type, Args...> func_operator;
+  enum { num_args = sizeof...(Args), is_member_func = false, is_const = false };
+};
+template <class R, class U, class... Args>
+struct deducer<R(U::*)(Args...)>
+{
+  typedef R(U::*func_type)(Args...);
+  typedef R return_type;
+  typedef U class_type;
+  typedef function_operator<func_type, return_type, Args...> func_operator;
+  enum { num_args = sizeof...(Args), is_member_func = true, is_const = false };
+};
+template <class R, class U, class... Args>
+struct deducer<R(U::*)(Args...)const>
+{
+  typedef R(U::*func_type)(Args...)const;
+  typedef R return_type;
+  typedef U class_type;
+  typedef function_operator<func_type, return_type, Args...> func_operator;
+  enum { num_args = sizeof...(Args), is_member_func = true, is_const = true };
+};
+
+template <class T>
+struct real_signature : public deducer<T>
+{
+private:
+  typedef typename deducer<T>::return_type possible_return_type;
+public:
+  enum {
+    has_return_value = (std::is_same<return_type, void>::value == false),
+  };
+
+  typedef typename std::conditional<has_return_value, possible_return_type, void_>::type return_type;
+
+  typedef typename deducer<T>::class_type class_type;
+  typedef typename deducer<T>::func_type func_type;
+  typedef typename deducer<T>::func_operator func_operator;
+
+  static inline void DeduceArgs(arg_traits* args)
+  {
+    func_operator::unwrapper::DeduceArgs(args);
+  }
+  static inline bool CheckArgs(const type** arg_types)
+  {
+    return func_operator::unwrapper::CheckArgs(arg_types);
+  }
+  static inline void Call(base_function* function, void* object, const arg_traits* traits, void** args)
+  {
+    func_operator::unwrapper::Call(function, object, traits, args);
+  }
+};
+
 template <class R, class... Args>
 struct signature<R(*)(Args...)>
 {
-  enum {
-    num_args = sizeof...(Args),
-    has_return_value = (std::is_same<R, void>::value == false),
-    is_member_func = false,
-    is_const = false
-  };
-  typedef typename std::conditional<has_return_value, R, void_>::type return_type;
-  typedef nulltype class_type;
-  typedef R(*function_type)(Args...);
-  typedef function_operator<function_type, R, Args...> function_operator;
+
 };
 
 template <class R, class U, class... Args>

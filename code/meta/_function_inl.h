@@ -17,9 +17,9 @@ function::function(T func)
   m_traits.classType = typeof<nulltype>();
   m_traits.isMemberFunction = false;
 
-  typedef internal::signature<func_type> sig;
-  m_traits.numArguments = sig::num_args;
-  sig::function_operator::DeduceArgs(m_traits.args);
+  typedef internal::real_signature<func_type> signature;
+  m_traits.numArguments = signature::num_args;
+  signature::DeduceArgs(m_traits.args);
 }
 template <class R, class... Args>
 function::function(R(*func)(Args...))
