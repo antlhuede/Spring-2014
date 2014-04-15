@@ -11,6 +11,10 @@ public:
 
   virtual void write(const string& file) const = 0;
   virtual bool read(const string& file) = 0;
+
+  enum class data_types {
+    Object, Field, Property, Event, NumDataTypes
+  };
 };
 
 typedef serializer<meta::object_container> base_serializer;

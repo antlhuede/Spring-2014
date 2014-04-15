@@ -61,7 +61,7 @@ inline function::function(function&& other)
 }
 inline function::~function() { if (m_function) delete m_function; }
 
-#define IMPLEMENT_CALLER_BODY() \
+#define IMPLEMENT_CALLER_BODY()                               \
   assert(sizeof...(Args) == m_traits.numArguments);           \
   const int size = sizeof...(args)+1;                         \
   /*make const now, so we can store pointers to const args*/  \

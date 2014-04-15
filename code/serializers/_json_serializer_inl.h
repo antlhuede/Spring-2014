@@ -6,15 +6,15 @@
 
 namespace serializers {
 template <class CP>
-void JSonSerializer<CP>::construct_object(const Json::Value& value, const meta::type* type, void* obj) const
+void JSonSerializer<CP>::construct_object(data_types data, const Json::Value& value, const meta::type* type, void* obj) const
 {
-  if (value.isObject())
+  if (data == data_types::Object)
   {
     Json::Value json_fields = value["fields"];
 
     for (auto field : type->fields())
     {
-      construct_object(json_fields[field.name()], field.type(), field.member_ptr(obj));
+      construct_object(data_types::Field, json_fields[field.name()], field.type(), field.member_ptr(obj));
     }
   }
   else
@@ -53,7 +53,7 @@ void JSonSerializer<CP>::construct_object(const Json::Value& value, const meta::
   }
 }
 template <class CP>
-Json::Value JSonSerializer<CP>::construct_json_value(const meta::type* type, const void* obj) const
+Json::Value JSonSerializer<CP>::construct_json_value(data_types data, const meta::type* type, const void* obj) const
 {
   Json::Value value;
   const vector<const meta::field>& fields = type->fields();
@@ -63,7 +63,7 @@ Json::Value JSonSerializer<CP>::construct_json_value(const meta::type* type, con
   if (fields.size())
   {
     for (size_t i = 0; i < fields.size(); ++i)
-      value["fields"][fields[i].name()] = construct_json_value(fields[i].type(), fields[i].member_ptr(obj));
+      value["fields"][fields[i].name()] = construct_json_value(data_types::Field, fields[i].type(), fields[i].member_ptr(obj));
   }
   else
   {
@@ -91,7 +91,7 @@ Json::Value JSonSerializer<CP>::build_json_tree() const
   for (auto value : m_names)
   {
     const meta::variant& variant = m_objects[value.second];
-    root[value.first] = construct_json_value(variant.type(), variant.data());
+    root[value.first] = construct_json_value(data_types::Object, variant.type(), variant.data());
   }
 
   return root;
@@ -121,7 +121,7 @@ bool JSonSerializer<CP>::read(const string& file)
     m_names[member] = m_objects.size();
     m_objects.push_back(meta::variant(meta::typeof(value["type"].asString().c_str())));
     meta::variant& var = m_objects.back();
-    construct_object(value, var.type(), var.data());
+    construct_object(data_types::Object, value, var.type(), var.data());
   }
   return true;
 }
