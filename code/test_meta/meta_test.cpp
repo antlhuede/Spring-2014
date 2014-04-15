@@ -168,7 +168,7 @@ void run_serializer_test(serializers::base_serializer_ptr serializer, const stri
 class test_funcs_class
 {
 public:
-  void func_test1() {}
+  string func_test1() { return "fuck return values"; }
   void func_test2(int a) { std::cout << a << std::endl; }
   void func_test3(int a, float b) { std::cout << a << " " << b << std::endl; }
   void func_test4(int a, float b, double c) { std::cout << a << " " << b << " " << c << std::endl; }
@@ -303,7 +303,8 @@ void run_basic_test_code()
   meta::function mfunc5(&test_funcs_class::func_test5, &tfc);
   meta::function mfunc6(&test_funcs_class::func_test6, &tfc);
 
-  mfunc1.call(&tfc);
+  meta::variant fuck_returns = mfunc1.call(&tfc);
+  std::cout << fuck_returns.get_as<string>() << std::endl;
   mfunc2.call(&tfc, 3);
   mfunc3.call(&tfc, 3, 3.5f);
   mfunc4.call(&tfc, 3, 3.5f, 123.0);
