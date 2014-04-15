@@ -109,7 +109,8 @@ struct function_operator
   };
 };
 
-template <class S> struct deducer;
+template <class T> struct deducer;
+
 template <class R, class... Args>
 struct deducer<R(*)(Args...)>
 {
@@ -117,7 +118,9 @@ struct deducer<R(*)(Args...)>
   typedef R return_type;
   typedef nulltype class_type;
   typedef function_operator<func_type, return_type, Args...> func_operator;
-  enum { num_args = sizeof...(Args), is_member_func = false, is_const = false };
+  enum { num_args = sizeof...(Args), is_member_func = false, is_const = false, is_lambda = false };
+
+  static inline base_function* Create(func_type func) { return new function_holder<func_type>(func); }
 };
 template <class R, class U, class... Args>
 struct deducer<R(U::*)(Args...)>
@@ -126,7 +129,9 @@ struct deducer<R(U::*)(Args...)>
   typedef R return_type;
   typedef U class_type;
   typedef function_operator<func_type, return_type, Args...> func_operator;
-  enum { num_args = sizeof...(Args), is_member_func = true, is_const = false };
+  enum { num_args = sizeof...(Args), is_member_func = true, is_const = false, is_lambda = false };
+
+  static inline base_function* Create(func_type func) { return new function_holder<func_type>(func); }
 };
 template <class R, class U, class... Args>
 struct deducer<R(U::*)(Args...)const>
@@ -135,16 +140,35 @@ struct deducer<R(U::*)(Args...)const>
   typedef R return_type;
   typedef U class_type;
   typedef function_operator<func_type, return_type, Args...> func_operator;
-  enum { num_args = sizeof...(Args), is_member_func = true, is_const = true };
+  enum { num_args = sizeof...(Args), is_member_func = true, is_const = true, is_lambda = false };
+
+  static inline base_function* Create(func_type func) { return new function_holder<func_type>(func); }
+};
+
+//lambda deducer
+template <class S> 
+struct deducer
+{
+  typedef decltype(&S::operator()) func_type;
+  typedef typename deducer<func_type>::return_type return_type;
+  typedef nulltype class_type;
+  typedef typename deducer<func_type>::func_operator func_operator;
+
+  enum { num_args = deducer<func_type>::num_args, is_member_func = false, is_const = true, is_lambda = true };
+  static inline base_function* Create(S lambda) { return new function_holder<func_type>(&S::operator()); }
 };
 
 template <class T>
-struct real_signature : public deducer<T>
+struct function_descriptor : public deducer<T>
 {
 private:
   typedef typename deducer<T>::return_type possible_return_type;
 public:
   enum {
+    num_args = deducer<T>::num_args,
+    is_member_function = deducer<T>::is_member_func,
+    is_const = deducer<T>::is_const,
+    is_lambda = deducer<T>::is_lambda,
     has_return_value = (std::is_same<return_type, void>::value == false),
   };
 
@@ -166,99 +190,9 @@ public:
   {
     func_operator::unwrapper::Call(function, object, traits, args);
   }
+  static inline base_function* Create(T func) { return deducer<T>::Create(func); }
 };
 
-template <class R, class... Args>
-struct signature<R(*)(Args...)>
-{
-
-};
-
-template <class R, class U, class... Args>
-struct signature<R(U::*)(Args...)>
-{
-  enum {
-    num_args = sizeof...(Args),
-    has_return_value = (std::is_same<R, void>::value == false),
-    is_member_func = true,
-    is_const = false
-  };
-  typedef typename std::conditional<has_return_value, R, void_>::type return_type;
-  typedef nulltype class_type;
-  typedef R(*function_type)(Args...);
-  typedef function_operator<function_type, R, Args...> function_operator;
-};
-
-template <class R, class U, class... Args>
-struct signature<R(U::*)(Args...)const>
-{
-  enum {
-    num_args = sizeof...(Args),
-    has_return_value = (std::is_same<R, void>::value == false),
-    is_member_func = true,
-    is_const = true
-  };
-  typedef typename std::conditional<has_return_value, R, void_>::type return_type;
-  typedef nulltype class_type;
-  typedef R(*function_type)(Args...);
-  typedef function_operator<function_type, R, Args...> function_operator;
-};
-
-
-
-//deductions that are common among all function pointers
-template <class T, class U, class R, class... Args>
-struct base_deducer : public function_operator<T, R, Args...>
-{
-  enum {
-    num_args = sizeof...(Args),
-    has_return_value = (std::is_same<R, void>::value == false),
-    is_member_func = (std::is_same<U, nulltype>::value == false),
-  };
-
-  typedef T function_type;
-  typedef U class_type;
-  typedef typename std::conditional<has_return_value, R, void_>::type return_type;
-};
-
-//catches all types, however only valid for types that implement operator() (functors)
-//is the fallback option for the compiler and therefore handles lambda functions
-template <class T>
-struct function_traits_deducer : function_traits_deducer<decltype(&T::operator())>
-{
-  typedef typename nulltype class_type;
-  typedef typename base_deducer::return_type return_type;
-  typedef typename base_deducer::function_type function_type;
-  enum { is_lambda = true, is_const = true };
-};
-
-//global functions
-template <class R, class... Args>
-struct function_traits_deducer<R(*)(Args...)> : public base_deducer<R(*)(Args...), nulltype, R, Args...>
-{
-  typedef typename base_deducer::class_type class_type;
-  typedef typename base_deducer::return_type return_type;
-  typedef typename base_deducer::function_type function_type;
-  enum { is_lambda = false, is_const = false };
-};
-//non-const member functions
-template <class U, class R, class... Args>
-struct function_traits_deducer<R(U::*)(Args...)> : public base_deducer<R(U::*)(Args...), U, R, Args...>
-{
-  typedef typename base_deducer::class_type class_type;
-  typedef typename base_deducer::return_type return_type;
-  typedef typename base_deducer::function_type function_type;
-  enum { is_lambda = false, is_const = false };
-};
-//const member functions
-template <class U, class R, class... Args>
-struct function_traits_deducer<R(U::*)(Args...)const> : public base_deducer<R(U::*)(Args...)const, U, R, Args...>
-{
-  typedef typename base_deducer::class_type class_type;
-  typedef typename base_deducer::return_type return_type;
-  typedef typename base_deducer::function_type function_type;
-  enum { is_lambda = false, is_const = true };
-};
 //so we can have a handle to a function
 struct base_function { virtual ~base_function() {} virtual base_function* clone() const = 0; };
 //so we can store the function as its correct type

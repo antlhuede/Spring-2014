@@ -4,61 +4,38 @@
 
 namespace meta {
 
+template <class T>
+void function::construct(T func)
+{
+  typedef internal::function_descriptor<T> descriptor;
+
+  m_function = descriptor::Create(func);
+  m_caller = &descriptor::Call;
+  m_checker = &descriptor::CheckArgs;
+}
 template <class T> 
 function::function(T func)
-  : m_initialized(true), m_object(&func)
-  , m_caller(&internal::function_traits_deducer<T>::Call)
-  , m_checker(&internal::function_traits_deducer<T>::CheckArgs)
+  : m_traits(func), m_initialized(true), m_object(&func)
 {
-  typedef decltype(&T::operator()) func_type;
-  m_function = new internal::function_holder<func_type>(&T::operator());
-  m_traits.isConst = true;
-  m_traits.isLambda = true;
-  m_traits.classType = typeof<nulltype>();
-  m_traits.isMemberFunction = false;
-
-  typedef internal::real_signature<func_type> signature;
-  m_traits.numArguments = signature::num_args;
-  signature::DeduceArgs(m_traits.args);
+  construct(func);
 }
 template <class R, class... Args>
 function::function(R(*func)(Args...))
   : m_traits(func), m_initialized(true), m_object(nullptr)
 {
-  typedef R(*func_type)(Args...);
-  typedef internal::function_traits_deducer<func_type> deducer;
-
-  m_caller = &deducer::Call;
-  m_checker = &deducer::CheckArgs;
-  m_function = new internal::function_holder<func_type>(func);
+  construct(func);
 }
 template <class R, class U, class... Args>
 function::function(R(U::*func)(Args...), U* obj)
   : m_traits(func), m_initialized(true), m_object(obj)
 {
-  if (m_object)
-    assert(typeof<U>() == m_traits.classType);
-
-  typedef R(U::*func_type)(Args...);
-  typedef internal::function_traits_deducer<func_type> deducer;
-
-  m_caller = &deducer::Call;
-  m_checker = &deducer::CheckArgs;
-  m_function = new internal::function_holder<func_type>(func);
+  construct(func);
 }
 template <class R, class U, class... Args>
 function::function(R(U::*func)(Args...)const, const U* obj)
   : m_traits(func), m_initialized(true), m_object(const_cast<U*>(obj))
 {
-  if (m_object)
-    assert(typeof<U>() == m_traits.classType);
-
-  typedef R(U::*func_type)(Args...)const;
-  typedef internal::function_traits_deducer<func_type> deducer;
-
-  m_caller = &deducer::Call;
-  m_checker = &deducer::CheckArgs;
-  m_function = new internal::function_holder<func_type>(func);
+  construct(func);
 }
 
 inline function::function(const function& other)
@@ -131,15 +108,15 @@ bool function::check_types() const
 
 template <class T>
 function_traits::function_traits(T func)
-  : isMemberFunction(internal::function_traits_deducer<T>::is_member_func)
-  , isConst(internal::function_traits_deducer<T>::is_const)
-  , hasReturnValue(internal::function_traits_deducer<T>::has_return_value)
-  , isLambda(internal::function_traits_deducer<T>::is_lambda)
-  , classType(typeof<internal::function_traits_deducer<T>::class_type>())
-  , returnType(typeof<internal::function_traits_deducer<T>::return_type>())
-  , numArguments(internal::function_traits_deducer<T>::num_args)
+  : isMemberFunction(internal::function_descriptor<T>::is_member_function)
+  , isConst(internal::function_descriptor<T>::is_const)
+  , hasReturnValue(internal::function_descriptor<T>::has_return_value)
+  , isLambda(internal::function_descriptor<T>::is_lambda)
+  , classType(typeof<internal::function_descriptor<T>::class_type>())
+  , returnType(typeof<internal::function_descriptor<T>::return_type>())
+  , numArguments(internal::function_descriptor<T>::num_args)
 {
-  internal::function_traits_deducer<T>::DeduceArgs(args);
+  internal::function_descriptor<T>::DeduceArgs(args);
 }
 inline bool function_traits::operator==(const function_traits& rhs) const
 {

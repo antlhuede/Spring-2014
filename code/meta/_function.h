@@ -76,6 +76,8 @@ public:
   template <class U, class... Args>
   bool check_types() const;
 private:
+  template <class T>
+  void construct(T func);
   typedef internal::base_function base_function;
   function_traits m_traits;
   bool m_initialized = false;
