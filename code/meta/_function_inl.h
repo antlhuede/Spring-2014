@@ -19,7 +19,6 @@ function::function(R(*func)(Args...))
 {
   typedef R(*func_type)(Args...);
   typedef internal::function_traits_deducer<func_type> deducer;
-  typedef internal::function_creator<func_type> creator;
 
   m_caller = &deducer::Call;
   m_checker = &deducer::CheckArgs;
@@ -34,7 +33,6 @@ function::function(R(U::*func)(Args...), U* obj)
 
   typedef R(U::*func_type)(Args...);
   typedef internal::function_traits_deducer<func_type> deducer;
-  typedef internal::function_creator<func_type> creator;
 
   m_caller = &deducer::Call;
   m_checker = &deducer::CheckArgs;
@@ -49,7 +47,6 @@ function::function(R(U::*func)(Args...)const, const U* obj)
 
   typedef R(U::*func_type)(Args...)const;
   typedef internal::function_traits_deducer<func_type> deducer;
-  typedef internal::function_creator<func_type> creator;
 
   m_caller = &deducer::Call;
   m_checker = &deducer::CheckArgs;

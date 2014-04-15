@@ -173,30 +173,4 @@ struct function_holder : public base_function
   virtual base_function* clone() const { return new function_holder<T>(function_ptr); }
   T function_ptr;
 };
-
-//partial template specialization to allow fundamental differences 
-//in creating and storing function information
-template <class T> struct function_creator;
-
-//creator for all types except lambda/functor objects
-template <class T> struct base_creator
-{
-  static base_function* create(T func, void**)
-  {
-    return new function_holder<T>(func);
-  }
-};
-
-//creator for functors / lambda objects
-template <class T> struct function_creator
-{
-  static base_function* create(T func, void** pObj)
-  {
-    *pObj = &func;
-    return new function_holder<decltype(&T::operator())>(&T::operator());
-  }
-};
-template <class R, class... Args> struct function_creator<R(*)(Args...)> : public base_creator<R(*)(Args...)>{};
-template <class U, class R, class... Args> struct function_creator<R(U::*)(Args...)> : public base_creator<R(U::*)(Args...)>{};
-template <class U, class R, class... Args> struct function_creator<R(U::*)(Args...)const> : public base_creator<R(U::*)(Args...)const>{};
 }}
