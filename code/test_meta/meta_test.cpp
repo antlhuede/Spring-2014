@@ -33,7 +33,7 @@ public:
   double test_double = 0.0;
   bool test_bool = false;
 
-
+  string name;
   void set_property(const string& test) { m_property = test; }
   const string& get_property() const { return m_property; }
 
@@ -61,6 +61,7 @@ struct global_message_table
 meta::messenger* global_message_table::m_table = nullptr;
 
 DECLARE_META_OBJECT(test_class)
+  .Field("name", &test_class::name)
   .Field("test_string", &test_class::test_string)
   .Field("test_int", &test_class::test_int)
   .Field("test_float", &test_class::test_float)
