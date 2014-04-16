@@ -12,8 +12,8 @@
 		},
 		"properties" : 
 		{
-			"test_getter_only" : "default property value",
-			"test_property" : "default property value"
+			"test_getter_only" : "read_test1: default property value property was successfully read and edited",
+			"test_property" : "read_test1: default property value property was successfully read and edited"
 		},
 		"type" : "test_class"
 	},
@@ -29,8 +29,8 @@
 		},
 		"properties" : 
 		{
-			"test_getter_only" : "default property value",
-			"test_property" : "default property value"
+			"test_getter_only" : "read_test2: default property value property was successfully read and edited",
+			"test_property" : "read_test2: default property value property was successfully read and edited"
 		},
 		"type" : "test_class"
 	}

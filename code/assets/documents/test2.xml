@@ -6,6 +6,10 @@
         <test_double type="double" value="0.092799999999999994"/>
         <test_bool type="bool" value="1"/>
     </fields>
+    <properties>
+        <test_property type="string" value="read_test1: default property value property was successfully read and edited"/>
+        <test_getter_only type="string" value="read_test1: default property value property was successfully read and edited"/>
+    </properties>
 </read_test1>
 
 <read_test2 type="test_class">
@@ -16,4 +20,8 @@
         <test_double type="double" value="10293.938200000001"/>
         <test_bool type="bool" value="0"/>
     </fields>
+    <properties>
+        <test_property type="string" value="read_test2: default property value property was successfully read and edited"/>
+        <test_getter_only type="string" value="read_test2: default property value property was successfully read and edited"/>
+    </properties>
 </read_test2>

@@ -12,10 +12,28 @@ void XMLSerializer<CP>::construct_object(const xml::XMLElement* element, const m
   {
     //Json::Value json_fields = value["fields"];
     const xml::XMLElement* xml_fields = element->FirstChildElement("fields");
+    const xml::XMLElement* xml_properties = element->FirstChildElement("properties");
 
     for (auto field : type->fields())
     {
       construct_object(xml_fields->FirstChildElement(field.name().c_str()), field.type(), field.member_ptr(obj));
+    }
+
+    for (auto property : type->properties())
+    {
+      if (property.has_setter())
+      {
+        const meta::type* propertyType = property.type();
+
+        const xml::XMLElement* propertyValue = xml_properties->FirstChildElement(property.name().c_str());
+        
+        if (propertyValue == nullptr)
+          return;
+
+        meta::variant propertyData(propertyType);
+        construct_object(propertyValue, propertyType, propertyData.data());
+        property.set(type, obj, propertyType, propertyData.data());
+      }
     }
   }
   else
@@ -63,14 +81,29 @@ xml::XMLElement* XMLSerializer<CP>::construct_xml_element(xml::XMLDocument* doc,
   node->SetAttribute("type", type->name().c_str());
 
   auto fields = type->fields();
-  if (fields.size())
+  auto properties = type->properties();
+  if (type->isObject())
   {
-    xml::XMLElement* xml_fields = doc->NewElement("fields");
-
-    for (size_t i = 0; i < fields.size(); ++i)
-      xml_fields->InsertEndChild(construct_xml_element(doc, fields[i].name(), fields[i].type(), fields[i].member_ptr(obj))); 
-
-    node->InsertEndChild(xml_fields);
+    if (fields.size())
+    {
+      xml::XMLElement* xml_fields = doc->NewElement("fields");
+      for (size_t i = 0; i < fields.size(); ++i)
+        xml_fields->InsertEndChild(construct_xml_element(doc, fields[i].name(), fields[i].type(), fields[i].member_ptr(obj)));
+      node->InsertEndChild(xml_fields);
+    }
+    if (properties.size())
+    {
+      xml::XMLElement* xml_properties = doc->NewElement("properties");
+      for (size_t i = 0; i < properties.size(); ++i)
+      {
+        if (properties[i].has_getter())
+        {
+          meta::variant propertyData = properties[i].get(obj);
+          xml_properties->InsertEndChild(construct_xml_element(doc, properties[i].name(), properties[i].type(), propertyData.data()));
+        }
+      }
+      node->InsertEndChild(xml_properties);
+    }
   }
   else
   {

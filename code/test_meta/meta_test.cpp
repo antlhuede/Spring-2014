@@ -167,6 +167,8 @@ void run_serializer_test(serializers::base_serializer_ptr serializer, const stri
   serializer->get("test_class1", read_test1);
   serializer->get("test_class2", read_test2);
   serializer->clear();
+  read_test1.set_property(string("read_test1: ") + read_test1.get_property() + " property was successfully read and edited");
+  read_test2.set_property(string("read_test2: ") + read_test2.get_property() + " property was successfully read and edited");
   serializer->add("read_test1", read_test1);
   serializer->add("read_test2", read_test2);
   serializer->write(second_file);
