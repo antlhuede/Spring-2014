@@ -10,6 +10,11 @@
 			"test_int" : 5,
 			"test_string" : "test123"
 		},
+		"properties" : 
+		{
+			"test_getter_only" : "default property value",
+			"test_property" : "default property value"
+		},
 		"type" : "test_class"
 	},
 	"test_class2" : 
@@ -21,6 +26,11 @@
 			"test_float" : 332.50,
 			"test_int" : 12,
 			"test_string" : "123 boogaloo"
+		},
+		"properties" : 
+		{
+			"test_getter_only" : "default property value",
+			"test_property" : "default property value"
 		},
 		"type" : "test_class"
 	}

@@ -46,6 +46,8 @@ public:
   type& Event(const string& name, R(U::*func)(Args...)const);
 
   const vector<const field>& fields() const;
+  const vector<const property>& properties() const;
+
   size_t size() const { return m_size; }
   const string& name() const { return m_name; }
   unsigned id() const { return m_id; }
@@ -53,6 +55,8 @@ public:
   const field field(const string& name, bool assert_on_failure = false) const;
   const property property(const string& name, bool assert_on_failure = false) const;
   const event event(const string& name, bool assert_on_failure = false) const;
+
+  bool isObject() const { return (m_fields.size() || m_properties.size()); }
 private:
   static unsigned S_ID_COUNTER;
   unsigned m_id = 0;

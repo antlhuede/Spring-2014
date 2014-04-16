@@ -43,7 +43,7 @@ public:
     return arg1 + " event was processed";
   }
 private:
-  string m_property;
+  string m_property = "default property value";
 };
 struct global_message_table
 {
@@ -68,6 +68,7 @@ DECLARE_META_OBJECT(test_class)
   .Field("test_bool", &test_class::test_bool)
   .Property("test_property", &test_class::get_property, &test_class::set_property)
   .Property("test_getter_only", &test_class::get_property)
+  .Property("test_setter_only", &test_class::set_property)
   .Event("test_event", &test_class::test_event)
 END_META_OBJECT()
 

@@ -84,6 +84,10 @@ inline const vector<const field>& type::fields() const
 {
   return m_fields;
 }
+inline const vector<const property>& type::properties() const
+{
+  return m_properties;
+}
 
 template <class T, class U>
 type& type::Field(const string& name, T U::*var)
