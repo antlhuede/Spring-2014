@@ -9,18 +9,17 @@ public:
   template <class T, class U>
   property(const string& name, T(U::*get)()const, void(U::*set)(T));
 
-  template <class T, class U>
-  void set(U* object, const T& value) const;
   template <class U>
   variant get(U* object) const;
-
-  //less 'safe' since not guarenteeing object is correct type
-  template <class T>
-  void set(void* object, const T& value) const;
   variant get(const void* object) const;
-
   template <class T, class U>
   T get_as(U* object) const;
+
+  template <class T, class U>
+  void set(U* object, const T& value) const;
+  template <class T>
+  void set(void* object, const T& value) const;
+  void set(const type* classType, void* object, const type* propertyType, const void* propertyValue);
 
   bool has_getter() const { return m_hasGetter; }
   bool has_setter() const { return m_hasSetter; }

@@ -72,6 +72,8 @@ public:
   template <class U, class... Args>
   variant call(const U* object, Args... args) const;
 
+  variant call_generic(const type* classType, const void* object, size_t numArgs, const type** argTypes, const void** args) const;
+  variant call_generic(const type* classType, void* object, size_t numArgs, const type** argTypes, const void** args) const;
   template <class U, class... Args>
   bool check_types() const;
 private:

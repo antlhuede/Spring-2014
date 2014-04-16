@@ -7,7 +7,7 @@
 namespace serializers {
 
 template <class RealType, class JsonType>
-inline void assign_json_value(const meta::type* type, void* obj, const Json::Value* value_ptr, JsonType(Json::Value::*getter)()const)
+inline void AssignJsonValue(const meta::type* type, void* obj, const Json::Value* value_ptr, JsonType(Json::Value::*getter)()const)
 {
   assert(type == meta::typeof<RealType>());
   RealType result = static_cast<RealType>((value_ptr->*getter)());
@@ -18,53 +18,42 @@ void JSonSerializer<CP>::construct_object(const Json::Value& value, const meta::
 {
   if (type->isObject())
   {
-    Json::Value json_fields = value["fields"];
-    Json::Value json_properties = value["properties"];
+    Json::Value jsonFields = value["fields"];
+    Json::Value jsonProperties = value["properties"];
 
     for (auto field : type->fields())
     {
-      construct_object(json_fields[field.name()], field.type(), field.member_ptr(obj));
+      construct_object(jsonFields[field.name()], field.type(), field.member_ptr(obj));
     }
 
     for (auto property : type->properties())
     {
       if (property.has_setter())
       {
-        const meta::type* property_type = property.type();
+        const meta::type* propertyType = property.type();
 
-        Json::Value property_value(json_properties[property.name()]);
-        if (property_value.isNull())
+        Json::Value propertyValue(jsonProperties[property.name()]);
+        if (propertyValue.isNull())
           return;
 
-        if (property_value.isInt() && property_type == meta::typeof<int>())
-          property.set(obj, property_value.asInt());
-        else if (property_value.isBool() && property_type == meta::typeof<bool>())
-          property.set(obj, property_value.asBool());
-        else if (property_value.isDouble() && property_type == meta::typeof<double>())
-          property.set(obj, property_value.asDouble());
-        else if (property_value.isString() && property_type == meta::typeof<string>())
-          property.set(obj, property_value.asString());
-        else if (property_value.isConvertibleTo(Json::ValueType::realValue) && property_type == meta::typeof<float>())
-          property.set(obj, static_cast<float>(property_value.asDouble()));
-        else
-        {
-          assert(false);
-        }
+        meta::variant propertyData(propertyType);
+        construct_object(propertyValue, propertyType, propertyData.data());
+        property.set(type, obj, propertyType, propertyData.data());
       }
     }
   }
   else
   {
     if (value.isInt())
-      assign_json_value<int>(type, obj, &value, &Json::Value::asInt);
+      AssignJsonValue<int>(type, obj, &value, &Json::Value::asInt);
     else if (value.isBool())
-      assign_json_value<bool>(type, obj, &value, &Json::Value::asBool);
+      AssignJsonValue<bool>(type, obj, &value, &Json::Value::asBool);
     else if (value.isDouble() && type == meta::typeof<double>()) //let it fall back to converting to real otherwise
-      assign_json_value<double>(type, obj, &value, &Json::Value::asDouble);
+      AssignJsonValue<double>(type, obj, &value, &Json::Value::asDouble);
     else if (value.isConvertibleTo(Json::ValueType::realValue))
-      assign_json_value<float>(type, obj, &value, &Json::Value::asDouble);
+      AssignJsonValue<float>(type, obj, &value, &Json::Value::asDouble);
     else if (value.isString())
-      assign_json_value<string>(type, obj, &value, &Json::Value::asString);
+      AssignJsonValue<string>(type, obj, &value, &Json::Value::asString);
     else
     {
       assert(false);

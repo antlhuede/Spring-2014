@@ -91,6 +91,18 @@ variant function::call(const U* object, Args... args) const
   assert(m_traits.isConst == true);
   return const_cast<function*>(this)->call(const_cast<U*>(object), std::forward<Args>(args)...);
 }
+inline variant function::call_generic(const type* classType, void* object, size_t numArgs, const type** argTypes, const void** args) const
+{
+  assert(m_traits.classType == classType);
+  assert(m_traits.numArguments == numArgs);
+  assert(m_checker && m_checker(argTypes));
+  return m_caller(m_function, object, m_traits.args, const_cast<void**>(args));
+}
+inline variant function::call_generic(const type* classType, const void* object, size_t numArgs, const type** argTypes, const void** args) const
+{
+  assert(m_traits.isConst == true);
+  return call_generic(classType, const_cast<void*>(object), numArgs, argTypes, args);
+}
 template <class U, class... Args>
 bool function::check_types() const
 {
