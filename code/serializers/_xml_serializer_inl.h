@@ -20,31 +20,33 @@ void XMLSerializer<CP>::construct_object(const xml::XMLElement* element, const m
   }
   else
   {
-#define ASSERT_CORRECT_TYPE(TYPE) (assert(type == meta::typeof<TYPE>()), true)
-#define CHECK_ELEMENT_TYPE(TYPE) (meta::typeof(element->Attribute("type")) == meta::typeof<TYPE>() && ASSERT_CORRECT_TYPE(TYPE))
-
-    if (CHECK_ELEMENT_TYPE(int))
+    if (meta::typeof(element->Attribute("type")) == meta::typeof<int>())
     {
+      assert(type == meta::typeof<int>());
       int result = element->IntAttribute("value");
       type->assign(obj, &result);
     }
-    else if (CHECK_ELEMENT_TYPE(bool))
+    else if (meta::typeof(element->Attribute("type")) == meta::typeof<bool>())
     {
+      assert(type == meta::typeof<bool>());
       bool result = element->BoolAttribute("value");
       type->assign(obj, &result);
     }
-    else if (CHECK_ELEMENT_TYPE(double)) //let it fall back to converting to real otherwise
+    else if (meta::typeof(element->Attribute("type")) == meta::typeof<double>()) //let it fall back to converting to real otherwise
     {
+      assert(type == meta::typeof<double>());
       double result = element->DoubleAttribute("value");
       type->assign(obj, &result);
     }
-    else if (CHECK_ELEMENT_TYPE(float))
+    else if (meta::typeof(element->Attribute("type")) == meta::typeof<float>())
     {
+      assert(type == meta::typeof<float>());
       float result = element->FloatAttribute("value");
       type->assign(obj, &result);
     }
-    else if (CHECK_ELEMENT_TYPE(string))
+    else if (meta::typeof(element->Attribute("type")) == meta::typeof<string>())
     {
+      assert(type == meta::typeof<string>());
       string result = element->Attribute("value");
       type->assign(obj, &result);
     }
@@ -52,8 +54,6 @@ void XMLSerializer<CP>::construct_object(const xml::XMLElement* element, const m
     {
       assert(false);
     }
-#undef CHECK_ELEMENT_TYPE
-#undef ASSERT_CORRECT_TYPE
   }
 }
 template <class CP>
