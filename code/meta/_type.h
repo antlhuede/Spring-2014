@@ -1,6 +1,11 @@
 #pragma once
 
 namespace meta {
+class constant
+{
+public:
+private:
+};
 
 class type : public list<type>
 {
@@ -57,6 +62,7 @@ public:
   const event event(const string& name, bool assert_on_failure = false) const;
 
   bool isObject() const { return (m_fields.size() || m_properties.size()); }
+  
 private:
   static unsigned S_ID_COUNTER;
   unsigned m_id = 0;
