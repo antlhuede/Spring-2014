@@ -9,6 +9,7 @@ void run_basic_test_code();
 class test_class
 {
 public:
+  static const int constant_int = 53;
   test_class() = default;
   ~test_class() = default;
 
@@ -71,6 +72,7 @@ DECLARE_META_OBJECT(test_class)
   .Property("test_getter_only", &test_class::get_property)
   .Property("test_setter_only", &test_class::set_property)
   .Event("test_event", &test_class::test_event)
+  .Constant("test_constant", &test_class::constant_int)
 END_META_OBJECT()
 
 int test_int1 = 5;

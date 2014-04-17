@@ -1,20 +1,17 @@
 #pragma once
 
 namespace meta {
-namespace internal
-{
-  template <class T, class Map, class Vector>
-  void AddElementToNamedVector(const string& name, T&& element, Map& map, Vector& vec);
-  template <class T, class Map, class Vector>
-  const T GetElementFromNamedVector(const string& name, const Map& map, const Vector& vec);
-}
 class constant
 {
 public:
   constant() = default;
   constant(const constant&) = default;
 
-  string name = "uninitialized_constant";
+  template <class T>
+  constant(const string& name_, const T& value_)
+    : name(name_), value(value_) {}
+
+  const string name = "uninitialized_constant";
   const variant value;
 };
 
@@ -36,6 +33,17 @@ type::type(decl<T>, const string name, ReadFunc r, WriteFunc w, StringizeFunc st
 {
   bool registered = internal::meta_registry::register_type(this);
   assert(registered == true);
+}
+inline void type::destroy()
+{
+  m_constants.clear();
+  m_constantMap.clear();
+  m_properties.clear();
+  m_propertyMap.clear();
+  m_fields.clear();
+  m_fieldMap.clear();
+  m_events.clear();
+  m_eventMap.clear();
 }
 
 inline void type::read(istream& stream, void* memory) const   
@@ -97,6 +105,14 @@ inline bool type::operator!=(const type& rhs) const
   return !(*this == rhs);
 }
 
+namespace internal
+{
+  template <class T>
+  void AddElementToNamedVector(const string& name, T&& element, hash_map<string, size_t>& map, vector<const T>& vec);
+  template <class T>
+  const T GetElementFromNamedVector(const string& name, const hash_map<string, size_t>& map, const vector<const T>& vec);
+}
+
 template <class T, class U>
 type& type::Field(const string& name, T U::*var)
 {
@@ -104,7 +120,6 @@ type& type::Field(const string& name, T U::*var)
   internal::AddElementToNamedVector(name, meta::field(name, typeof<T>(), ((size_t)&(((U*)0)->*var))), m_fieldMap, m_fields);
   return *this;
 }
-
 
 template <class T, class U>
 type& type::Property(const string& name, T(U::*get)()const, void(U::*set)(T))
@@ -125,13 +140,6 @@ type& type::Property(const string& name, T(U::*get)()const)
   return *this;
 }
 
-template <class T>
-type& type::Constant(const string& name, const T& value)
-{
-  
-  return *this;
-}
-
 template <class U, class R, class... Args>
 type& type::Event(const string& name, R(U::*func)(Args...))
 {
@@ -147,29 +155,40 @@ type& type::Event(const string& name, R(U::*func)(Args...)const)
   return *this;
 }
 
+template <class T>
+type& type::Constant(const string& name, const T& value)
+{
+  internal::AddElementToNamedVector(name, meta::constant(name, value), m_constantMap, m_constants);
+  return *this;
+}
+
 inline const field type::field(const string& name) const
 {
-  return internal::GetElementFromNamedVector<meta::field>(name, m_fieldMap, m_fields);
+  return internal::GetElementFromNamedVector(name, m_fieldMap, m_fields);
 }
 inline const property type::property(const string& name) const
 {
-  return internal::GetElementFromNamedVector<meta::property>(name, m_propertyMap, m_properties);
+  return internal::GetElementFromNamedVector(name, m_propertyMap, m_properties);
 }
 inline const event type::event(const string& name) const
 {
-  return internal::GetElementFromNamedVector<meta::event>(name, m_eventMap, m_events);
+  return internal::GetElementFromNamedVector(name, m_eventMap, m_events);
+}
+inline const constant type::constant(const string& name) const
+{
+  return internal::GetElementFromNamedVector(name, m_constantMap, m_constants);
 }
 
 namespace internal {
-template <class T, class Map, class Vector>
-void AddElementToNamedVector(const string& name, T&& element, Map& map, Vector& vec)
+template <class T>
+void AddElementToNamedVector(const string& name, T&& element, hash_map<string, size_t>& map, vector<const T>& vec)
 {
   assert(map.find(name) == map.end());
   map[name] = vec.size();
   vec.push_back(element);
 }
-template <class T, class Map, class Vector>
-const T GetElementFromNamedVector(const string& name, const Map& map, const Vector& vec)
+template <class T>
+const T GetElementFromNamedVector(const string& name, const hash_map<string, size_t>& map, const vector<const T>& vec)
 {
   auto index = map.find(name);
   if (index == map.end())

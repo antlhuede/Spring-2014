@@ -65,6 +65,7 @@ public:
 
   bool isObject() const { return (m_fields.size() || m_properties.size()); }
   
+  void destroy();
 private:
   static unsigned S_ID_COUNTER;
   unsigned m_id = 0;

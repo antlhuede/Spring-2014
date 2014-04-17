@@ -40,6 +40,16 @@ void initialize()
 void destroy()
 {
   internal::type_initializer* it = internal::type_initializer::head();
+  //must shutdown first since some components
+  //depend on type* being valid during destruction
+  while (it != nullptr)
+  {
+    if (it->shutdown_func)
+      it->shutdown_func();
+
+    it = it->next();
+  }
+  it = internal::type_initializer::head();
   while (it != nullptr)
   {
     it->destroy_func();
