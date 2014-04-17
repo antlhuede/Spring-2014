@@ -8,6 +8,10 @@ public:
   ~property() = default;
   template <class T, class U>
   property(const string& name, T(U::*get)()const, void(U::*set)(T));
+  template <class T, class U>
+  property(const string& name, T(U::*get)()const);
+  template <class T, class U>
+  property(const string& name, void(U::*set)(T));
 
   template <class U>
   variant get(U* object) const;
@@ -21,21 +25,16 @@ public:
   void set(void* object, const T& value) const;
   void set(const type* classType, void* object, const type* propertyType, const void* propertyValue);
 
-  bool has_getter() const { return m_hasGetter; }
-  bool has_setter() const { return m_hasSetter; }
-
-  const string& name() const { return m_name; }
-  const type* type() const { return m_type; }
   const function& getter() const { return m_get; }
   const function& setter() const { return m_set; }
-  
+
+  const bool hasSetter = false;
+  const bool hasGetter = false;
+  const string name = "uninitialized_property";
+  const ::meta::type* const type = typeof<nulltype>();
+  const ::meta::type* const classType = typeof<nulltype>();
 private:
-  string m_name = "uninitialized_property";
-  const ::meta::type* m_type = typeof<nulltype>();
-  const ::meta::type* m_classType = typeof<nulltype>();
   const function m_get;
   const function m_set;
-  bool m_hasSetter = false;
-  bool m_hasGetter = false;
 };
 }

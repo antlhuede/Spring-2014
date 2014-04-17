@@ -294,7 +294,7 @@ void run_basic_test_code()
   for (size_t i = 0; i < fields.size(); ++i)
   {
     Json::Value value;
-    value[fields[i].name()] = fields[i].to_string(&tc);
+    value[fields[i].name] = fields[i].to_string(&tc);
     root[type->to_string(&tc)].append(value);
     //std::cout << fields[i]->type().name() << " " << fields[i]->name() << " " << fields[i]->offset() << std::endl;
   }

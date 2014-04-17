@@ -61,7 +61,7 @@ const vector<const field>& field_list = obj_type->fields(); \
 for (size_t i = 0; i < field_list.size(); ++i)        \
 {                                                     \
 const field& field = field_list[i];                \
-const type* field_type = field.type();              \
+const type* field_type = field.type;              \
 field_type->CALL_FUNC(stream, field.member_ptr(memory));         \
 }
 

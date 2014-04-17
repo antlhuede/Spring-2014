@@ -1,7 +1,23 @@
 #pragma once
 
-namespace meta
+namespace meta {
+namespace internal
 {
+  template <class T, class Map, class Vector>
+  void AddElementToNamedVector(const string& name, T&& element, Map& map, Vector& vec);
+  template <class T, class Map, class Vector>
+  const T GetElementFromNamedVector(const string& name, const Map& map, const Vector& vec);
+}
+class constant
+{
+public:
+  constant() = default;
+  constant(const constant&) = default;
+
+  string name = "uninitialized_constant";
+  const variant value;
+};
+
 template <class T>
 type::type(decl<T>, const string name, ReadFunc r, WriteFunc w, StringizeFunc str)
   : m_id(++S_ID_COUNTER)
@@ -80,85 +96,85 @@ inline bool type::operator!=(const type& rhs) const
 {
   return !(*this == rhs);
 }
-inline const vector<const field>& type::fields() const
-{
-  return m_fields;
-}
-inline const vector<const property>& type::properties() const
-{
-  return m_properties;
-}
 
 template <class T, class U>
 type& type::Field(const string& name, T U::*var)
 {
   assert(typeof<U>() == this);
-  assert(m_fieldMap.find(name) == m_fieldMap.end());
-  m_fieldMap[name] = m_fields.size();
-  m_fields.push_back(::meta::field(name, typeof<T>(), ((size_t)&(((U*)0)->*var))));
+  internal::AddElementToNamedVector(name, meta::field(name, typeof<T>(), ((size_t)&(((U*)0)->*var))), m_fieldMap, m_fields);
   return *this;
 }
+
 
 template <class T, class U>
 type& type::Property(const string& name, T(U::*get)()const, void(U::*set)(T))
 {
-  assert(m_propertyMap.find(name) == m_propertyMap.end());
-  m_propertyMap[name] = m_properties.size();
-  m_properties.push_back(::meta::property(name, get, set));
+  internal::AddElementToNamedVector(name, meta::property(name, get, set), m_propertyMap, m_properties);
   return *this;
 }
 template <class T, class U>
 type& type::Property(const string& name, void(U::*set)(T))
 {
-  typedef T(U::*getter_type)()const;
-  return Property(name, (getter_type)nullptr, set);
+  internal::AddElementToNamedVector(name, meta::property(name, set), m_propertyMap, m_properties);
+  return *this;
 }
 template <class T, class U>
 type& type::Property(const string& name, T(U::*get)()const)
 {
-  typedef void(U::*setter_type)(T);
-  return Property(name, get, (setter_type)nullptr);
+  internal::AddElementToNamedVector(name, meta::property(name, get), m_propertyMap, m_properties);
+  return *this;
 }
 
-
-#define IMPLEMENT_EVENT_CONSTRUCTOR()                 \
-  assert(typeof<U>() == this);                        \
-  assert(m_eventMap.find(name) == m_eventMap.end());  \
-  m_eventMap[name] = m_events.size();                 \
-  m_events.push_back(::meta::event(name, func));      \
-  return *this
+template <class T>
+type& type::Constant(const string& name, const T& value)
+{
+  
+  return *this;
+}
 
 template <class U, class R, class... Args>
 type& type::Event(const string& name, R(U::*func)(Args...))
 {
-  IMPLEMENT_EVENT_CONSTRUCTOR();
+  assert(typeof<U>() == this);
+  internal::AddElementToNamedVector(name, meta::event(name, func), m_eventMap, m_events);
+  return *this;
 }
 template <class U, class R, class... Args>
 type& type::Event(const string& name, R(U::*func)(Args...)const)
 {
-  IMPLEMENT_EVENT_CONSTRUCTOR();
+  assert(typeof<U>() == this);
+  internal::AddElementToNamedVector(name, meta::event(name, func), m_eventMap, m_events);
+  return *this;
 }
-#undef IMPLEMENT_EVENT_CONSTRUCTOR
 
-
-#define IMPLEMENT_META_GET_FUNCTION(data_type, name_map, object_array)                \
-  auto index = name_map.find(name);                                                   \
-  if (index == name_map.end() && (assert_on_failure ? assert(false), true : true))    \
-  return ::meta::data_type();                                                         \
-  return object_array[index->second]
-
-inline const field type::field(const string& name, bool assert_on_failure) const
+inline const field type::field(const string& name) const
 {
-  IMPLEMENT_META_GET_FUNCTION(field, m_fieldMap, m_fields);
+  return internal::GetElementFromNamedVector<meta::field>(name, m_fieldMap, m_fields);
 }
-inline const property type::property(const string& name, bool assert_on_failure) const
+inline const property type::property(const string& name) const
 {
-  IMPLEMENT_META_GET_FUNCTION(property, m_propertyMap, m_properties);
+  return internal::GetElementFromNamedVector<meta::property>(name, m_propertyMap, m_properties);
 }
-inline const event type::event(const string& name, bool assert_on_failure) const
+inline const event type::event(const string& name) const
 {
-  IMPLEMENT_META_GET_FUNCTION(event, m_eventMap, m_events);
+  return internal::GetElementFromNamedVector<meta::event>(name, m_eventMap, m_events);
 }
-#undef IMPLEMENT_META_GET_FUNCTION
 
+namespace internal {
+template <class T, class Map, class Vector>
+void AddElementToNamedVector(const string& name, T&& element, Map& map, Vector& vec)
+{
+  assert(map.find(name) == map.end());
+  map[name] = vec.size();
+  vec.push_back(element);
 }
+template <class T, class Map, class Vector>
+const T GetElementFromNamedVector(const string& name, const Map& map, const Vector& vec)
+{
+  auto index = map.find(name);
+  if (index == map.end())
+    return T();
+
+  return vec[index->second];
+}
+}}

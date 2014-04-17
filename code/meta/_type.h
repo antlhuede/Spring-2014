@@ -1,11 +1,7 @@
 #pragma once
 
 namespace meta {
-class constant
-{
-public:
-private:
-};
+class constant;
 
 class type : public list<type>
 {
@@ -50,16 +46,22 @@ public:
   template <class U, class R, class... Args>
   type& Event(const string& name, R(U::*func)(Args...)const);
 
-  const vector<const field>& fields() const;
-  const vector<const property>& properties() const;
+  template <class T>
+  type& Constant(const string& name, const T& value);
 
   size_t size() const { return m_size; }
   const string& name() const { return m_name; }
   unsigned id() const { return m_id; }
 
-  const field field(const string& name, bool assert_on_failure = false) const;
-  const property property(const string& name, bool assert_on_failure = false) const;
-  const event event(const string& name, bool assert_on_failure = false) const;
+  const field field(const string& name) const;
+  const property property(const string& name) const;
+  const constant constant(const string& name) const;
+  const event event(const string& name) const;
+
+  const vector<const meta::field>& fields() const { return m_fields; }
+  const vector<const meta::property>& properties() const { return m_properties; }
+  const vector<const meta::constant>& constants() const { return m_constants; }
+  const vector<const meta::event>& events() const { return m_events; }
 
   bool isObject() const { return (m_fields.size() || m_properties.size()); }
   
@@ -69,14 +71,17 @@ private:
   size_t m_size = 0;
   string m_name = "nulltype";
 
-  vector<const ::meta::field> m_fields;
+  vector<const meta::field> m_fields;
   hash_map<string, size_t> m_fieldMap;
 
-  vector<const ::meta::property> m_properties;
+  vector<const meta::property> m_properties;
   hash_map<string, size_t> m_propertyMap;
 
-  vector<const ::meta::event> m_events;
+  vector<const meta::event> m_events;
   hash_map<string, size_t> m_eventMap;
+
+  vector<const meta::constant> m_constants;
+  hash_map<string, size_t> m_constantMap;
 
   const ReadFunc m_read = nullptr;
   const WriteFunc m_write = nullptr;

@@ -5,12 +5,12 @@ namespace meta
 template <class U, class... Args>
 variant event::trigger(U* obj, Args... args) const
 {
-  return m_function.call(obj, std::forward<Args>(args)...);
+  return function.call(obj, std::forward<Args>(args)...);
 }
 template <class U, class... Args>
 variant event::trigger(const U* obj, Args... args) const
 {
-  assert(m_function.traits().isConst == true);
-  return m_function.call(obj, std::forward<Args>(args)...);
+  assert(function.traits().isConst == true);
+  return function.call(obj, std::forward<Args>(args)...);
 }
 }

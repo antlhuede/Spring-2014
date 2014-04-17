@@ -16,16 +16,16 @@ void XMLSerializer<CP>::construct_object(const xml::XMLElement* element, const m
 
     for (auto field : type->fields())
     {
-      construct_object(xml_fields->FirstChildElement(field.name().c_str()), field.type(), field.member_ptr(obj));
+      construct_object(xml_fields->FirstChildElement(field.name.c_str()), field.type, field.member_ptr(obj));
     }
 
     for (auto property : type->properties())
     {
-      if (property.has_setter())
+      if (property.hasSetter)
       {
-        const meta::type* propertyType = property.type();
+        const meta::type* propertyType = property.type;
 
-        const xml::XMLElement* propertyValue = xml_properties->FirstChildElement(property.name().c_str());
+        const xml::XMLElement* propertyValue = xml_properties->FirstChildElement(property.name.c_str());
         
         if (propertyValue == nullptr)
           return;
@@ -88,7 +88,7 @@ xml::XMLElement* XMLSerializer<CP>::construct_xml_element(xml::XMLDocument* doc,
     {
       xml::XMLElement* xml_fields = doc->NewElement("fields");
       for (size_t i = 0; i < fields.size(); ++i)
-        xml_fields->InsertEndChild(construct_xml_element(doc, fields[i].name(), fields[i].type(), fields[i].member_ptr(obj)));
+        xml_fields->InsertEndChild(construct_xml_element(doc, fields[i].name, fields[i].type, fields[i].member_ptr(obj)));
       node->InsertEndChild(xml_fields);
     }
     if (properties.size())
@@ -96,10 +96,10 @@ xml::XMLElement* XMLSerializer<CP>::construct_xml_element(xml::XMLDocument* doc,
       xml::XMLElement* xml_properties = doc->NewElement("properties");
       for (size_t i = 0; i < properties.size(); ++i)
       {
-        if (properties[i].has_getter())
+        if (properties[i].hasGetter)
         {
           meta::variant propertyData = properties[i].get(obj);
-          xml_properties->InsertEndChild(construct_xml_element(doc, properties[i].name(), properties[i].type(), propertyData.data()));
+          xml_properties->InsertEndChild(construct_xml_element(doc, properties[i].name, properties[i].type, propertyData.data()));
         }
       }
       node->InsertEndChild(xml_properties);

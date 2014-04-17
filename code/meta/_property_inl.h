@@ -2,50 +2,45 @@
 
 namespace meta {
 template <class T, class U>
-inline property::property(const string& name, T(U::*get)()const, void(U::*set)(T))
-  : m_name(name), m_hasGetter(get != nullptr), m_hasSetter(set != nullptr)
-  , m_get(get ? get : meta::function()), m_set(set ? set : meta::function())
-{
-  assert(get || set);
+inline property::property(const string& name_, T(U::*get)()const, void(U::*set)(T))
+  : name(name_), hasGetter(true), hasSetter(true)
+  , m_get(get), m_set(set)
+  , classType(typeof<U>())
+  , type(typeof<T>()) {}
 
-  if (get)
-    assert(m_get.traits().numArguments == 0);
+template <class T, class U>
+property::property(const string& name_, T(U::*get)()const)
+  : name(name_), hasGetter(true), hasSetter(false)
+  , m_get(get), m_set(meta::function())
+  , classType(typeof<U>())
+  , type(typeof<T>()) {}
 
-  if (set)
-  {
-    assert(m_set.traits().numArguments == 1);
-    assert(m_set.traits().hasReturnValue == false);
-  }
-
-  if (get && set)
-  {
-    assert(m_get.traits().classType == m_set.traits().classType);
-    assert(m_get.traits().returnType == m_set.traits().args[0].type);
-  }
-
-  m_classType = get ? m_get.traits().classType : m_set.traits().classType;
-  m_type = get ? m_get.traits().returnType : m_set.traits().args[0].type;
-}
+template <class T, class U>
+property::property(const string& name_, void(U::*set)(T))
+  : name(name_), hasGetter(false), hasSetter(true)
+  , m_get(meta::function()), m_set(set)
+  , classType(typeof<U>())
+  , type(typeof<T>()) {}
 
 template <class T, class U>
 void property::set(U* object, const T& value) const
 {
-  assert(typeof<U>() == m_classType);
-  assert(typeof<T>() == m_type);
-  assert(m_hasSetter);
+  assert(typeof<U>() == classType);
+  assert(typeof<T>() == type);
+  assert(hasSetter);
   m_set.call(object, std::forward<const T&>(value));
 }
 template <class T>
 void property::set(void* object, const T& value) const
 {
-  assert(typeof<T>() == m_type);
-  assert(m_hasSetter);
+  assert(typeof<T>() == type);
+  assert(hasSetter);
   m_set.call(object, std::forward<const T&>(value));
 }
 inline void property::set(const meta::type* classType, void* object, const meta::type* propertyType, const void* propertyValue)
 {
-  assert(classType == m_classType);
-  assert(propertyType == m_type);
+  assert(classType == classType);
+  assert(propertyType == type);
 
   const meta::type* types[function_traits::MAX_ARGS] = { propertyType };
   const void* args[function_traits::MAX_ARGS] = { propertyValue };
@@ -55,13 +50,13 @@ inline void property::set(const meta::type* classType, void* object, const meta:
 template <class U>
 variant property::get(U* object) const
 {
-  assert(typeof<U>() == m_classType);
-  assert(m_hasGetter);
+  assert(typeof<U>() == classType);
+  assert(hasGetter);
   return m_get.call(object);
 }
 inline variant property::get(const void* object) const
 {
-  assert(m_hasGetter);
+  assert(hasGetter);
   return m_get.call(object);
 }
 

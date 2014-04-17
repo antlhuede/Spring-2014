@@ -23,16 +23,16 @@ void JSonSerializer<CP>::construct_object(const Json::Value& value, const meta::
 
     for (auto field : type->fields())
     {
-      construct_object(jsonFields[field.name()], field.type(), field.member_ptr(obj));
+      construct_object(jsonFields[field.name], field.type, field.member_ptr(obj));
     }
 
     for (auto property : type->properties())
     {
-      if (property.has_setter())
+      if (property.hasSetter)
       {
-        const meta::type* propertyType = property.type();
+        const meta::type* propertyType = property.type;
 
-        Json::Value propertyValue(jsonProperties[property.name()]);
+        Json::Value propertyValue(jsonProperties[property.name]);
         if (propertyValue.isNull())
           return;
 
@@ -72,14 +72,14 @@ Json::Value JSonSerializer<CP>::construct_json_value(const meta::type* type, con
   if (type->isObject())
   {
     for (size_t i = 0; i < fields.size(); ++i)
-      value["fields"][fields[i].name()] = construct_json_value(fields[i].type(), fields[i].member_ptr(obj));
+      value["fields"][fields[i].name] = construct_json_value(fields[i].type, fields[i].member_ptr(obj));
 
     for (size_t i = 0; i < properties.size(); ++i)
     {
-      if (properties[i].has_getter())
+      if (properties[i].hasGetter)
       {
         meta::variant property_data = properties[i].get(obj);
-        value["properties"][properties[i].name()] = construct_json_value(properties[i].type(), property_data.data());
+        value["properties"][properties[i].name] = construct_json_value(properties[i].type, property_data.data());
       }
     }
   }
