@@ -28,20 +28,20 @@ void property::set(U* object, const T& value) const
   assert(typeof<U>() == classType);
   assert(typeof<T>() == type);
   assert(hasSetter);
-  m_set.call(object, std::forward<const T&>(value));
+  m_set.Call(object, std::forward<const T&>(value));
 }
 template <class T>
 void property::set(void* object, const T& value) const
 {
   assert(typeof<T>() == type);
   assert(hasSetter);
-  m_set.call(object, std::forward<const T&>(value));
+  m_set.Call(object, std::forward<const T&>(value));
 }
 inline void property::set(const meta::type* classType, void* object, const meta::type* propertyType, const void* propertyValue)
 {
   assert(classType == classType);
   assert(propertyType == type);
-  m_set.call_generic(classType, object, 1, &propertyType, &propertyValue);
+  m_set.CallGeneric(classType, object, 1, &propertyType, &propertyValue);
 }
 
 template <class U>
@@ -49,12 +49,12 @@ variant property::get(U* object) const
 {
   assert(typeof<U>() == classType);
   assert(hasGetter);
-  return m_get.call(object);
+  return m_get.Call(object);
 }
 inline variant property::get(const void* object) const
 {
   assert(hasGetter);
-  return m_get.call(object);
+  return m_get.Call(object);
 }
 
 template <class T, class U>

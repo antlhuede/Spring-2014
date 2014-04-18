@@ -46,7 +46,7 @@ struct function_traits
 class function
 {
 public:
-  function() = default;
+  function();
   ~function();
   function(function&& other);
   function(const function& other);
@@ -60,34 +60,33 @@ public:
   function(R(U::*func)(Args...), U* obj = nullptr);
   template <class R, class U, class... Args>
   function(R(U::*func)(Args...)const, const U* obj = nullptr);
-  
-  const function_traits& traits() const { return m_traits; }
 
   template <class... Args>
   variant operator()(Args... args) const;
 
   template <class U, class... Args>
-  variant call(U* object, Args... args) const;
+  variant Call(U* object, Args... args) const;
 
   template <class U, class... Args>
-  variant call(const U* object, Args... args) const;
+  variant Call(const U* object, Args... args) const;
 
-  variant call_generic(const type* classType, const void* object, size_t numArgs, const type** argTypes, const void** args) const;
-  variant call_generic(const type* classType, void* object, size_t numArgs, const type** argTypes, const void** args) const;
-  template <class U, class... Args>
-  bool check_types() const;
+  variant CallGeneric(const type* classType, const void* object, size_t numArgs, const type** argTypes, const void** args) const;
+  variant CallGeneric(const type* classType, void* object, size_t numArgs, const type** argTypes, const void** args) const;
+
+  typedef bool(*ArgChecker)(const type** argTypes, size_t numArgs);
+
+  const function_traits traits;
+  const bool initialized = false;
+  ArgChecker const CheckArgs = nullptr;
+
 private:
-  template <class T>
-  void construct(T func);
   typedef internal::base_function base_function;
-  function_traits m_traits;
-  bool m_initialized = false;
+  typedef variant(*Caller)(base_function* function, void* object, const arg_traits* traits, void** args);
+
+  template <class T>
+  void Construct(T func, void* object = nullptr);
   void* m_object = nullptr;
   base_function* m_function = nullptr;
-  typedef variant(*Caller)(base_function* function, void* object, const arg_traits* traits, void** args);
-  typedef bool(*ArgChecker)(const type** arg_types);
-
   Caller m_caller = nullptr;
-  ArgChecker m_checker = nullptr;
 };
 }

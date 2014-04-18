@@ -31,8 +31,8 @@ public:
     }
     else if (item->second.size())
     {
-      const function_traits& root_traits = item->second.front().traits();
-      const function_traits& new_traits = func.traits();
+      const function_traits& root_traits = item->second.front().traits;
+      const function_traits& new_traits = func.traits;
 
       if (root_traits.numArguments != new_traits.numArguments)
         return false;

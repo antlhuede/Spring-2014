@@ -27,6 +27,7 @@ template <class T, class R, class... Args>
 struct function_operator
 {
   template <size_t> struct unwrap;
+  static const int NUM_ARGS = sizeof...(Args);
   typedef typename unwrap<sizeof...(Args)> unwrapper;
   typedef std::tuple<Args...> arg_tuple;
   typedef T function_type;
@@ -35,9 +36,9 @@ struct function_operator
   {
     unwrapper::DeduceArgs(args);
   }
-  static inline bool CheckArgs(const type** arg_types)
+  static inline bool CheckArgs(const type** argTypes)
   {
-    return unwrapper::CheckArgs(arg_types);
+    return unwrapper::CheckArgs(argTypes);
   }
   static inline variant Call(base_function* function, void* object, const arg_traits* traits, void** args)
   {
@@ -175,9 +176,10 @@ public:
   {
     func_operator::DeduceArgs(args);
   }
-  static inline bool CheckArgs(const type** arg_types)
+  static inline bool CheckArgs(const type** argTypes, size_t numArgs)
   {
-    return func_operator::CheckArgs(arg_types);
+    if (numArgs != num_args) return false;
+    return func_operator::CheckArgs(argTypes);
   }
   static inline variant Call(base_function* function, void* object, const arg_traits* traits, void** args)
   {

@@ -3,122 +3,134 @@
 #include "meta\_function_internal_inl.h"
 
 namespace meta {
+namespace internal
+{
+  static bool DefaultArgsChecker(const type**, size_t) { return false; }
+  static variant DefaultCaller(base_function*, void*, const arg_traits*, void**) { return variant(); }
+}
+
+inline function::function()
+  : traits(), initialized(false), CheckArgs(&internal::DefaultArgsChecker)
+  , m_object(nullptr), m_function(nullptr), m_caller(&internal::DefaultCaller) {}
 
 template <class T> 
 function::function(T lambda)
-  : m_traits(lambda), m_initialized(true), m_object(&lambda)
+  : traits(lambda), initialized(true)
 {
-  construct(lambda);
+  Construct(lambda, &lambda);
 }
 template <class R, class... Args>
 function::function(R(*func)(Args...))
-  : m_traits(func), m_initialized(true), m_object(nullptr)
+  : traits(func), initialized(true)
 {
-  construct(func);
+  Construct(func);
 }
 template <class R, class U, class... Args>
-function::function(R(U::*func)(Args...), U* obj)
-  : m_traits(func), m_initialized(true), m_object(obj)
+function::function(R(U::*func)(Args...), U* object)
+  : traits(func), initialized(true)
 {
-  construct(func);
+  Construct(func, object);
 }
+
 template <class R, class U, class... Args>
-function::function(R(U::*func)(Args...)const, const U* obj)
-  : m_traits(func), m_initialized(true), m_object(const_cast<U*>(obj))
+function::function(R(U::*func)(Args...)const, const U* object)
+  : traits(func), initialized(true)
 {
-  construct(func);
+  Construct(func, const_cast<U*>(object));
 }
 
 template <class T>
-void function::construct(T func)
+void function::Construct(T func, void* object)
 {
   typedef internal::function_descriptor<T> descriptor;
+  
+  const_cast<ArgChecker&>(CheckArgs) = &descriptor::CheckArgs;
 
   m_function = descriptor::Create(func);
   m_caller = &descriptor::Call;
-  m_checker = &descriptor::CheckArgs;
+  m_object = object;
 }
 
 inline function::function(const function& other)
   : m_function(other.m_function ? other.m_function->clone() : nullptr)
-  , m_traits(other.m_traits)
+  , traits(other.traits)
+  , CheckArgs(other.CheckArgs)
+  , initialized(other.initialized)
   , m_caller(other.m_caller)
-  , m_checker(other.m_checker)
-  , m_initialized(other.m_initialized)
   , m_object(other.m_object) {}
 
 inline function::function(function&& other)
   : m_function(other.m_function)
-  , m_traits(other.m_traits)
+  , traits(other.traits)
+  , CheckArgs(other.CheckArgs)
+  , initialized(other.initialized)
   , m_caller(other.m_caller)
-  , m_checker(other.m_checker)
-  , m_initialized(other.m_initialized)
   , m_object(other.m_object)
 {
   other.m_object = nullptr;
   other.m_function = nullptr;
-  other.m_initialized = false;
+  const_cast<bool&>(other.initialized) = false;
 }
 inline function::~function() { if (m_function) delete m_function; }
 
 #define IMPLEMENT_CALLER_BODY()                               \
-  assert(sizeof...(Args) == m_traits.numArguments);           \
-  const int size = sizeof...(args)+1;                         \
+  const int numArgs = sizeof...(Args);                        \
+  assert(numArgs == traits.numArguments);                     \
+  const int size = numArgs+1;                                 \
   /*make const now, so we can store pointers to const args*/  \
   const void* args_ptr[size] = { &args... };                  \
   const type* types_ptr[size] = { typeof(args)... };          \
-  assert(m_checker && m_checker(types_ptr))
+  assert(CheckArgs && CheckArgs(types_ptr, numArgs))
 
 template <class... Args>
 variant function::operator()(Args... args) const
 {
   IMPLEMENT_CALLER_BODY();
   //cast away the const from the args since its expected by the caller
-  return m_caller(m_function, m_object, m_traits.args, const_cast<void**>(args_ptr));
+  return m_caller(m_function, m_object, traits.args, const_cast<void**>(args_ptr));
 }
 template <class U, class... Args>
-variant function::call(U* object, Args... args) const
+variant function::Call(U* object, Args... args) const
 {
   IMPLEMENT_CALLER_BODY();
   //cast away the const from the args since its expected by the caller
-  return m_caller(m_function, object, m_traits.args, const_cast<void**>(args_ptr));
+  return m_caller(m_function, object, traits.args, const_cast<void**>(args_ptr));
 }
 #undef IMPLEMENT_CALLER_BODY
 
 template <class U, class... Args>
-variant function::call(const U* object, Args... args) const
+variant function::Call(const U* object, Args... args) const
 {
-  assert(m_traits.isConst == true);
-  return const_cast<function*>(this)->call(const_cast<U*>(object), std::forward<Args>(args)...);
+  assert(traits.isConst == true);
+  return const_cast<function*>(this)->Call(const_cast<U*>(object), std::forward<Args>(args)...);
 }
-inline variant function::call_generic(const type* classType, void* object, size_t numArgs, const type** argTypes, const void** args) const
+inline variant function::CallGeneric(const type* classType, void* object, size_t numArgs, const type** argTypes, const void** args) const
 {
-  assert(m_traits.classType == classType);
-  assert(m_traits.numArguments == numArgs);
-  assert(m_checker && m_checker(argTypes));
-  return m_caller(m_function, object, m_traits.args, const_cast<void**>(args));
+  assert(traits.classType == classType);
+  assert(CheckArgs && CheckArgs(argTypes, numArgs));
+  return m_caller(m_function, object, traits.args, const_cast<void**>(args));
 }
-inline variant function::call_generic(const type* classType, const void* object, size_t numArgs, const type** argTypes, const void** args) const
+inline variant function::CallGeneric(const type* classType, const void* object, size_t numArgs, const type** argTypes, const void** args) const
 {
-  assert(m_traits.isConst == true);
-  return call_generic(classType, const_cast<void*>(object), numArgs, argTypes, args);
+  assert(traits.isConst == true);
+  return CallGeneric(classType, const_cast<void*>(object), numArgs, argTypes, args);
 }
-template <class U, class... Args>
-bool function::check_types() const
-{
-  if(sizeof...(Args) != m_traits.numArguments)
-    return false;
-  if (m_checker == nullptr)
-    return false;
-
-  const int size = sizeof...(args)+1;
-  const type* types_ptr[size] = { typeof(args)... };
-
-  if (m_checker(types_ptr) == false)
-    return false;
-
-  return true;
-}
+//template <class U, class... Args>
+//bool function::check_types() const
+//{
+//  if(sizeof...(Args) != m_traits.numArguments)
+//    return false;
+//  if (m_checker == nullptr)
+//    return false;
+//
+//  const int size = sizeof...(args)+1;
+//  const type* types_ptr[size] = { typeof(args)... };
+//
+//  if (m_checker(types_ptr) == false)
+//    return false;
+//
+//  return true;
+//}
 
 template <class T>
 function_traits::function_traits(T func)

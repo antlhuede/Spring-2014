@@ -325,8 +325,8 @@ void run_basic_test_code()
   test_properties();
   std::cout << "start run basic test" << std::endl;
   make_test_memory();
-
   test_message_class tm;
+
   //tm.DispatchMessage("Player Dead", 2);
   global_message_table::AddListener("Player Dead", meta::function(&test_message_class::PlayerDeadFunc, &tm));
   global_message_table::AddListener("Player Dead", meta::function(&GlobalPlayerDeadFunc));
@@ -413,18 +413,18 @@ void run_basic_test_code()
   meta::function mfunc5(&test_funcs_class::func_test5, &tfc);
   meta::function mfunc6(&test_funcs_class::func_test6, &tfc);
 
-  meta::variant fuck_returns = mfunc1.call(&tfc);
+  meta::variant fuck_returns = mfunc1.Call(&tfc);
   std::cout << fuck_returns.get_as<string>() << std::endl;
-  mfunc2.call(&tfc, 3);
-  mfunc3.call(&tfc, 3, 3.5f);
-  mfunc4.call(&tfc, 3, 3.5f, 123.0);
-  mfunc5.call(&tfc, 3, 3.5f, 123.0, hello_world);
+  mfunc2.Call(&tfc, 3);
+  mfunc3.Call(&tfc, 3, 3.5f);
+  mfunc4.Call(&tfc, 3, 3.5f, 123.0);
+  mfunc5.Call(&tfc, 3, 3.5f, 123.0, hello_world);
 
   auto print_args = [](const string& name, meta::function& func) -> void {
     std::cout << name << " test: " << std::endl;
-    for (size_t i = 0; i < func.traits().numArguments; ++i)
-      std::cout << "  arg " << i << ": " << func.traits().args[i].type->name << std::endl;
-    std::cout << "  member func: " << func.traits().isMemberFunction << std::endl;
+    for (size_t i = 0; i < func.traits.numArguments; ++i)
+      std::cout << "  arg " << i << ": " << func.traits.args[i].type->name << std::endl;
+    std::cout << "  member func: " << func.traits.isMemberFunction << std::endl;
   };
 
   print_args("function1", func1);
