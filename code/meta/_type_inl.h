@@ -17,20 +17,38 @@ public:
 
 template <class T>
 type::type(decl<T>, const string name, ReadFunc r, WriteFunc w, StringizeFunc str)
-  : m_id(++S_ID_COUNTER)
-  , m_size(sizeof(T))
-  , m_name(name)
-  , m_read(r)
-  , m_write(w)
-  , m_to_string(str)
-  , m_construct(std::has_default_constructor<T>::value ? &PlacementNew<std::conditional<std::has_default_constructor<T>::value, T, decl<T>>::type> : nullptr)
-  , m_copy(std::has_copy_constructor<T>::value ? &CopyMemory<std::conditional<std::has_copy_constructor<T>::value, T, decl<T>>::type> : nullptr)
-  , m_destruct(&CallDestructor<T>)
-  , m_clone(&CloneObject<T>)
-  , m_allocate(&AllocMemory<T>)
-  , m_deallocate(&DeleteMemory<T>)
-  , m_assign(&AssignMemory<T>) 
+  : id(++S_ID_COUNTER)
+  , size(sizeof(T))
+  , name(name)
+  , read(r)
+  , write(w)
+  , toString(str)
+  , construct(std::has_default_constructor<T>::value ? &PlacementNew<std::conditional<std::has_default_constructor<T>::value, T, decl<T>>::type> : nullptr)
+  , copy(std::is_copy_constructible<T>::value ? &CopyMemory<T> : nullptr)
+  , destruct(&CallDestructor<T>)
+  , clone(std::is_copy_constructible<T>::value ? &CloneObject<T> : nullptr)
+  , allocate(&AllocMemory<T>)
+  , deallocate(&DeleteMemory<T>)
+  , assign((std::is_arithmetic<T>::value || std::is_assignable<T, T>::value) ? &AssignMemory<T> : nullptr)
+  , isArithmetic(std::is_arithmetic<T>::value)
+  , isPolymorphic(std::is_polymorphic<T>::value)
+  , isIntegral(std::is_integral<T>::value)
+  , isFloatingPoint(std::is_floating_point<T>::value)
+  , isSigned(std::is_signed<T>::value)
+  , isPod(std::is_pod<T>::value)
+  , isEnum(std::is_enum<T>::value)
+  //strings are considered basic types by my meta
+  , isObject(std::is_class<T>::value && (std::is_same<T, string>::value == false))
 {
+  assert(construct != nullptr);
+  assert(copy != nullptr);
+  assert(destruct != nullptr);
+  assert(clone != nullptr);
+  assert(allocate != nullptr);
+  assert(deallocate != nullptr);
+  //assert assign is true if enum is false
+  assert((isEnum == false) ? (assign != nullptr) : true);
+
   bool registered = internal::meta_registry::register_type(this);
   assert(registered == true);
 }
@@ -46,63 +64,31 @@ inline void type::destroy()
   m_eventMap.clear();
 }
 
-inline void type::read(istream& stream, void* memory) const   
-{
-  assert(m_read);
-  m_read(stream, memory);
-}
-inline void type::write(ostream& stream, void* memory) const  
-{
-  assert(m_write);
-  m_write(stream, memory);
-}
-inline void type::construct(void* memory) const               
-{
-  assert(m_construct);
-  m_construct(memory);
-}
-inline void type::destruct(void* memory) const                
-{
-  assert(m_destruct);
-  m_destruct(memory);
-}
-inline void type::copy(void* dest, const void* source) const  
-{
-  assert(m_copy);
-  m_copy(dest, source);
-}
-inline const string type::to_string(const void* memory) const 
-{
-  assert(m_to_string);
-  return m_to_string(memory);
-}
-inline void* type::clone(const void* source) const            
-{
-  assert(m_clone);
-  return m_clone(source);
-}
-inline void* type::allocate() const                           
-{
-  assert(m_allocate);
-  return m_allocate();
-}
-inline void type::deallocate(void* memory) const              
-{
-  assert(m_deallocate);
-  m_deallocate(memory);
-}
-inline void type::assign(void* dest, const void* source) const
-{
-  assert(m_assign);
-  m_assign(dest, source);
-}
 inline bool type::operator==(const type& rhs) const
 {
-  return m_id == rhs.m_id;
+  return id == rhs.id;
 }
 inline bool type::operator!=(const type& rhs) const
 {
   return !(*this == rhs);
+}
+
+inline bool type::isConvertible(const type* toType) const
+{
+  assert(toType);
+
+  if (this == toType || baseType == toType)
+    return true;
+  
+  if (isArithmetic && toType->isArithmetic)
+    return true;
+
+  return false;
+}
+template <class T>
+bool type::isConvertible() const
+{
+  return isConvertible(typeof<T>());
 }
 
 namespace internal
@@ -162,19 +148,19 @@ type& type::Constant(const string& name, const T& value)
   return *this;
 }
 
-inline const field type::field(const string& name) const
+inline const field type::getField(const string& name) const
 {
   return internal::GetElementFromNamedVector(name, m_fieldMap, m_fields);
 }
-inline const property type::property(const string& name) const
+inline const property type::getProperty(const string& name) const
 {
   return internal::GetElementFromNamedVector(name, m_propertyMap, m_properties);
 }
-inline const event type::event(const string& name) const
+inline const event type::getEvent(const string& name) const
 {
   return internal::GetElementFromNamedVector(name, m_eventMap, m_events);
 }
-inline const constant type::constant(const string& name) const
+inline const constant type::getConstant(const string& name) const
 {
   return internal::GetElementFromNamedVector(name, m_constantMap, m_constants);
 }

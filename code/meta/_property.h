@@ -33,6 +33,7 @@ public:
   const string name = "uninitialized_property";
   const ::meta::type* const type = typeof<nulltype>();
   const ::meta::type* const classType = typeof<nulltype>();
+
 private:
   const function m_get;
   const function m_set;

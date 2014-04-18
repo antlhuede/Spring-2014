@@ -1,6 +1,6 @@
 <read_test1 type="test_class">
     <fields>
-        <name type="string" value=""/>
+        <name type="string" value="steven"/>
         <test_string type="string" value="test123"/>
         <test_int type="int" value="5"/>
         <test_float type="float" value="13.5"/>
@@ -15,7 +15,7 @@
 
 <read_test2 type="test_class">
     <fields>
-        <name type="string" value=""/>
+        <name type="string" value="steven"/>
         <test_string type="string" value="123 boogaloo"/>
         <test_int type="int" value="12"/>
         <test_float type="float" value="332.5"/>

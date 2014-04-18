@@ -14,10 +14,10 @@ inline const type* meta_registry::find(const string& key)
 
 inline bool meta_registry::register_type(const type* pType)
 {
-  if (m_registry->find(pType->name()) != m_registry->end())
+  if (m_registry->find(pType->name) != m_registry->end())
     return false;
 
-  (*m_registry)[pType->name()] = pType;
+  (*m_registry)[pType->name] = pType;
   return true;
 }
 }

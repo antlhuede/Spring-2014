@@ -1,6 +1,11 @@
 #include "meta\meta.h"
 
+DECLARE_META_TYPE(char)
+DECLARE_META_TYPE(unsigned char)
 DECLARE_META_TYPE(int)
+DECLARE_META_TYPE(unsigned int)
+DECLARE_META_TYPE(short)
+DECLARE_META_TYPE(unsigned short)
 DECLARE_META_TYPE(bool)
 DECLARE_META_TYPE(float)
 DECLARE_META_TYPE(double)

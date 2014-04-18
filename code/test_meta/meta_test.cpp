@@ -34,7 +34,7 @@ public:
   double test_double = 0.0;
   bool test_bool = false;
 
-  string name;
+  string name = "steven";
   void set_property(const string& test) { m_property = test; }
   const string& get_property() const { return m_property; }
 
@@ -228,21 +228,101 @@ void test_properties()
 {
   test_class tc;
   const meta::type* tc_type = meta::typeof(tc);
-  const meta::property p1 = tc_type->property("test_property");
+  const meta::property p1 = tc_type->getProperty("test_property");
   string value("initial test");
   p1.set(&tc, value);
   std::cout << p1.get_as<string>(&tc) << std::endl;
 
-  const meta::property p2 = tc_type->property("test_getter_only");
+  const meta::property p2 = tc_type->getProperty("test_getter_only");
   std::cout << p2.get_as<string>(&tc) << std::endl;
 
-  const meta::event e1 = tc_type->event("test_event");
+  const meta::event e1 = tc_type->getEvent("test_event");
   std::cout << e1.trigger(&tc, string("hello world"), 13.5f, 255, true).get_as<string>() << std::endl;
+}
+void assert_basic_type_conversions(const meta::type* type)
+{
+  const meta::type* boolType = meta::typeof<bool>();
+  const meta::type* signedCharType = meta::typeof<char>();
+  const meta::type* unsignedCharType = meta::typeof<unsigned char>();
+  const meta::type* signedShortType = meta::typeof<short>();
+  const meta::type* unsignedShortType = meta::typeof<unsigned short>();
+  const meta::type* signedIntType = meta::typeof<int>();
+  const meta::type* unsignedIntType = meta::typeof<unsigned int>();
+  const meta::type* floatType = meta::typeof<float>();
+  const meta::type* doubleType = meta::typeof<double>();
+
+  bool result = false;
+  result = type->isConvertible<bool>();
+  assert(result);
+  result = type->isConvertible(boolType);
+  assert(result);
+  result = type->isConvertible<char>();
+  assert(result);
+  result = type->isConvertible(signedCharType);
+  assert(result);
+  result = type->isConvertible<unsigned char>();
+  assert(result);
+  result = type->isConvertible(unsignedCharType);
+  assert(result);
+  result = type->isConvertible<short>();
+  assert(result);
+  result = type->isConvertible(signedShortType);
+  assert(result);
+  result = type->isConvertible<unsigned short>();
+  assert(result);
+  result = type->isConvertible(unsignedShortType);
+  assert(result);
+  result = type->isConvertible<int>();
+  assert(result);
+  result = type->isConvertible(signedIntType);
+  assert(result);
+  result = type->isConvertible<unsigned int>();
+  assert(result);
+  result = type->isConvertible(unsignedIntType);
+  assert(result);
+  result = type->isConvertible<float>();
+  assert(result);
+  result = type->isConvertible(floatType);
+  assert(result);
+  result = type->isConvertible<double>();
+  assert(result);
+  result = type->isConvertible(doubleType);
+  assert(result);
+
+}
+struct test_pod
+{
+  string hello;
+  int world;
+};
+enum test_enum { zero_value, one_value, two_value, num_values };
+enum class test_enum_class { zero_value, one_value, two_value, num_values };
+
+DECLARE_META_OBJECT(test_enum_class) END_META_OBJECT()
+//  .Constant("zero value", test_enum::zero_value)
+//  .Constant("one value", test_enum::one_value)
+//  .Constant("two value", test_enum::two_value)
+//  .Constant("num values", test_enum::num_values)
+//END_META_OBJECT()
+
+void test_type()
+{
+  //std::cout << std::boolalpha << meta::typeof<test_enum>()->isEnum << std::endl;
+  assert_basic_type_conversions(meta::typeof<bool>());
+  assert_basic_type_conversions(meta::typeof<char>());
+  assert_basic_type_conversions(meta::typeof<unsigned char>());
+  assert_basic_type_conversions(meta::typeof<short>());
+  assert_basic_type_conversions(meta::typeof<unsigned short>());
+  assert_basic_type_conversions(meta::typeof<int>());
+  assert_basic_type_conversions(meta::typeof<unsigned int>());
+  assert_basic_type_conversions(meta::typeof<float>());
+  assert_basic_type_conversions(meta::typeof<double>());
+
 }
 void run_basic_test_code()
 {
+  test_type();
   test_properties();
-
   std::cout << "start run basic test" << std::endl;
   make_test_memory();
 
@@ -297,7 +377,7 @@ void run_basic_test_code()
   {
     Json::Value value;
     value[fields[i].name] = fields[i].to_string(&tc);
-    root[type->to_string(&tc)].append(value);
+    root[type->toString(&tc)].append(value);
     //std::cout << fields[i]->type().name() << " " << fields[i]->name() << " " << fields[i]->offset() << std::endl;
   }
   Json::StyledWriter writer;
@@ -311,7 +391,7 @@ void run_basic_test_code()
   test->write(std::cout, &testint);
   test = meta::typeof(teststr);
   
-  std::cout << test->name() << " " << test->size() << "\n\n";
+  std::cout << test->name << " " << test->size << "\n\n";
 
   test_funcs_class tfc;
   string hello_world("Hello World");
@@ -343,7 +423,7 @@ void run_basic_test_code()
   auto print_args = [](const string& name, meta::function& func) -> void {
     std::cout << name << " test: " << std::endl;
     for (size_t i = 0; i < func.traits().numArguments; ++i)
-      std::cout << "  arg " << i << ": " << func.traits().args[i].type->name() << std::endl;
+      std::cout << "  arg " << i << ": " << func.traits().args[i].type->name << std::endl;
     std::cout << "  member func: " << func.traits().isMemberFunction << std::endl;
   };
 

@@ -78,7 +78,7 @@ inline void variant::construct(const meta::type* type, const void* memory)
   //conditionals:
   //if type can fit in array, assign to array pointer and appropriately construct memory
   //otherwise, appropriately either new up or clone a pointer to the object
-  if (type->size() <= SMALL_OBJECT_SIZE)
+  if (type->size <= SMALL_OBJECT_SIZE)
   {
     m_data = m_array;
 
@@ -125,7 +125,7 @@ inline bool variant::can_convert(const meta::type* type) const
 }
 inline const string variant::to_string() const
 {
-  return m_type->to_string(m_data);
+  return m_type->toString(m_data);
 }
 
 template <class T>

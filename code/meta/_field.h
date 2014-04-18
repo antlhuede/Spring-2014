@@ -19,7 +19,7 @@ public:
   }
   const string field::to_string(void* var) const
   {
-    return type->to_string(member_ptr(var));
+    return type->toString(member_ptr(var));
   }
 
   const string name = "uninitialized_field";

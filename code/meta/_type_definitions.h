@@ -28,6 +28,7 @@ namespace meta
   class type;
   class field;
   class property;
+  class constant;
   class event;
   class messenger;
 

@@ -41,10 +41,7 @@ inline void property::set(const meta::type* classType, void* object, const meta:
 {
   assert(classType == classType);
   assert(propertyType == type);
-
-  const meta::type* types[function_traits::MAX_ARGS] = { propertyType };
-  const void* args[function_traits::MAX_ARGS] = { propertyValue };
-  m_set.call_generic(classType, object, 1, types, args);
+  m_set.call_generic(classType, object, 1, &propertyType, &propertyValue);
 }
 
 template <class U>

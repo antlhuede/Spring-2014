@@ -16,7 +16,7 @@ inline void AssignJsonValue(const meta::type* type, void* obj, const Json::Value
 template <class CP>
 void JSonSerializer<CP>::construct_object(const Json::Value& value, const meta::type* type, void* obj) const
 {
-  if (type->isObject())
+  if (type->isObject)
   {
     Json::Value jsonFields = value["fields"];
     Json::Value jsonProperties = value["properties"];
@@ -67,9 +67,9 @@ Json::Value JSonSerializer<CP>::construct_json_value(const meta::type* type, con
   Json::Value value;
   const vector<const meta::field>& fields = type->fields();
   const vector<const meta::property>& properties = type->properties();
-  value["type"] = type->name();
+  value["type"] = type->name;
 
-  if (type->isObject())
+  if (type->isObject)
   {
     for (size_t i = 0; i < fields.size(); ++i)
       value["fields"][fields[i].name] = construct_json_value(fields[i].type, fields[i].member_ptr(obj));
@@ -96,7 +96,7 @@ Json::Value JSonSerializer<CP>::construct_json_value(const meta::type* type, con
     else if (type == meta::typeof<string>())
       value = meta::converter::toString(type, obj);
     else
-      value = type->to_string(obj);
+      value = type->toString(obj);
   }
 
   return value;

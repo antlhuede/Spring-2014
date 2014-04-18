@@ -40,7 +40,7 @@ void write_basic_types(ostream& stream, void* memory)
 template <class T>
 const string to_string_objects(const void* memory)
 {
-  return typeof<T>()->name();
+  return typeof<T>()->name;
   /*const type& obj_type = typeof<T>();
   const vector<const field*>& field_list = obj_type.fields();
   ostringstream buff;

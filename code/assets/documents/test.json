@@ -4,7 +4,7 @@
 	{
 		"fields" : 
 		{
-			"name" : "",
+			"name" : "steven",
 			"test_bool" : true,
 			"test_double" : 0.09279999999999999,
 			"test_float" : 13.50,
@@ -22,7 +22,7 @@
 	{
 		"fields" : 
 		{
-			"name" : "",
+			"name" : "steven",
 			"test_bool" : false,
 			"test_double" : 10293.93820,
 			"test_float" : 332.50,

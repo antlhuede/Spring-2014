@@ -1,8 +1,6 @@
 #pragma once
 
 namespace meta {
-class constant;
-
 class type : public list<type>
 {
 public:
@@ -14,26 +12,29 @@ public:
   type(const type& rhs) = delete;
   type& operator=(const type& rhs) = delete;
 
-  void read(istream& stream, void* memory) const;
-  void write(ostream& stream, void* memory) const;
-  void construct(void* memory) const;
-  void destruct(void* memory) const;
-  void copy(void* dest, const void* source) const;
-  const string to_string(const void* memory) const;
-  void* clone(const void* source) const;
-  void* allocate() const;
-  void deallocate(void* memory) const;
-  void assign(void* dest, const void* source) const;
-
   bool operator==(const type& rhs) const;
   bool operator!=(const type& rhs) const;
+  
+  const field getField(const string& name) const;
+  const property getProperty(const string& name) const;
+  const constant getConstant(const string& name) const;
+  const event getEvent(const string& name) const;
+
+  const vector<const meta::field>& fields() const { return m_fields; }
+  const vector<const meta::property>& properties() const { return m_properties; }
+  const vector<const meta::constant>& constants() const { return m_constants; }
+  const vector<const meta::event>& events() const { return m_events; }
+
+  template <class T>
+  bool isConvertible() const;
+  bool isConvertible(const type* toType) const;
 
   template <class T, class U>
   type& Field(const string& name, T U::*var);
 
   template <class T, class U>
   type& Property(const string& name, T(U::*get)()const, void(U::*set)(T));
-  
+
   //functions to enable passing nullptr into either getter or setter without explicit
   //casting to the pointer type
   template <class T, class U>
@@ -49,29 +50,41 @@ public:
   template <class T>
   type& Constant(const string& name, const T& value);
 
-  size_t size() const { return m_size; }
-  const string& name() const { return m_name; }
-  unsigned id() const { return m_id; }
-
-  const field field(const string& name) const;
-  const property property(const string& name) const;
-  const constant constant(const string& name) const;
-  const event event(const string& name) const;
-
-  const vector<const meta::field>& fields() const { return m_fields; }
-  const vector<const meta::property>& properties() const { return m_properties; }
-  const vector<const meta::constant>& constants() const { return m_constants; }
-  const vector<const meta::event>& events() const { return m_events; }
-
-  bool isObject() const { return (m_fields.size() || m_properties.size()); }
-  
+  //NEVER EVER EVER CALL THIS FUNCTION
+  //it would require const_casting the type* and explicitly calling it
+  //it is called during shutdown of meta
   void destroy();
+
+  //const public member variables, better than private with getters
+  const unsigned id = 0;
+  const size_t size = 0;
+  const string name = "nulltype";
+  const type* baseType = nullptr;
+
+  const ReadFunc read = nullptr;
+  const WriteFunc write = nullptr;
+  const StringizeFunc toString = nullptr;
+
+  const PlacementNewFunc construct = nullptr;
+  const CopyFunc copy = nullptr;
+  const DestructFunc destruct = nullptr;
+  const AllocFunc allocate = nullptr;
+  const DeleteFunc deallocate = nullptr;
+  const CloneFunc clone = nullptr;
+  const AssignFunc assign = nullptr;
+  
+  const bool isEnum = false;
+  const bool isObject = false;
+
+  const bool isArithmetic = false;
+  const bool isPolymorphic = false;
+  const bool isIntegral = false;
+  const bool isFloatingPoint = false;
+  const bool isSigned = false;
+  const bool isPod = false;
+
 private:
   static unsigned S_ID_COUNTER;
-  unsigned m_id = 0;
-  size_t m_size = 0;
-  string m_name = "nulltype";
-
   vector<const meta::field> m_fields;
   hash_map<string, size_t> m_fieldMap;
 
@@ -83,18 +96,6 @@ private:
 
   vector<const meta::constant> m_constants;
   hash_map<string, size_t> m_constantMap;
-
-  const ReadFunc m_read = nullptr;
-  const WriteFunc m_write = nullptr;
-  const StringizeFunc m_to_string = nullptr;
-
-  const PlacementNewFunc m_construct = nullptr;
-  const CopyFunc m_copy = nullptr;
-  const DestructFunc m_destruct = nullptr;
-  const AllocFunc m_allocate = nullptr;
-  const DeleteFunc m_deallocate = nullptr;
-  const CloneFunc m_clone = nullptr;
-  const AssignFunc m_assign = nullptr;
 };
 
 }

@@ -8,7 +8,7 @@ namespace serializers {
 template <class CP>
 void XMLSerializer<CP>::construct_object(const xml::XMLElement* element, const meta::type* type, void* obj) const
 {
-  if (element->NoChildren() == false)
+  if (type->isObject)
   {
     //Json::Value json_fields = value["fields"];
     const xml::XMLElement* xml_fields = element->FirstChildElement("fields");
@@ -78,11 +78,11 @@ template <class CP>
 xml::XMLElement* XMLSerializer<CP>::construct_xml_element(xml::XMLDocument* doc, const string& name, const meta::type* type, const void* obj) const
 {
   xml::XMLElement* node = doc->NewElement(name.c_str());
-  node->SetAttribute("type", type->name().c_str());
+  node->SetAttribute("type", type->name.c_str());
 
   auto fields = type->fields();
   auto properties = type->properties();
-  if (type->isObject())
+  if (type->isObject)
   {
     if (fields.size())
     {
@@ -118,7 +118,7 @@ xml::XMLElement* XMLSerializer<CP>::construct_xml_element(xml::XMLDocument* doc,
     else if (type == meta::typeof<string>())
       node->SetAttribute("value", meta::converter::toString(type, obj).c_str());
     else
-      node->SetAttribute("value", type->to_string(obj).c_str());
+      node->SetAttribute("value", type->toString(obj).c_str());
   }
 
   return node;
