@@ -1,11 +1,11 @@
 <read_test1 type="test_class">
     <fields>
         <name type="string" value="steven"/>
-        <test_string type="string" value="test123"/>
-        <test_int type="int" value="5"/>
-        <test_float type="float" value="13.5"/>
-        <test_double type="double" value="0.092799999999999994"/>
-        <test_bool type="bool" value="1"/>
+        <test_string type="string" value="123 boogaloo"/>
+        <test_int type="int" value="12"/>
+        <test_float type="float" value="332.5"/>
+        <test_double type="double" value="10293.938200000001"/>
+        <test_bool type="bool" value="0"/>
         <test_enum_field type="test_enum_norm" value="two value"/>
     </fields>
     <properties>
@@ -21,11 +21,11 @@
 <read_test2 type="test_class">
     <fields>
         <name type="string" value="steven"/>
-        <test_string type="string" value="123 boogaloo"/>
-        <test_int type="int" value="12"/>
-        <test_float type="float" value="332.5"/>
-        <test_double type="double" value="10293.938200000001"/>
-        <test_bool type="bool" value="0"/>
+        <test_string type="string" value="test123"/>
+        <test_int type="int" value="5"/>
+        <test_float type="float" value="13.5"/>
+        <test_double type="double" value="0.092799999999999994"/>
+        <test_bool type="bool" value="1"/>
         <test_enum_field type="test_enum_norm" value="two value"/>
     </fields>
     <properties>

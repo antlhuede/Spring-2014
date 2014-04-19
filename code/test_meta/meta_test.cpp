@@ -199,8 +199,8 @@ void run_serializer_test(meta::serializer* serializer, const string& file1, cons
   test_class read_test2;
   
   serializer->read(first_file);
-  serializer->get("test_class1", read_test1);
-  serializer->get("test_class2", read_test2);
+  serializer->get("test_class1", read_test2);
+  serializer->get("test_class2", read_test1);
   serializer->clear();
   read_test1.set_property(string("read_test1: ") + read_test1.get_property() + " property was successfully read and edited");
   read_test2.set_property(string("read_test2: ") + read_test2.get_property() + " property was successfully read and edited");
@@ -224,8 +224,8 @@ void test_new_serializer(meta::serializer* s, const string& file1, const string&
   test_class read_test1;
   test_class read_test2;
   s->ReadFile(first_file);
-  meta::Deserialize(s, "test_class1", read_test1);
-  meta::Deserialize(s, "test_class2", read_test2);
+  meta::Deserialize(s, "test_class1", read_test2);
+  meta::Deserialize(s, "test_class2", read_test1);
   read_test1.set_property(string("read_test1: ") + read_test1.get_property() + " property was successfully read and edited");
   read_test2.set_property(string("read_test2: ") + read_test2.get_property() + " property was successfully read and edited");
   s->BeginWrite(second_file);

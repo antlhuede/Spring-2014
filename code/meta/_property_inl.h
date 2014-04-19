@@ -37,11 +37,11 @@ void property::set(void* object, const T& value) const
   assert(hasSetter);
   m_set.Call(object, std::forward<const T&>(value));
 }
-inline void property::set(const meta::type* classType, void* object, const meta::type* propertyType, const void* propertyValue)
+inline void property::set(const meta::type* objectType, void* object, const meta::type* propertyType, const void* propertyValue)
 {
-  assert(classType == classType);
+  assert(objectType == classType);
   assert(propertyType == type);
-  m_set.CallGeneric(classType, object, 1, &propertyType, &propertyValue);
+  m_set.CallGeneric(objectType, object, 1, &propertyType, &propertyValue);
 }
 
 //template <class U>

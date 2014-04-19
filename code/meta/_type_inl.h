@@ -130,11 +130,14 @@ inline void type::Serialize(serializer* s, const string& name, const void* objec
       field.type->Serialize(s, field.name, field.member_ptr(object));
     }
 
-    //for (auto property : m_properties)
-    //{
-    //  const variant value = property.get(object);
-    //  property.type->Serialize(s, property.name, value.data());
-    //}
+    for (auto property : m_properties)
+    {
+      if (property.hasGetter)
+      {
+        const variant value = property.get(object);
+        property.type->Serialize(s, property.name, value.data());
+      }
+    }
     s->EndObject();
   }
   else
@@ -146,6 +149,7 @@ inline void type::Deserialize(serializer* s, const string& name, void* object) c
 {
   if (isObject)
   {
+    s->BeginObject(name, this);
     for (auto field : m_fields)
     {
       field.type->Deserialize(s, field.name, field.member_ptr(object));
@@ -153,9 +157,14 @@ inline void type::Deserialize(serializer* s, const string& name, void* object) c
 
     for (auto property : m_properties)
     {
-      variant value = property.get(object);
-      property.type->Deserialize(s, property.name, value.data());
+      if (property.hasSetter)
+      {
+        variant value(property.type);
+        property.type->Deserialize(s, property.name, value.data());
+        property.set(this, object, property.type, value.data());
+      }
     }
+    s->EndObject();
   }
   else
   {

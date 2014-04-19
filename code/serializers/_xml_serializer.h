@@ -46,6 +46,7 @@ public:
 private:
   shared_ptr<xml::XMLDocument> m_doc = nullptr;
   xml::XMLNode* m_current = nullptr;
+
   string m_fileName = "";
   enum state { e_None, e_Read, e_Write };
   state m_state;

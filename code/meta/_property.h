@@ -24,7 +24,7 @@ public:
   template <class T>
   void set(void* object, const T& value) const;
   void set(const type* classType, void* object, const type* propertyType, const void* propertyValue);
-
+  
   const function& getter() const { return m_get; }
   const function& setter() const { return m_set; }
 
