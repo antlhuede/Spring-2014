@@ -18,8 +18,10 @@ public:
   const field getField(const string& name) const;
   const property getProperty(const string& name) const;
   const constant getConstant(const string& name) const;
+  const constant getConstant(int value) const;
   const event getEvent(const string& name) const;
 
+  
   const vector<const meta::field>& fields() const { return m_fields; }
   const vector<const meta::property>& properties() const { return m_properties; }
   const vector<const meta::constant>& constants() const { return m_constants; }

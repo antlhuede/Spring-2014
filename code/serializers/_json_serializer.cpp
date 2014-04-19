@@ -67,7 +67,16 @@ void JSonSerializer::construct_object(const Json::Value& value, const meta::type
     else if (value.isConvertibleTo(Json::ValueType::realValue))
       AssignJsonValue<float>(type, obj, &value, &Json::Value::asDouble);
     else if (value.isString())
-      AssignJsonValue<string>(type, obj, &value, &Json::Value::asString);
+    {
+      if (type->isEnum == false)
+        AssignJsonValue<string>(type, obj, &value, &Json::Value::asString);
+      else
+      {
+        string name = value.asString();
+        auto constant = type->getConstant(name);
+        type->assign(obj, constant.value.data());
+      }
+    }
     else
     {
       assert(false);
@@ -105,7 +114,7 @@ Json::Value JSonSerializer::construct_json_value(const meta::type* type, const v
   }
   else
   {
-    if (type == meta::typeof<int>() || type->isEnum)
+    if (type == meta::typeof<int>())
       value = meta::converter::toInt(type, obj);
     else if (type == meta::typeof<bool>())
       value = meta::converter::toBool(type, obj);
@@ -115,6 +124,11 @@ Json::Value JSonSerializer::construct_json_value(const meta::type* type, const v
       value = meta::converter::toDouble(type, obj);
     else if (type == meta::typeof<string>())
       value = meta::converter::toString(type, obj);
+    else if (type->isEnum)
+    {
+      auto constant = type->getConstant(meta::converter::toInt(type, obj));
+      value = constant.name;
+    }
     else
       value = type->toString(obj);
   }

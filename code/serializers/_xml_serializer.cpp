@@ -52,32 +52,39 @@ void XMLSerializer::construct_object(const xml::XMLElement* element, const meta:
   else
   {
     const meta::type* elementType = meta::typeof(element->Attribute("type"));
-    assert(elementType == type);
+    assert(type == elementType);
 
-    if (elementType == meta::typeof<int>() || elementType->isEnum)
+    if (type == meta::typeof<int>())
     {
       int result = element->IntAttribute("value");
       type->assign(obj, &result);
     }
-    else if (elementType == meta::typeof<bool>())
+    else if (type == meta::typeof<bool>())
     {
       bool result = element->BoolAttribute("value");
       type->assign(obj, &result);
     }
-    else if (elementType == meta::typeof<double>()) //let it fall back to converting to real otherwise
+    else if (type == meta::typeof<double>())
     {
       double result = element->DoubleAttribute("value");
       type->assign(obj, &result);
     }
-    else if (elementType == meta::typeof<float>())
+    else if (type == meta::typeof<float>())
     {
       float result = element->FloatAttribute("value");
       type->assign(obj, &result);
     }
-    else if (elementType == meta::typeof<string>())
+    else if (type == meta::typeof<string>())
     {
       string result = element->Attribute("value");
+
       type->assign(obj, &result);
+    }
+    else if (type->isEnum)
+    {
+      string name = element->Attribute("value");
+      auto constant = type->getConstant(name);
+      type->assign(obj, constant.value.data());
     }
     else
     {
@@ -128,7 +135,7 @@ xml::XMLElement* XMLSerializer::construct_xml_element(xml::XMLDocument* doc, con
   }
   else
   {
-    if (type == meta::typeof<int>() || type->isEnum)
+    if (type == meta::typeof<int>())
       node->SetAttribute("value", meta::converter::toInt(type, obj));
     else if (type == meta::typeof<bool>())
       node->SetAttribute("value", meta::converter::toBool(type, obj));
@@ -138,6 +145,11 @@ xml::XMLElement* XMLSerializer::construct_xml_element(xml::XMLDocument* doc, con
       node->SetAttribute("value", meta::converter::toDouble(type, obj));
     else if (type == meta::typeof<string>())
       node->SetAttribute("value", meta::converter::toString(type, obj).c_str());
+    else if (type->isEnum)
+    {
+      auto constant = type->getConstant(meta::converter::toInt(type, obj));
+      node->SetAttribute("value", constant.name.c_str());
+    }
     else
       node->SetAttribute("value", type->toString(obj).c_str());
   }

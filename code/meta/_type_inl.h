@@ -167,6 +167,15 @@ inline const constant type::getConstant(const string& name) const
 {
   return internal::GetElementFromNamedVector(name, m_constantMap, m_constants);
 }
+inline const constant type::getConstant(int value) const
+{
+  for (auto constant : m_constants)
+  {
+    if (value == constant.value.get_as<int>())
+      return constant;
+  }
+  return constant();
+}
 
 namespace internal {
 template <class T>
