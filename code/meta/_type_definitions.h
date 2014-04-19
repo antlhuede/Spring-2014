@@ -42,6 +42,8 @@ namespace meta
 
   typedef void(*ReadFunc)(istream&, void*);
   typedef void(*WriteFunc)(ostream&, const void*);
+  typedef void(*SerializeFunc)(serializer*, const string&, const void*);
+  typedef void(*DeserializeFunc)(serializer*, const string&, void*);
   typedef void(*PlacementNewFunc)(void*);
   typedef void(*CopyFunc)(void* dest, const void* source);
   typedef void(*DestructFunc)(void*);

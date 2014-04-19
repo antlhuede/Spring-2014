@@ -17,6 +17,43 @@ public:
 };
 
 template <class T>
+struct read_write
+{
+  static void read(serializer* s, const string& name, void* object) {}
+  static void write(serializer* s, const string& name, const void* object) {}
+};
+#define META_SPECIALIZE_READ_WRITE(T, FUNCTION)                                       \
+template <>                                                                           \
+struct read_write<T>                                                                  \
+{                                                                                     \
+  static void read(serializer* s, const string& name, void* object)                   \
+  {                                                                                   \
+    *(T*)object = s->Read##FUNCTION(name);                                            \
+  }                                                                                   \
+  static void write(serializer* s, const string& name, const void* object)            \
+  {                                                                                   \
+    s->Write##FUNCTION(name, *(T*)object);                                            \
+  }                                                                                   \
+};
+
+META_SPECIALIZE_READ_WRITE(bool, Bool)
+META_SPECIALIZE_READ_WRITE(char, Integer)
+META_SPECIALIZE_READ_WRITE(short, Integer)
+META_SPECIALIZE_READ_WRITE(int, Integer)
+META_SPECIALIZE_READ_WRITE(unsigned char, Integer)
+META_SPECIALIZE_READ_WRITE(unsigned short, Integer)
+META_SPECIALIZE_READ_WRITE(unsigned int, Integer)
+META_SPECIALIZE_READ_WRITE(float, Float)
+META_SPECIALIZE_READ_WRITE(double, Double)
+META_SPECIALIZE_READ_WRITE(string, String)
+
+template <class T>
+struct enum_read_write
+{
+  static_assert(std::is_enum<T>::value, "using enum_read_write class with something other than an enum.");
+};
+
+template <class T>
 type::type(decl<T>, const string name, ReadFunc r, WriteFunc w, StringizeFunc str)
   : id(++S_ID_COUNTER)
   , size(sizeof(T))

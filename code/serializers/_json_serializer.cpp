@@ -5,6 +5,82 @@
 
 namespace serializers {
 
+bool JSonSerializer::ReadFile(const string& file)
+{
+  return false;
+}
+bool JSonSerializer::BeginWrite(const string& file)
+{
+  return false;
+}
+void JSonSerializer::EndWrite()
+{
+
+}
+bool JSonSerializer::ReadBool(const string& name) const
+{
+  return false;
+}
+int JSonSerializer::ReadInteger(const string& name) const
+{
+  return 0;
+}
+float JSonSerializer::ReadFloat(const string& name) const
+{
+  return 0.0f;
+}
+double JSonSerializer::ReadDouble(const string& name) const
+{
+  return 0.0;
+}
+const string JSonSerializer::ReadString(const string& name) const
+{
+  return string();
+}
+const meta::variant JSonSerializer::ReadVariable(const string& name) const
+{
+  return meta::variant();
+}
+void JSonSerializer::WriteBool(const string& name, bool value)
+{
+
+}
+void JSonSerializer::WriteInteger(const string& name, int value)
+{
+
+}
+void JSonSerializer::WriteFloat(const string& name, float value)
+{
+
+}
+void JSonSerializer::WriteDouble(const string& name, double value)
+{
+
+}
+void JSonSerializer::WriteString(const string& name, const string& value)
+{
+
+}
+void JSonSerializer::BeginObject(const string& name, const meta::type* type)
+{
+
+}
+void JSonSerializer::EndObject()
+{
+
+}
+void JSonSerializer::BeginArray(const string& name)
+{
+
+}
+void JSonSerializer::EndArray()
+{
+
+}
+
+
+
+
 template <class RealType, class JsonType>
 inline void AssignJsonValue(const meta::type* type, void* obj, const Json::Value* value_ptr, JsonType(Json::Value::*getter)()const)
 {

@@ -1,6 +1,7 @@
 #pragma once
 
 namespace meta {
+
 class type : public list<type>
 {
 public:
@@ -66,6 +67,9 @@ public:
   const ReadFunc read = nullptr;
   const WriteFunc write = nullptr;
   const StringizeFunc toString = nullptr;
+
+  const SerializeFunc serialize = nullptr;
+  const DeserializeFunc deserialize = nullptr;
 
   const PlacementNewFunc construct = nullptr;
   const CopyFunc copy = nullptr;

@@ -6,6 +6,83 @@
 #include <iostream>
 
 namespace serializers {
+
+bool XMLSerializer::ReadFile(const string& file)
+{
+  return false;
+}
+bool XMLSerializer::BeginWrite(const string& file)                                 
+{
+  return false;
+}
+void XMLSerializer::EndWrite()                                                     
+{
+
+}
+bool XMLSerializer::ReadBool(const string& name) const                             
+{
+  return false;
+}
+int XMLSerializer::ReadInteger(const string& name) const                           
+{
+  return 0;
+}
+float XMLSerializer::ReadFloat(const string& name) const                           
+{
+  return 0.0f;
+}
+double XMLSerializer::ReadDouble(const string& name) const                         
+{
+  return 0.0;
+}
+const string XMLSerializer::ReadString(const string& name) const                   
+{
+  return string();
+}
+const meta::variant XMLSerializer::ReadVariable(const string& name) const          
+{
+  return meta::variant();
+}
+void XMLSerializer::WriteBool(const string& name, bool value)                      
+{
+
+}
+void XMLSerializer::WriteInteger(const string& name, int value)                    
+{
+
+}
+void XMLSerializer::WriteFloat(const string& name, float value)                    
+{
+
+}
+void XMLSerializer::WriteDouble(const string& name, double value)                  
+{
+
+}
+void XMLSerializer::WriteString(const string& name, const string& value)           
+{
+
+}
+void XMLSerializer::BeginObject(const string& name, const meta::type* type)        
+{
+
+}
+void XMLSerializer::EndObject()                                                    
+{
+
+}
+void XMLSerializer::BeginArray(const string& name)                                 
+{
+
+}
+void XMLSerializer::EndArray()                                                     
+{
+
+}
+
+
+
+
 void XMLSerializer::construct_object(const xml::XMLElement* element, const meta::type* type, void* obj) const
 {
   if (type->isObject)
