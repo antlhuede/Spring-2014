@@ -103,19 +103,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\serializers\_json_serializer.h" />
-    <ClInclude Include="..\..\serializers\_json_serializer_inl.h" />
     <ClInclude Include="..\..\serializers\_serializer.h" />
     <ClInclude Include="..\..\serializers\_xml_serializer.h" />
-    <ClInclude Include="..\..\serializers\_xml_serializer_inl.h" />
     <ClInclude Include="..\..\serializers\json_batchallocator.h" />
     <ClInclude Include="..\..\serializers\serializers.h" />
     <ClInclude Include="..\..\serializers\tinyxml2.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\serializers\_json_serializer.cpp" />
     <ClCompile Include="..\..\serializers\json_reader.cpp" />
     <ClCompile Include="..\..\serializers\json_value.cpp" />
     <ClCompile Include="..\..\serializers\json_writer.cpp" />
     <ClCompile Include="..\..\serializers\tinyxml2.cpp" />
+    <ClCompile Include="..\..\serializers\_xml_serializer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\serializers\json_internalarray.inl" />

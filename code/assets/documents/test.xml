@@ -6,11 +6,16 @@
         <test_float type="float" value="13.5"/>
         <test_double type="double" value="0.092799999999999994"/>
         <test_bool type="bool" value="1"/>
+        <test_enum_field type="test_enum_norm" value="2"/>
     </fields>
     <properties>
         <test_property type="string" value="default property value"/>
         <test_getter_only type="string" value="default property value"/>
+        <test_enum_property type="test_enum_class" value="3"/>
     </properties>
+    <constants>
+        <test_constant type="int" value="53"/>
+    </constants>
 </test_class1>
 
 <test_class2 type="test_class">
@@ -21,9 +26,14 @@
         <test_float type="float" value="332.5"/>
         <test_double type="double" value="10293.938200000001"/>
         <test_bool type="bool" value="0"/>
+        <test_enum_field type="test_enum_norm" value="2"/>
     </fields>
     <properties>
         <test_property type="string" value="default property value"/>
         <test_getter_only type="string" value="default property value"/>
+        <test_enum_property type="test_enum_class" value="3"/>
     </properties>
+    <constants>
+        <test_constant type="int" value="53"/>
+    </constants>
 </test_class2>

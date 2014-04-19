@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="source">
@@ -13,6 +13,9 @@
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\meta\_event.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\meta\_event_inl.h">
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\meta\_field.h">
@@ -84,15 +87,12 @@
     <ClInclude Include="..\..\meta\meta.h">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\meta\_event_inl.h">
-      <Filter>source</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\meta\meta.cpp">
+    <ClCompile Include="..\..\meta\_object_container.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\meta\object_container.cpp">
+    <ClCompile Include="..\..\meta\meta.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

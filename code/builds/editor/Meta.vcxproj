@@ -131,8 +131,8 @@
     <ClInclude Include="..\..\meta\meta.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\meta\_object_container.cpp" />
     <ClCompile Include="..\..\meta\meta.cpp" />
-    <ClCompile Include="..\..\meta\object_container.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

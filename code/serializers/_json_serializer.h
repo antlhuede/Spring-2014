@@ -4,11 +4,10 @@
 #include "serializers\json\value.h"
 
 namespace serializers {
-template <class ContainerPolicy>
-class JSonSerializer : public serializer<ContainerPolicy>
+class JSonSerializer : public serializer<meta::object_container>
 {
 public:
-  typedef serializer<ContainerPolicy> base_serializer;
+  typedef serializer<meta::object_container> base_serializer;
 
   JSonSerializer() = default;
   ~JSonSerializer() = default;
@@ -27,6 +26,6 @@ private:
 }
 
 namespace json {
-typedef serializers::JSonSerializer<meta::object_container> serializer;
+typedef serializers::JSonSerializer serializer;
 typedef serializer* serializer_ptr;
 }

@@ -5,11 +5,10 @@
 namespace serializers {
 namespace xml = ::tinyxml2;
 
-template <class ContainerPolicy>
-class XMLSerializer : public serializer<ContainerPolicy>
+class XMLSerializer : public serializer<meta::object_container>
 {
 public:
-  typedef serializer<ContainerPolicy> base_serializer;
+  typedef serializer<meta::object_container> base_serializer;
 
   XMLSerializer() = default;
   ~XMLSerializer() = default;
@@ -28,6 +27,6 @@ private:
 }
 
 namespace xml {
-typedef serializers::XMLSerializer<meta::object_container> serializer;
+typedef serializers::XMLSerializer serializer;
 typedef serializer* serializer_ptr;
 }

@@ -6,6 +6,29 @@
 
 void run_basic_test_code();
 
+struct test_pod
+{
+  string hello;
+  int world;
+};
+enum test_enum_norm { zero_value, one_value, two_value, num_values };
+enum class test_enum_class { zero_value, one_value, two_value, num_values };
+
+DECLARE_META_OBJECT(test_enum_class)// END_META_OBJECT()
+.Constant("zero value", test_enum_class::zero_value)
+.Constant("one value", test_enum_class::one_value)
+.Constant("two value", test_enum_class::two_value)
+.Constant("num values", test_enum_class::num_values)
+END_META_OBJECT()
+
+DECLARE_META_OBJECT(test_enum_norm)// END_META_OBJECT()
+.Constant("zero value", test_enum_norm::zero_value)
+.Constant("one value", test_enum_norm::one_value)
+.Constant("two value", test_enum_norm::two_value)
+.Constant("num values", test_enum_norm::num_values)
+END_META_OBJECT()
+
+
 class test_class
 {
 public:
@@ -35,6 +58,8 @@ public:
   bool test_bool = false;
 
   string name = "steven";
+
+  test_enum_norm enumField = two_value;
   void set_property(const string& test) { m_property = test; }
   const string& get_property() const { return m_property; }
 
@@ -43,7 +68,12 @@ public:
     std::cout << "test event: " << arg1 << " " << arg2 << " " << arg3 << " " << arg4 << std::endl;
     return arg1 + " event was processed";
   }
+
+  test_enum_class getEnum() const { return enumClassProperty; }
+  void setEnum(test_enum_class v) { enumClassProperty = v; }
+
 private:
+  test_enum_class enumClassProperty = test_enum_class::num_values;
   string m_property = "default property value";
 };
 struct global_message_table
@@ -72,7 +102,9 @@ DECLARE_META_OBJECT(test_class)
   .Property("test_getter_only", &test_class::get_property)
   .Property("test_setter_only", &test_class::set_property)
   .Event("test_event", &test_class::test_event)
-  .Constant("test_constant", &test_class::constant_int)
+  .Constant("test_constant", test_class::constant_int)
+  .Field("test_enum_field", &test_class::enumField)
+  .Property("test_enum_property", &test_class::getEnum, &test_class::setEnum)
 END_META_OBJECT()
 
 int test_int1 = 5;
@@ -290,27 +322,6 @@ void assert_basic_type_conversions(const meta::type* type)
   assert(result);
 
 }
-struct test_pod
-{
-  string hello;
-  int world;
-};
-enum test_enum_norm { zero_value, one_value, two_value, num_values };
-enum class test_enum_class { zero_value, one_value, two_value, num_values };
-
-DECLARE_META_OBJECT(test_enum_class)// END_META_OBJECT()
-  .Constant("zero value", test_enum_class::zero_value)
-  .Constant("one value", test_enum_class::one_value)
-  .Constant("two value", test_enum_class::two_value)
-  .Constant("num values", test_enum_class::num_values)
-END_META_OBJECT()
-
-DECLARE_META_OBJECT(test_enum_norm)// END_META_OBJECT()
-  .Constant("zero value", test_enum_norm::zero_value)
-  .Constant("one value", test_enum_norm::one_value)
-  .Constant("two value", test_enum_norm::two_value)
-  .Constant("num values", test_enum_norm::num_values)
-END_META_OBJECT()
 
 void test_enum()
 {

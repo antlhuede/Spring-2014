@@ -9,10 +9,11 @@ public:
 
   template <class T>
   constant(const string& name_, const T& value_)
-    : name(name_), value(value_) {}
+    : name(name_), value(value_), type(typeof<T>()) {}
 
   const string name = "uninitialized_constant";
   const variant value;
+  const type* const type = typeof<nulltype>();
 };
 
 template <class T>
@@ -29,7 +30,7 @@ type::type(decl<T>, const string name, ReadFunc r, WriteFunc w, StringizeFunc st
   , clone(std::is_copy_constructible<T>::value ? &CloneObject<T> : nullptr)
   , allocate(&AllocMemory<T>)
   , deallocate(&DeleteMemory<T>)
-  , assign((std::is_arithmetic<T>::value || std::is_assignable<T, T>::value) ? &AssignMemory<T> : nullptr)
+  , assign((std::is_arithmetic<T>::value || std::is_enum<T>::value || std::is_assignable<T, T>::value) ? &AssignMemory<T> : nullptr)
   , isArithmetic(std::is_arithmetic<T>::value)
   , isPolymorphic(std::is_polymorphic<T>::value)
   , isIntegral(std::is_integral<T>::value)
@@ -144,6 +145,8 @@ type& type::Event(const string& name, R(U::*func)(Args...)const)
 template <class T>
 type& type::Constant(const string& name, const T& value)
 {
+  static_assert((std::is_pointer<T>::value == false), "Constant variable is invalid type (pointer type)");
+
   internal::AddElementToNamedVector(name, meta::constant(name, value), m_constantMap, m_constants);
   return *this;
 }
