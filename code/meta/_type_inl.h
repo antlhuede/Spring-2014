@@ -1,6 +1,18 @@
 #pragma once
 
 namespace meta {
+
+template <class T>
+void Serialize(serializer* s, const string& name, const T& object)
+{
+  typeof<T>()->Serialize(s, name, &object);
+}
+template <class T>
+void Deserialize(serializer* s, const string& name, T& object)
+{
+  typeof<T>()->Deserialize(s, name, &object);
+}
+
 class constant
 {
 public:
@@ -52,11 +64,11 @@ struct enum_read_write
 {
   static void read(serializer* s, const string& name, void* object)
   {
-    *(T*)object = s->ReadEnum(name).get_as<T>();
+    //*(T*)object = s->ReadEnum(name).get_as<T>();
   }
   static void write(serializer* s, const string& name, const void* object)
   {
-    s->WriteEnum(name, *(T*)object);
+    //s->WriteEnum(name, *(T*)object);
   }
 };
 
@@ -118,11 +130,11 @@ inline void type::Serialize(serializer* s, const string& name, const void* objec
       field.type->Serialize(s, field.name, field.member_ptr(object));
     }
 
-    for (auto property : m_properties)
-    {
-      const variant value = property.get(object);
-      property.type->Serialize(s, property.name, value.data());
-    }
+    //for (auto property : m_properties)
+    //{
+    //  const variant value = property.get(object);
+    //  property.type->Serialize(s, property.name, value.data());
+    //}
     s->EndObject();
   }
   else
@@ -132,7 +144,23 @@ inline void type::Serialize(serializer* s, const string& name, const void* objec
 }
 inline void type::Deserialize(serializer* s, const string& name, void* object) const
 {
-  
+  if (isObject)
+  {
+    for (auto field : m_fields)
+    {
+      field.type->Deserialize(s, field.name, field.member_ptr(object));
+    }
+
+    for (auto property : m_properties)
+    {
+      variant value = property.get(object);
+      property.type->Deserialize(s, property.name, value.data());
+    }
+  }
+  else
+  {
+    m_read(s, name, object);
+  }
 }
 inline bool type::operator==(const type& rhs) const
 {

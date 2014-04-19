@@ -45,10 +45,10 @@ public:
 
 private:
   shared_ptr<xml::XMLDocument> m_doc = nullptr;
-  xml::XMLNode* m_root = nullptr;
   xml::XMLNode* m_current = nullptr;
   string m_fileName = "";
-
+  enum state { e_None, e_Read, e_Write };
+  state m_state;
   shared_ptr<xml::XMLDocument> build_xml_document() const;
   xml::XMLElement* construct_xml_element(xml::XMLDocument* doc, const string& name, const meta::type* type, const void* obj) const;
   void construct_object(const xml::XMLElement* element, const meta::type* type, void* obj) const;

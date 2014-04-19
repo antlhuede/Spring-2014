@@ -209,6 +209,31 @@ void run_serializer_test(meta::serializer* serializer, const string& file1, cons
   serializer->write(second_file);
   serializer->clear();
 }
+void test_new_serializer(meta::serializer* s, const string& file1, const string& file2)
+{
+  const meta::type* tctype = meta::typeof<test_class>();
+
+  string file_path("documents/");
+  string first_file = file_path + file1;
+  string second_file = file_path + file2;
+  s->BeginWrite(first_file);
+  tctype->Serialize(s, "test_class1", test_class1);
+  tctype->Serialize(s, "test_class2", test_class2);
+  s->EndWrite();
+
+  test_class read_test1;
+  test_class read_test2;
+  s->ReadFile(first_file);
+  meta::Deserialize(s, "test_class1", read_test1);
+  meta::Deserialize(s, "test_class2", read_test2);
+  read_test1.set_property(string("read_test1: ") + read_test1.get_property() + " property was successfully read and edited");
+  read_test2.set_property(string("read_test2: ") + read_test2.get_property() + " property was successfully read and edited");
+  s->BeginWrite(second_file);
+  meta::Serialize(s, "read_test1", read_test1);
+  meta::Serialize(s, "read_test2", read_test2);
+  s->EndWrite();
+
+}
 
 class test_funcs_class
 {
@@ -358,10 +383,11 @@ void run_basic_test_code()
 {
   std::cout << "start run basic test" << std::endl;
   make_test_memory();
+  test_new_serializer(xml_serializer, "new_test.xml", "new_test2.xml");
+  test_new_serializer(json_serializer, "new_test.json", "new_test2.json");
   test_enum();
   test_type();
   test_properties();
-
   test_message_class tm;
 
   //tm.DispatchMessage("Player Dead", 2);

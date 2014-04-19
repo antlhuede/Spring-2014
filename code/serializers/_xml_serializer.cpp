@@ -16,8 +16,8 @@ bool XMLSerializer::ReadFile(const string& file)
     return false;
 
   m_fileName = file;
-  m_root = m_doc->RootElement();
-  m_current = m_root;
+  m_current = m_doc->RootElement();
+  m_state = e_Read;
   return true;
 }
 bool XMLSerializer::BeginWrite(const string& file)                                 
@@ -29,8 +29,9 @@ bool XMLSerializer::BeginWrite(const string& file)
 
   m_fileName = file;
   m_doc = shared_ptr<xml::XMLDocument>(new xml::XMLDocument);
-  m_root = m_doc->RootElement();
-  m_current = m_root;
+  m_current = nullptr;
+
+  m_state = e_Write;
   return true;
 }
 void XMLSerializer::EndWrite()                                                     
@@ -40,6 +41,12 @@ void XMLSerializer::EndWrite()
   xml::XMLPrinter printer;
   m_doc->Print(&printer);
   stream << printer.CStr();
+  stream.close();
+
+  m_fileName = "";
+  m_current = nullptr;
+  m_doc.reset();
+  m_state = e_None;
 }
 bool XMLSerializer::ReadBool(const string& name) const                             
 {
@@ -68,6 +75,7 @@ double XMLSerializer::ReadDouble(const string& name) const
 const string XMLSerializer::ReadString(const string& name) const                   
 {
   xml::XMLElement* node = m_current->FirstChildElement(name.c_str());
+  assert(node);
   assert(meta::typeof(node->Attribute("type")) == meta::typeof<string>());
   return node->Attribute("value");
 }
@@ -125,14 +133,38 @@ void XMLSerializer::WriteString(const string& name, const string& value)
 }
 void XMLSerializer::BeginObject(const string& name, const meta::type* type)        
 {
-  xml::XMLElement* element = m_doc->NewElement(name.c_str());
-  element->SetAttribute("type", type->name.c_str());
-  m_current->InsertEndChild(element);
-  m_current = m_current->LastChildElement();
+  assert(m_state != e_None);
+  if (m_state == e_Write)
+  {
+    xml::XMLElement* element = m_doc->NewElement(name.c_str());
+    element->SetAttribute("type", type->name.c_str());
+
+    if (m_current == nullptr)
+      m_doc->InsertEndChild(element);
+    else
+      m_current->InsertEndChild(element);
+
+    m_current = element;
+  }
+  else if (m_state == e_Read)
+  {
+    
+  }
 }
 void XMLSerializer::EndObject()                                                    
 {
-  m_current = m_current->Parent();
+  assert(m_state != e_None);
+  if (m_state == e_Write)
+  {
+    assert(m_current);
+    m_current = m_current->Parent();
+    if (m_current == m_doc.get())
+      m_current = nullptr;
+  }
+  else if (m_state == e_Read)
+  {
+
+  }
 }
 void XMLSerializer::BeginArray(const string& name)                                 
 {

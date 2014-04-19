@@ -44,13 +44,14 @@ inline void property::set(const meta::type* classType, void* object, const meta:
   m_set.CallGeneric(classType, object, 1, &propertyType, &propertyValue);
 }
 
-template <class U>
-variant property::get(U* object) const
-{
-  assert(typeof<U>() == classType);
-  assert(hasGetter);
-  return m_get.Call(object);
-}
+//template <class U>
+//variant property::get(const U* object) const
+//{
+//  //is either void pointer or a pointer to memb
+//  assert(std::is_same<U, void>::value || typeof<U>() == classType);
+//  assert(hasGetter);
+//  return m_get.Call(object);
+//}
 inline variant property::get(const void* object) const
 {
   assert(hasGetter);
@@ -58,7 +59,7 @@ inline variant property::get(const void* object) const
 }
 
 template <class T, class U>
-T property::get_as(U* object) const
+T property::get_as(const U* object) const
 {
   return get(object).get_as<T>();
 }

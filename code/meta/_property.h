@@ -13,11 +13,11 @@ public:
   template <class T, class U>
   property(const string& name, void(U::*set)(T));
 
-  template <class U>
-  variant get(U* object) const;
+  //template <class U>
+  //variant get(const U* object) const;
   variant get(const void* object) const;
   template <class T, class U>
-  T get_as(U* object) const;
+  T get_as(const U* object) const;
 
   template <class T, class U>
   void set(U* object, const T& value) const;
