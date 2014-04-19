@@ -64,21 +64,38 @@ struct enum_read_write
 {
   static void read(serializer* s, const string& name, void* object)
   {
-    //*(T*)object = s->ReadEnum(name).get_as<T>();
+    const string title = s->ReadEnum(name);
+    const type* type = typeof<T>();
+    const variant& value = type->getConstant(title).value;
+    *(T*)object = value.get_as<T>();
   }
   static void write(serializer* s, const string& name, const void* object)
   {
-    //s->WriteEnum(name, *(T*)object);
+    const type* type = typeof<T>();
+    for (auto constant : type->constants())
+    {
+      assert(constant.type == type);
+
+      if (constant.value.get_as<T>() == *(T*)object)
+      {
+        s->WriteEnum(name, type, constant.name);
+        return;
+      }
+    }
   }
 };
+
+template <class T, bool isEnum> struct read_write_selector;
+template <class T> struct read_write_selector<T, false> : public read_write<T> {};
+template <class T> struct read_write_selector<T, true> : public enum_read_write<T>{};
 
 template <class T>
 type::type(decl<T>, const string name, ReadFunc r, WriteFunc w, StringizeFunc str)
   : id(++S_ID_COUNTER)
   , size(sizeof(T))
   , name(name)
-  , m_read(std::is_enum<T>::value ? &enum_read_write<T>::read : &read_write<T>::read)
-  , m_write(std::is_enum<T>::value ? &enum_read_write<T>::write : &read_write<T>::write)
+  , m_read(&read_write_selector<T, std::is_enum<T>::value>::read)
+  , m_write(&read_write_selector<T, std::is_enum<T>::value>::write)
   , toString(str)
   , construct(std::has_default_constructor<T>::value ? &PlacementNew<std::conditional<std::has_default_constructor<T>::value, T, decl<T>>::type> : nullptr)
   , copy(std::is_copy_constructible<T>::value ? &CopyMemory<T> : nullptr)

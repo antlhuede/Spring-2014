@@ -95,7 +95,8 @@ const string XMLSerializer::ReadString(const string& name) const
   if (node == nullptr)
     return string();
 
-  assert(meta::typeof(node->Attribute("type")) == meta::typeof<string>());
+  const meta::type* type = meta::typeof(node->Attribute("type"));
+  assert(type == meta::typeof<string>());
   return node->Attribute("value");
 }
 const meta::variant XMLSerializer::ReadVariable(const string& name) const          
@@ -119,6 +120,26 @@ const meta::variant XMLSerializer::ReadVariable(const string& name) const
     ret = node->Attribute("value");
   return ret;
 }
+const string XMLSerializer::ReadEnum(const string& name) const
+{
+  xml::XMLElement* node = m_current->FirstChildElement(name.c_str());
+  if (node == nullptr)
+    return string();
+
+  const meta::type* type = meta::typeof(node->Attribute("type"));
+  assert(type->isEnum);
+  return node->Attribute("value");
+}
+void XMLSerializer::WriteEnum(const string& name, const meta::type* type, const string& value)
+{
+  //strings are handled differently to other types
+  xml::XMLElement* element = m_doc->NewElement(name.c_str());
+
+  element->SetAttribute("type", type->name.c_str());
+  element->SetAttribute("value", value.c_str());
+  m_current->InsertEndChild(element);
+}
+
 template <class T>
 void AddNewElement(xml::XMLDocument* doc, xml::XMLNode* parent, const string& name, T value)
 {
@@ -189,15 +210,6 @@ void XMLSerializer::BeginArray(const string& name)
 void XMLSerializer::EndArray()                                                     
 {
   assert(false);
-}
-
-const meta::variant XMLSerializer::ReadEnum(const string& name) const
-{
-  return meta::variant();
-}
-void XMLSerializer::WriteEnum(const string& name, const meta::variant_ref& value)
-{
-
 }
 
 

@@ -78,11 +78,11 @@ void JSonSerializer::EndArray()
 
 }
 
-const meta::variant JSonSerializer::ReadEnum(const string& name) const
+const string JSonSerializer::ReadEnum(const string& name) const
 {
-  return meta::variant();
+  return string();
 }
-void JSonSerializer::WriteEnum(const string& name, const meta::variant_ref& value)
+void JSonSerializer::WriteEnum(const string& name, const meta::type* type, const string& value)
 {
 
 }
