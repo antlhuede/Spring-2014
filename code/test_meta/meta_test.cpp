@@ -295,16 +295,41 @@ struct test_pod
   string hello;
   int world;
 };
-enum test_enum { zero_value, one_value, two_value, num_values };
+enum test_enum_norm { zero_value, one_value, two_value, num_values };
 enum class test_enum_class { zero_value, one_value, two_value, num_values };
 
-DECLARE_META_OBJECT(test_enum_class) END_META_OBJECT()
-//  .Constant("zero value", test_enum::zero_value)
-//  .Constant("one value", test_enum::one_value)
-//  .Constant("two value", test_enum::two_value)
-//  .Constant("num values", test_enum::num_values)
-//END_META_OBJECT()
+DECLARE_META_OBJECT(test_enum_class)// END_META_OBJECT()
+  .Constant("zero value", test_enum_class::zero_value)
+  .Constant("one value", test_enum_class::one_value)
+  .Constant("two value", test_enum_class::two_value)
+  .Constant("num values", test_enum_class::num_values)
+END_META_OBJECT()
 
+DECLARE_META_OBJECT(test_enum_norm)// END_META_OBJECT()
+  .Constant("zero value", test_enum_norm::zero_value)
+  .Constant("one value", test_enum_norm::one_value)
+  .Constant("two value", test_enum_norm::two_value)
+  .Constant("num values", test_enum_norm::num_values)
+END_META_OBJECT()
+
+void test_enum()
+{
+  const meta::type* normalEnum = meta::typeof<test_enum_norm>();
+  const meta::type* classEnum = meta::typeof<test_enum_class>();
+
+  auto iterate_enum = [](const meta::type* type){
+    assert(type->isEnum);
+    std::cout << "Iterating enum: " << type->name << std::endl;
+    auto constants = type->constants();
+    for (auto c : constants)
+    {
+      std::cout << c.name << " " << c.value.get_as<int>() << std::endl;
+    }
+  };
+
+  iterate_enum(normalEnum);
+  iterate_enum(classEnum);
+}
 void test_type()
 {
   //std::cout << std::boolalpha << meta::typeof<test_enum>()->isEnum << std::endl;
@@ -317,14 +342,15 @@ void test_type()
   assert_basic_type_conversions(meta::typeof<unsigned int>());
   assert_basic_type_conversions(meta::typeof<float>());
   assert_basic_type_conversions(meta::typeof<double>());
-
 }
 void run_basic_test_code()
 {
-  test_type();
-  test_properties();
   std::cout << "start run basic test" << std::endl;
   make_test_memory();
+  test_enum();
+  test_type();
+  test_properties();
+
   test_message_class tm;
 
   //tm.DispatchMessage("Player Dead", 2);

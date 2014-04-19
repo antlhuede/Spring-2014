@@ -38,7 +38,7 @@ namespace meta
   template <class T> struct decl {};
 
   typedef void(*ReadFunc)(istream&, void*);
-  typedef void(*WriteFunc)(ostream&, void*);
+  typedef void(*WriteFunc)(ostream&, const void*);
   typedef void(*PlacementNewFunc)(void*);
   typedef void(*CopyFunc)(void* dest, const void* source);
   typedef void(*DestructFunc)(void*);

@@ -32,9 +32,9 @@ void read_basic_types(istream& stream, void* memory)
   stream >> *reinterpret_cast<T*>(memory);
 }
 template <class T>
-void write_basic_types(ostream& stream, void* memory)
+void write_basic_types(ostream& stream, const void* memory)
 {
-  stream << *reinterpret_cast<T*>(memory);
+  stream << *reinterpret_cast<const T*>(memory);
 }
 
 template <class T>
@@ -71,7 +71,7 @@ void read_objects(istream& stream, void* memory)
   ITERATE_OBJECTS(read)
 }
 template <class T>
-void write_objects(ostream& stream, void* memory)
+void write_objects(ostream& stream, const void* memory)
 {
   ITERATE_OBJECTS(write)
 }
