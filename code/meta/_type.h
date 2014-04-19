@@ -64,8 +64,6 @@ public:
   const string name = "nulltype";
   const type* baseType = nullptr;
 
-  const ReadFunc read = nullptr;
-  const WriteFunc write = nullptr;
   const StringizeFunc toString = nullptr;
 
   const SerializeFunc serialize = nullptr;

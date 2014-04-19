@@ -68,12 +68,12 @@ field_type->CALL_FUNC(stream, field.member_ptr(memory));         \
 template <class T>
 void read_objects(istream& stream, void* memory)
 {
-  ITERATE_OBJECTS(read)
+  //ITERATE_OBJECTS(read)
 }
 template <class T>
 void write_objects(ostream& stream, const void* memory)
 {
-  ITERATE_OBJECTS(write)
+  //ITERATE_OBJECTS(write)
 }
 #undef ITERATE_OBJECTS
 

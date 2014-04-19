@@ -58,8 +58,6 @@ type::type(decl<T>, const string name, ReadFunc r, WriteFunc w, StringizeFunc st
   : id(++S_ID_COUNTER)
   , size(sizeof(T))
   , name(name)
-  , read(r)
-  , write(w)
   , toString(str)
   , construct(std::has_default_constructor<T>::value ? &PlacementNew<std::conditional<std::has_default_constructor<T>::value, T, decl<T>>::type> : nullptr)
   , copy(std::is_copy_constructible<T>::value ? &CopyMemory<T> : nullptr)

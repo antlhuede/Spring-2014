@@ -422,14 +422,6 @@ void run_basic_test_code()
   std::cout << output;
   
   
-  float testint = 12.5;
-  string teststr = "\nteststr";
-  const meta::type* test = meta::typeof(testint);
-  test->write(std::cout, &testint);
-  test = meta::typeof(teststr);
-  
-  std::cout << test->name << " " << test->size << "\n\n";
-
   test_funcs_class tfc;
   string hello_world("Hello World");
 
