@@ -9,75 +9,138 @@ namespace serializers {
 
 bool XMLSerializer::ReadFile(const string& file)
 {
-  return false;
+  m_doc = shared_ptr<xml::XMLDocument>(new xml::XMLDocument);
+  xml::XMLError result = m_doc->LoadFile(file.c_str());
+  
+  if (result != xml::XML_SUCCESS)
+    return false;
+
+  m_fileName = file;
+  m_root = m_doc->RootElement();
+  m_current = m_root;
+  return true;
 }
 bool XMLSerializer::BeginWrite(const string& file)                                 
 {
-  return false;
+  std::ofstream stream(file.c_str());
+  if (stream.is_open() == false)
+    return false;
+  stream.close();
+
+  m_fileName = file;
+  m_doc = shared_ptr<xml::XMLDocument>(new xml::XMLDocument);
+  m_root = m_doc->RootElement();
+  m_current = m_root;
+  return true;
 }
 void XMLSerializer::EndWrite()                                                     
 {
-
+  std::ofstream stream(m_fileName.c_str());
+  assert(stream.is_open());
+  xml::XMLPrinter printer;
+  m_doc->Print(&printer);
+  stream << printer.CStr();
 }
 bool XMLSerializer::ReadBool(const string& name) const                             
 {
-  return false;
+  xml::XMLElement* node = m_current->FirstChildElement(name.c_str());
+  assert(meta::typeof(node->Attribute("type")) == meta::typeof<bool>());
+  return node->BoolAttribute("value");
 }
 int XMLSerializer::ReadInteger(const string& name) const                           
 {
-  return 0;
+  xml::XMLElement* node = m_current->FirstChildElement(name.c_str());
+  assert(meta::typeof(node->Attribute("type")) == meta::typeof<int>());
+  return node->IntAttribute("value");
 }
 float XMLSerializer::ReadFloat(const string& name) const                           
 {
-  return 0.0f;
+  xml::XMLElement* node = m_current->FirstChildElement(name.c_str());
+  assert(meta::typeof(node->Attribute("type")) == meta::typeof<float>());
+  return node->FloatAttribute("value");
 }
 double XMLSerializer::ReadDouble(const string& name) const                         
 {
-  return 0.0;
+  xml::XMLElement* node = m_current->FirstChildElement(name.c_str());
+  assert(meta::typeof(node->Attribute("type")) == meta::typeof<double>());
+  return node->DoubleAttribute("value");
 }
 const string XMLSerializer::ReadString(const string& name) const                   
 {
-  return string();
+  xml::XMLElement* node = m_current->FirstChildElement(name.c_str());
+  assert(meta::typeof(node->Attribute("type")) == meta::typeof<string>());
+  return node->Attribute("value");
 }
 const meta::variant XMLSerializer::ReadVariable(const string& name) const          
 {
-  return meta::variant();
+  xml::XMLElement* node = m_current->FirstChildElement(name.c_str());
+  meta::variant ret;
+
+  if (meta::typeof(node->Attribute("type")) == meta::typeof<bool>())
+    ret = node->BoolAttribute("value");
+  else if (meta::typeof(node->Attribute("type")) == meta::typeof<int>())
+    ret = node->IntAttribute("value");
+  else if (meta::typeof(node->Attribute("type")) == meta::typeof<float>())
+    ret = node->FloatAttribute("value");
+  else if (meta::typeof(node->Attribute("type")) == meta::typeof<double>())
+    ret = node->DoubleAttribute("value");
+  else if (meta::typeof(node->Attribute("type")) == meta::typeof<string>())
+    ret = node->Attribute("value");
+  return ret;
 }
+template <class T>
+void AddNewElement(xml::XMLDocument* doc, xml::XMLNode* parent, const string& name, T value)
+{
+  xml::XMLElement* element = doc->NewElement(name.c_str());
+
+  element->SetAttribute("type", meta::typeof<T>()->name.c_str());
+  element->SetAttribute("value", value);
+  parent->InsertEndChild(element);
+}
+
 void XMLSerializer::WriteBool(const string& name, bool value)                      
 {
-
+  AddNewElement(m_doc.get(), m_current, name, value);
 }
 void XMLSerializer::WriteInteger(const string& name, int value)                    
 {
-
+  AddNewElement(m_doc.get(), m_current, name, value);
 }
 void XMLSerializer::WriteFloat(const string& name, float value)                    
 {
-
+  AddNewElement(m_doc.get(), m_current, name, value);
 }
 void XMLSerializer::WriteDouble(const string& name, double value)                  
 {
-
+  AddNewElement(m_doc.get(), m_current, name, value);
 }
 void XMLSerializer::WriteString(const string& name, const string& value)           
 {
+  //strings are handled differently to other types
+  xml::XMLElement* element = m_doc->NewElement(name.c_str());
 
+  element->SetAttribute("type", meta::typeof<string>()->name.c_str());
+  element->SetAttribute("value", value.c_str());
+  m_current->InsertEndChild(element);
 }
 void XMLSerializer::BeginObject(const string& name, const meta::type* type)        
 {
-
+  xml::XMLElement* element = m_doc->NewElement(name.c_str());
+  element->SetAttribute("type", type->name.c_str());
+  m_current->InsertEndChild(element);
+  m_current = m_current->LastChildElement();
 }
 void XMLSerializer::EndObject()                                                    
 {
-
+  m_current = m_current->Parent();
 }
 void XMLSerializer::BeginArray(const string& name)                                 
 {
-
+  assert(false);
 }
 void XMLSerializer::EndArray()                                                     
 {
-
+  assert(false);
 }
 
 
@@ -230,7 +293,7 @@ xml::XMLElement* XMLSerializer::construct_xml_element(xml::XMLDocument* doc, con
     else
       node->SetAttribute("value", type->toString(obj).c_str());
   }
-
+  
   return node;
 }
 shared_ptr<xml::XMLDocument> XMLSerializer::build_xml_document() const

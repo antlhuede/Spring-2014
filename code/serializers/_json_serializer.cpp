@@ -208,7 +208,7 @@ Json::Value JSonSerializer::construct_json_value(const meta::type* type, const v
     else
       value = type->toString(obj);
   }
-
+  
   return value;
 }
 Json::Value JSonSerializer::build_json_tree() const
