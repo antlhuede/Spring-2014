@@ -122,6 +122,7 @@
     <ClInclude Include="..\..\meta\_property_inl.h" />
     <ClInclude Include="..\..\meta\_registry.h" />
     <ClInclude Include="..\..\meta\_registry_inl.h" />
+    <ClInclude Include="..\..\meta\_serializer.h" />
     <ClInclude Include="..\..\meta\_type.h" />
     <ClInclude Include="..\..\meta\_type_definitions.h" />
     <ClInclude Include="..\..\meta\_type_initializer.h" />

@@ -5,7 +5,7 @@
 namespace serializers {
 namespace xml = ::tinyxml2;
 
-class XMLSerializer : public serializer
+class XMLSerializer : public meta::serializer
 {
 public:
   XMLSerializer() = default;
@@ -22,9 +22,4 @@ private:
   xml::XMLElement* construct_xml_element(xml::XMLDocument* doc, const string& name, const meta::type* type, const void* obj) const;
   void construct_object(const xml::XMLElement* element, const meta::type* type, void* obj) const;
 };
-}
-
-namespace xml {
-typedef serializers::XMLSerializer serializer;
-typedef serializer* serializer_ptr;
 }

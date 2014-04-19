@@ -1,6 +1,6 @@
 #pragma once
 
-namespace serializers
+namespace meta
 {
 //container policy necessary for dependency inversion
 class serializer : public meta::object_container
@@ -12,8 +12,5 @@ public:
   virtual bool read(const string& file) = 0;
 
 };
-
-typedef serializer base_serializer;
-typedef base_serializer* base_serializer_ptr;
 }
 

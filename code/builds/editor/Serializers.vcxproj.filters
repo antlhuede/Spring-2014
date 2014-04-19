@@ -23,9 +23,6 @@
     <ClInclude Include="..\..\serializers\_json_serializer.h">
       <Filter>serializers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\serializers\_serializer.h">
-      <Filter>serializers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\serializers\_xml_serializer.h">
       <Filter>serializers</Filter>
     </ClInclude>

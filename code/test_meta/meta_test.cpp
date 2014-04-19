@@ -120,8 +120,8 @@ bool test_bool2 = false;
 
 test_class* test_class1 = nullptr;
 test_class* test_class2 = nullptr;
-xml::serializer_ptr xml_serializer = nullptr;
-json::serializer_ptr json_serializer = nullptr;
+serializers::XMLSerializer* xml_serializer = nullptr;
+serializers::JSonSerializer* json_serializer = nullptr;
 meta::function* pFunc = nullptr;
 
 void make_test_memory()
@@ -132,8 +132,8 @@ void make_test_memory()
   test_class1 = new test_class(test_int1, *test_string1, test_float1, test_double1, test_bool1);
   test_class2 = new test_class(test_int2, *test_string2, test_float2, test_double2, test_bool2);
 
-  xml_serializer = new xml::serializer;
-  json_serializer = new json::serializer;
+  xml_serializer = new serializers::XMLSerializer;
+  json_serializer = new serializers::JSonSerializer;
   auto lambda = [](int a, float b, double c, const string& d) {
     std::cout << a << " " << b << " " << c << " " << d << std::endl;
   };
@@ -181,7 +181,7 @@ void delete_test_memory()
 //#undef TEST_TYPEOF
 //}
 
-void run_serializer_test(serializers::base_serializer_ptr serializer, const string& file1, const string& file2)
+void run_serializer_test(meta::serializer* serializer, const string& file1, const string& file2)
 {
   string file_path("documents/");
   string first_file = file_path + file1;

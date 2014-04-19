@@ -4,7 +4,7 @@
 #include "serializers\json\value.h"
 
 namespace serializers {
-class JSonSerializer : public serializer
+class JSonSerializer : public meta::serializer
 {
 public:
   JSonSerializer() = default;
@@ -21,9 +21,4 @@ private:
   Json::Value construct_json_value(const meta::type* type, const void* obj) const;
   void construct_object(const Json::Value& value, const meta::type* type, void* obj) const;
 };
-}
-
-namespace json {
-typedef serializers::JSonSerializer serializer;
-typedef serializer* serializer_ptr;
 }

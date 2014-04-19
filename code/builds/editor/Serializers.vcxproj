@@ -103,7 +103,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\serializers\_json_serializer.h" />
-    <ClInclude Include="..\..\serializers\_serializer.h" />
     <ClInclude Include="..\..\serializers\_xml_serializer.h" />
     <ClInclude Include="..\..\serializers\json_batchallocator.h" />
     <ClInclude Include="..\..\serializers\serializers.h" />

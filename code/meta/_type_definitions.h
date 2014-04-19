@@ -32,6 +32,9 @@ namespace meta
   class event;
   class messenger;
 
+  class object_container;
+  class serializer;
+
   class variant;
   class variant_ref;
 
