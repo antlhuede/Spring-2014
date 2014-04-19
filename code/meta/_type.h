@@ -13,25 +13,6 @@ public:
   type(const type& rhs) = delete;
   type& operator=(const type& rhs) = delete;
 
-  bool operator==(const type& rhs) const;
-  bool operator!=(const type& rhs) const;
-  
-  const field getField(const string& name) const;
-  const property getProperty(const string& name) const;
-  const constant getConstant(const string& name) const;
-  const constant getConstant(int value) const;
-  const event getEvent(const string& name) const;
-
-  
-  const vector<const meta::field>& fields() const { return m_fields; }
-  const vector<const meta::property>& properties() const { return m_properties; }
-  const vector<const meta::constant>& constants() const { return m_constants; }
-  const vector<const meta::event>& events() const { return m_events; }
-
-  template <class T>
-  bool isConvertible() const;
-  bool isConvertible(const type* toType) const;
-
   template <class T, class U>
   type& Field(const string& name, T U::*var);
 
@@ -53,6 +34,28 @@ public:
   template <class T>
   type& Constant(const string& name, const T& value);
 
+  void Serialize(serializer* s, const string& name, const void* object) const;
+  void Deserialize(serializer* s, const string& name, void* object) const;
+
+  bool operator==(const type& rhs) const;
+  bool operator!=(const type& rhs) const;
+  
+  const field getField(const string& name) const;
+  const property getProperty(const string& name) const;
+  const constant getConstant(const string& name) const;
+  const constant getConstant(int value) const;
+  const event getEvent(const string& name) const;
+
+  
+  const vector<const meta::field>& fields() const { return m_fields; }
+  const vector<const meta::property>& properties() const { return m_properties; }
+  const vector<const meta::constant>& constants() const { return m_constants; }
+  const vector<const meta::event>& events() const { return m_events; }
+
+  template <class T>
+  bool isConvertible() const;
+  bool isConvertible(const type* toType) const;
+
   //NEVER EVER EVER CALL THIS FUNCTION
   //it would require const_casting the type* and explicitly calling it
   //it is called during shutdown of meta
@@ -65,10 +68,7 @@ public:
   const type* baseType = nullptr;
 
   const StringizeFunc toString = nullptr;
-
-  const SerializeFunc serialize = nullptr;
-  const DeserializeFunc deserialize = nullptr;
-
+  
   const PlacementNewFunc construct = nullptr;
   const CopyFunc copy = nullptr;
   const DestructFunc destruct = nullptr;
@@ -89,6 +89,10 @@ public:
 
 private:
   static unsigned S_ID_COUNTER;
+
+  const SerializeFunc m_write = nullptr;
+  const DeserializeFunc m_read = nullptr;
+
   vector<const meta::field> m_fields;
   hash_map<string, size_t> m_fieldMap;
 

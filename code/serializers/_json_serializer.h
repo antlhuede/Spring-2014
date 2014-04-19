@@ -39,6 +39,9 @@ public:
   virtual void BeginArray(const string& name);
   virtual void EndArray();
 
+  virtual const meta::variant ReadEnum(const string& name) const;
+  virtual void WriteEnum(const string& name, const meta::variant_ref& value);
+
 private:
   Json::Value build_json_tree() const;
   Json::Value construct_json_value(const meta::type* type, const void* obj) const;

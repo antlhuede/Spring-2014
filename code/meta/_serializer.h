@@ -21,6 +21,9 @@ public:
   virtual double ReadDouble(const string& name) const = 0;
   virtual const string ReadString(const string& name) const = 0;
   virtual const variant ReadVariable(const string& name) const = 0;
+  
+  virtual const variant ReadEnum(const string& name) const = 0;
+  virtual void WriteEnum(const string& name, const variant_ref& value) = 0;
 
   virtual void WriteBool(const string& name, bool value) = 0;
   virtual void WriteInteger(const string& name, int value) = 0;

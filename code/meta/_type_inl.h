@@ -50,7 +50,14 @@ META_SPECIALIZE_READ_WRITE(string, String)
 template <class T>
 struct enum_read_write
 {
-  static_assert(std::is_enum<T>::value, "using enum_read_write class with something other than an enum.");
+  static void read(serializer* s, const string& name, void* object)
+  {
+    *(T*)object = s->ReadEnum(name).get_as<T>();
+  }
+  static void write(serializer* s, const string& name, const void* object)
+  {
+    s->WriteEnum(name, *(T*)object);
+  }
 };
 
 template <class T>
@@ -58,6 +65,8 @@ type::type(decl<T>, const string name, ReadFunc r, WriteFunc w, StringizeFunc st
   : id(++S_ID_COUNTER)
   , size(sizeof(T))
   , name(name)
+  , m_read(std::is_enum<T>::value ? &enum_read_write<T>::read : &read_write<T>::read)
+  , m_write(std::is_enum<T>::value ? &enum_read_write<T>::write : &read_write<T>::write)
   , toString(str)
   , construct(std::has_default_constructor<T>::value ? &PlacementNew<std::conditional<std::has_default_constructor<T>::value, T, decl<T>>::type> : nullptr)
   , copy(std::is_copy_constructible<T>::value ? &CopyMemory<T> : nullptr)
@@ -99,7 +108,32 @@ inline void type::destroy()
   m_events.clear();
   m_eventMap.clear();
 }
+inline void type::Serialize(serializer* s, const string& name, const void* object) const
+{
+  if (isObject)
+  {
+    s->BeginObject(name, this);
+    for (auto field : m_fields)
+    {
+      field.type->Serialize(s, field.name, field.member_ptr(object));
+    }
 
+    for (auto property : m_properties)
+    {
+      const variant value = property.get(object);
+      property.type->Serialize(s, property.name, value.data());
+    }
+    s->EndObject();
+  }
+  else
+  {
+    m_write(s, name, object);
+  }
+}
+inline void type::Deserialize(serializer* s, const string& name, void* object) const
+{
+  
+}
 inline bool type::operator==(const type& rhs) const
 {
   return id == rhs.id;

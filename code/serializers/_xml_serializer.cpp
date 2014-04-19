@@ -143,6 +143,14 @@ void XMLSerializer::EndArray()
   assert(false);
 }
 
+const meta::variant XMLSerializer::ReadEnum(const string& name) const
+{
+  return meta::variant();
+}
+void XMLSerializer::WriteEnum(const string& name, const meta::variant_ref& value)
+{
+
+}
 
 
 

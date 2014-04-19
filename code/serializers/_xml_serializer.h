@@ -40,6 +40,9 @@ public:
   virtual void BeginArray(const string& name);
   virtual void EndArray();
 
+  virtual const meta::variant ReadEnum(const string& name) const;
+  virtual void WriteEnum(const string& name, const meta::variant_ref& value);
+
 private:
   shared_ptr<xml::XMLDocument> m_doc = nullptr;
   xml::XMLNode* m_root = nullptr;
