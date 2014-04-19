@@ -5,11 +5,9 @@
 namespace serializers {
 namespace xml = ::tinyxml2;
 
-class XMLSerializer : public serializer<meta::object_container>
+class XMLSerializer : public serializer
 {
 public:
-  typedef serializer<meta::object_container> base_serializer;
-
   XMLSerializer() = default;
   ~XMLSerializer() = default;
   XMLSerializer(XMLSerializer&&) = delete;

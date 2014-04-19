@@ -4,11 +4,9 @@
 #include "serializers\json\value.h"
 
 namespace serializers {
-class JSonSerializer : public serializer<meta::object_container>
+class JSonSerializer : public serializer
 {
 public:
-  typedef serializer<meta::object_container> base_serializer;
-
   JSonSerializer() = default;
   ~JSonSerializer() = default;
   JSonSerializer(JSonSerializer&&) = delete;

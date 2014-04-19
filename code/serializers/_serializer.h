@@ -3,8 +3,7 @@
 namespace serializers
 {
 //container policy necessary for dependency inversion
-template <class ContainerPolicy = meta::object_container>
-class serializer : public ContainerPolicy
+class serializer : public meta::object_container
 {
 public:
   virtual ~serializer() = 0 {};
@@ -12,12 +11,9 @@ public:
   virtual void write(const string& file) const = 0;
   virtual bool read(const string& file) = 0;
 
-  enum class data_types {
-    Object, Field, Property, Event, NumDataTypes
-  };
 };
 
-typedef serializer<meta::object_container> base_serializer;
+typedef serializer base_serializer;
 typedef base_serializer* base_serializer_ptr;
 }
 
