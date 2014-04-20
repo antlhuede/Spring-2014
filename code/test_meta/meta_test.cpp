@@ -19,14 +19,14 @@ DECLARE_META_OBJECT(test_enum_class)// END_META_OBJECT()
 .Constant("one value", test_enum_class::one_value)
 .Constant("two value", test_enum_class::two_value)
 .Constant("num values", test_enum_class::num_values)
-END_META_OBJECT()
+END_META_OBJECT
 
 DECLARE_META_OBJECT(test_enum_norm)// END_META_OBJECT()
 .Constant("zero value", test_enum_norm::zero_value)
 .Constant("one value", test_enum_norm::one_value)
 .Constant("two value", test_enum_norm::two_value)
 .Constant("num values", test_enum_norm::num_values)
-END_META_OBJECT()
+END_META_OBJECT
 
 
 class test_class
@@ -105,7 +105,7 @@ DECLARE_META_OBJECT(test_class)
   .Constant("test_constant", test_class::constant_int)
   .Field("test_enum_field", &test_class::enumField)
   .Property("test_enum_property", &test_class::getEnum, &test_class::setEnum)
-END_META_OBJECT()
+END_META_OBJECT
 
 int test_int1 = 5;
 int test_int2 = 12;
@@ -263,8 +263,8 @@ public:
   }
 private:
 };
-DECLARE_META_OBJECT(test_funcs_class) END_META_OBJECT()
-DECLARE_META_OBJECT(test_message_class) END_META_OBJECT()
+DECLARE_META_TYPE(test_funcs_class)
+DECLARE_META_TYPE(test_message_class)
 void func_test1() {}
 void func_test2(int a) {}
 void func_test3(int a, float b) {}

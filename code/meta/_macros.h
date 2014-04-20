@@ -19,4 +19,4 @@
   void EXX(InitializeMeta, __LINE__)() {  \
   const_cast<::meta::type&>(*::meta::typeof<class>())
 
-#define END_META_OBJECT() ;}}
+#define END_META_OBJECT ;}}
