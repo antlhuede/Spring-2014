@@ -115,7 +115,6 @@
     <ClInclude Include="..\..\meta\_list_inl.h" />
     <ClInclude Include="..\..\meta\_macros.h" />
     <ClInclude Include="..\..\meta\_message.h" />
-    <ClInclude Include="..\..\meta\_object_container.h" />
     <ClInclude Include="..\..\meta\_operations.h" />
     <ClInclude Include="..\..\meta\_operations_inl.h" />
     <ClInclude Include="..\..\meta\_property.h" />
@@ -132,7 +131,6 @@
     <ClInclude Include="..\..\meta\meta.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\meta\_object_container.cpp" />
     <ClCompile Include="..\..\meta\meta.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

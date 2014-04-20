@@ -110,11 +110,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\serializers\_json_serializer.cpp" />
+    <ClCompile Include="..\..\serializers\_xml_serializer.cpp" />
     <ClCompile Include="..\..\serializers\json_reader.cpp" />
     <ClCompile Include="..\..\serializers\json_value.cpp" />
     <ClCompile Include="..\..\serializers\json_writer.cpp" />
     <ClCompile Include="..\..\serializers\tinyxml2.cpp" />
-    <ClCompile Include="..\..\serializers\_xml_serializer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\serializers\json_internalarray.inl" />
