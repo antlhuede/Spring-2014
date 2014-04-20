@@ -407,22 +407,22 @@ void run_basic_test_code()
   meta::variant variant;
   variant = 5;
   assert(variant.is_type<int>());
-  std::cout << "variant is int:" << variant.get_as<int>() << "\n";
+  std::cout << "variant is int:" << variant.get_as<int>() << " : toString(" << variant.to_string() << ")\n";
   variant = 15.32413;
   assert(variant.is_type<double>());
-  std::cout << "variant is double:" << variant.get_as<double>() << "\n";
+  std::cout << "variant is double:" << variant.get_as<double>() << " : toString(" << variant.to_string() << ")\n";
   
   variant = 2.32f;
   assert(variant.is_type<float>());
-  std::cout << "variant is float:" << variant.get_as<float>() << "\n";
-  
+  std::cout << "variant is float:" << variant.get_as<float>() << " : toString(" << variant.to_string() << ")\n";
+
   variant = false;
   assert(variant.is_type<bool>());
-  std::cout << "variant is bool:" << variant.get_as<bool>() << "\n";
+  std::cout << "variant is bool:" << variant.get_as<bool>() << " : toString(" << variant.to_string() << ")\n";
   
   variant = "hello world";
   assert(variant.is_type<string>());
-  std::cout << "variant is string:" << variant.get_as<string>() << "\n";
+  std::cout << "variant is string:" << variant.get_as<string>() << " : toString(" << variant.to_string() << ")\n";
   
   const meta::type* type = meta::typeof<test_class>();
   

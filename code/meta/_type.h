@@ -6,7 +6,7 @@ class type : public list<type>
 {
 public:
   template <class T>
-  explicit type(decl<T>, const string name, ReadFunc r, WriteFunc w, StringizeFunc str);
+  explicit type(decl<T>, const string name);
   ~type() = default;
 
   type(type&&) = delete;

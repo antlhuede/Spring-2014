@@ -5,13 +5,13 @@
 
 #define DECLARE_META_TYPE(class) \
   const ::meta::type* ::meta::internal::meta_holder<class>::s_pType = 0; namespace { \
-  void EXX(CreateMeta, __LINE__)() { ::meta::internal::meta_holder<class>::s_pType = new ::meta::type(::meta::decl<class>(), #class, &::meta::read_basic_types<class>, &::meta::write_basic_types<class>, &::meta::to_string_basic_types<class>); } \
+  void EXX(CreateMeta, __LINE__)() { ::meta::internal::meta_holder<class>::s_pType = new ::meta::type(::meta::decl<class>(), #class); } \
   void EXX(DeleteMeta, __LINE__)() { delete ::meta::internal::meta_holder<class>::s_pType; ::meta::internal::meta_holder<class>::s_pType = 0; }  \
   ::meta::internal::type_initializer EXX(g_typeInitializer, __LINE__)(&EXX(CreateMeta, __LINE__), &EXX(DeleteMeta, __LINE__), 0, 0); }
 
 #define DECLARE_META_OBJECT(class) \
   const ::meta::type* ::meta::internal::meta_holder<class>::s_pType = 0; namespace { \
-  void EXX(CreateMeta, __LINE__)() { ::meta::internal::meta_holder<class>::s_pType = new ::meta::type(::meta::decl<class>(), #class, &::meta::read_objects<class>, &::meta::write_objects<class>, &::meta::to_string_objects<class>); } \
+  void EXX(CreateMeta, __LINE__)() { ::meta::internal::meta_holder<class>::s_pType = new ::meta::type(::meta::decl<class>(), #class); } \
   void EXX(DeleteMeta, __LINE__)() { delete ::meta::internal::meta_holder<class>::s_pType; ::meta::internal::meta_holder<class>::s_pType = 0; } \
   void EXX(ShutDownMeta, __LINE__)() { const_cast<::meta::type*>(::meta::internal::meta_holder<class>::s_pType)->destroy(); } \
   void EXX(InitializeMeta, __LINE__)(); \

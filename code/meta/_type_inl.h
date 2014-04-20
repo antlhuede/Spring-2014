@@ -89,14 +89,48 @@ template <class T, bool isEnum> struct read_write_selector;
 template <class T> struct read_write_selector<T, false> : public read_write<T> {};
 template <class T> struct read_write_selector<T, true> : public enum_read_write<T>{};
 
+template <class T> struct to_string
+{
+  static const string toString(const void*) { return string(); }
+};
+template <class T> struct basic_types_to_string
+{
+  static const string toString(const void* object)
+  {
+    ostringstream buff;
+    buff << *((T*)object);
+    return buff.str();
+  }
+};
+template <class T> struct enum_to_string
+{
+  static const string toString(const void* object)
+  {
+    const type* type = typeof<T>();
+    for (auto constant : type->constants())
+    {
+      assert(constant.type == type);
+
+      if (constant.value.get_as<T>() == *(T*)object)
+      {
+        return constant.name;
+      }
+    }
+    return string();
+  }
+};
+template <class T, bool isBasicType, bool isEnum> struct to_string_selector : public to_string<T> {};
+template <class T> struct to_string_selector<T, true, false> : public basic_types_to_string<T>{};
+template <class T> struct to_string_selector<T, false, true> : public enum_to_string<T>{};
+
 template <class T>
-type::type(decl<T>, const string name, ReadFunc r, WriteFunc w, StringizeFunc str)
+type::type(decl<T>, const string name)
   : id(++S_ID_COUNTER)
   , size(sizeof(T))
   , name(name)
   , m_read(&read_write_selector<T, std::is_enum<T>::value>::read)
   , m_write(&read_write_selector<T, std::is_enum<T>::value>::write)
-  , toString(str)
+  , toString(&to_string_selector<T, (std::is_arithmetic<T>::value || std::is_same<T, string>::value), (std::is_enum<T>::value)>::toString)
   , construct(std::has_default_constructor<T>::value ? &PlacementNew<std::conditional<std::has_default_constructor<T>::value, T, decl<T>>::type> : nullptr)
   , copy(std::is_copy_constructible<T>::value ? &CopyMemory<T> : nullptr)
   , destruct(&CallDestructor<T>)
