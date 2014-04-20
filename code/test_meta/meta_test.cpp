@@ -183,31 +183,31 @@ void delete_test_memory()
 
 void run_serializer_test(meta::serializer* serializer, const string& file1, const string& file2)
 {
-  string file_path("documents/");
-  string first_file = file_path + file1;
-  string second_file = file_path + file2;
+  //string file_path("documents/");
+  //string first_file = file_path + file1;
+  //string second_file = file_path + file2;
 
-  test_class tc(test_int1, *test_string1, test_float1, test_double1, test_bool1);
-  test_class tc2(test_int2, *test_string2, test_float2, test_double2, test_bool2);
-  
-  serializer->add("test_class1", tc);
-  serializer->add("test_class2", tc2);
-  serializer->write(first_file);
-  serializer->clear();
-  
-  test_class read_test1;
-  test_class read_test2;
-  
-  serializer->read(first_file);
-  serializer->get("test_class1", read_test2);
-  serializer->get("test_class2", read_test1);
-  serializer->clear();
-  read_test1.set_property(string("read_test1: ") + read_test1.get_property() + " property was successfully read and edited");
-  read_test2.set_property(string("read_test2: ") + read_test2.get_property() + " property was successfully read and edited");
-  serializer->add("read_test1", read_test1);
-  serializer->add("read_test2", read_test2);
-  serializer->write(second_file);
-  serializer->clear();
+  //test_class tc(test_int1, *test_string1, test_float1, test_double1, test_bool1);
+  //test_class tc2(test_int2, *test_string2, test_float2, test_double2, test_bool2);
+  //
+  //serializer->add("test_class1", tc);
+  //serializer->add("test_class2", tc2);
+  //serializer->write(first_file);
+  //serializer->clear();
+  //
+  //test_class read_test1;
+  //test_class read_test2;
+  //
+  //serializer->read(first_file);
+  //serializer->get("test_class1", read_test2);
+  //serializer->get("test_class2", read_test1);
+  //serializer->clear();
+  //read_test1.set_property(string("read_test1: ") + read_test1.get_property() + " property was successfully read and edited");
+  //read_test2.set_property(string("read_test2: ") + read_test2.get_property() + " property was successfully read and edited");
+  //serializer->add("read_test1", read_test1);
+  //serializer->add("read_test2", read_test2);
+  //serializer->write(second_file);
+  //serializer->clear();
 }
 void test_new_serializer(meta::serializer* s, const string& file1, const string& file2)
 {

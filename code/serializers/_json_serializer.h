@@ -49,21 +49,8 @@ private:
   string m_fileName = "";
   state m_state;
 
-  struct JsonValueHandle
-  {
-    Json::Value* parent = nullptr;
-    Json::Value* node = nullptr;
-    JsonValueHandle() = default;
-    JsonValueHandle(Json::Value* parent_, Json::Value* node_)
-      : parent(parent_), node(node_) {}
-  };
-
   shared_ptr<Json::Value> m_root;
-  std::vector<JsonValueHandle> m_tree;
+  std::vector<Json::Value*> m_parents;
   Json::Value* m_current;
-
-  Json::Value build_json_tree() const;
-  Json::Value construct_json_value(const meta::type* type, const void* obj) const;
-  void construct_object(const Json::Value& value, const meta::type* type, void* obj) const;
 };
 }
