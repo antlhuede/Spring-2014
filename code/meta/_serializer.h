@@ -2,8 +2,7 @@
 
 namespace meta
 {
-//container policy necessary for dependency inversion
-class serializer : public meta::object_container
+class serializer
 {
 public:
   virtual ~serializer() = 0 {};
