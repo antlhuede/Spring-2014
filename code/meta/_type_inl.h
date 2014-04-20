@@ -93,15 +93,29 @@ template <class T> struct to_string
 {
   static const string toString(const void*) { return string(); }
 };
-template <class T> struct basic_types_to_string
-{
-  static const string toString(const void* object)
-  {
-    ostringstream buff;
-    buff << *((T*)object);
-    return buff.str();
-  }
+
+#define META_SPECIALIZE_TO_STRING(T)                  \
+template <> struct to_string<T>                       \
+{                                                     \
+  static const string toString(const void* object)    \
+  {                                                   \
+    ostringstream buff;                               \
+    buff << *((T*)object);                            \
+    return buff.str();                                \
+  }                                                   \
 };
+
+META_SPECIALIZE_TO_STRING(bool)
+META_SPECIALIZE_TO_STRING(char)
+META_SPECIALIZE_TO_STRING(short)
+META_SPECIALIZE_TO_STRING(int)
+META_SPECIALIZE_TO_STRING(unsigned char)
+META_SPECIALIZE_TO_STRING(unsigned short)
+META_SPECIALIZE_TO_STRING(unsigned int)
+META_SPECIALIZE_TO_STRING(float)
+META_SPECIALIZE_TO_STRING(double)
+META_SPECIALIZE_TO_STRING(string)
+
 template <class T> struct enum_to_string
 {
   static const string toString(const void* object)
@@ -119,9 +133,9 @@ template <class T> struct enum_to_string
     return string();
   }
 };
-template <class T, bool isBasicType, bool isEnum> struct to_string_selector : public to_string<T> {};
-template <class T> struct to_string_selector<T, true, false> : public basic_types_to_string<T>{};
-template <class T> struct to_string_selector<T, false, true> : public enum_to_string<T>{};
+template <class T, bool isEnum> struct to_string_selector;
+template <class T> struct to_string_selector<T, false> : public to_string<T>{};
+template <class T> struct to_string_selector<T, true> : public enum_to_string<T>{};
 
 template <class T>
 type::type(decl<T>, const string name)
@@ -130,7 +144,7 @@ type::type(decl<T>, const string name)
   , name(name)
   , m_read(&read_write_selector<T, std::is_enum<T>::value>::read)
   , m_write(&read_write_selector<T, std::is_enum<T>::value>::write)
-  , toString(&to_string_selector<T, (std::is_arithmetic<T>::value || std::is_same<T, string>::value), (std::is_enum<T>::value)>::toString)
+  , toString(&to_string_selector<T, std::is_enum<T>::value>::toString)
   , construct(std::has_default_constructor<T>::value ? &PlacementNew<std::conditional<std::has_default_constructor<T>::value, T, decl<T>>::type> : nullptr)
   , copy(std::is_copy_constructible<T>::value ? &CopyMemory<T> : nullptr)
   , destruct(&CallDestructor<T>)
