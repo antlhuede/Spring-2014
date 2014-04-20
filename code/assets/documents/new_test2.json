@@ -1,0 +1,27 @@
+
+{
+	"read_test1" : 
+	{
+		"name" : "steven",
+		"test_bool" : false,
+		"test_double" : 10293.93820,
+		"test_float" : 332.50,
+		"test_getter_only" : "read_test1:  property was successfully read and edited",
+		"test_int" : 12,
+		"test_property" : "read_test1:  property was successfully read and edited",
+		"test_string" : "123 boogaloo",
+		"type" : "test_class"
+	},
+	"read_test2" : 
+	{
+		"name" : "steven",
+		"test_bool" : true,
+		"test_double" : 0.09279999999999999,
+		"test_float" : 13.50,
+		"test_getter_only" : "read_test2:  property was successfully read and edited",
+		"test_int" : 5,
+		"test_property" : "read_test2:  property was successfully read and edited",
+		"test_string" : "test123",
+		"type" : "test_class"
+	}
+}

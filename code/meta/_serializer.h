@@ -36,6 +36,7 @@ public:
 
   virtual void BeginArray(const string& name) = 0;
   virtual void EndArray() = 0;
+  enum state { e_None, e_Read, e_Write };
 };
 }
 
