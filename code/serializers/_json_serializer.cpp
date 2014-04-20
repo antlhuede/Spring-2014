@@ -126,7 +126,7 @@ const string JSonSerializer::ReadString(const string& name) const
 }
 const string JSonSerializer::ReadEnum(const string& name) const
 {
-  return string();
+  return ExtractValue(m_current, name, &Json::Value::asString);
 }
 const meta::variant JSonSerializer::ReadVariable(const string& name) const
 {
@@ -152,8 +152,9 @@ void JSonSerializer::WriteString(const string& name, const string& value)
 {
   (*m_current)[name] = value;
 }
-void JSonSerializer::WriteEnum(const string& name, const meta::type* type, const string& value)
+void JSonSerializer::WriteEnum(const string& name, const meta::type*, const string& value)
 {
+  (*m_current)[name] = value;
 }
 
 
